@@ -1,3 +1,4 @@
+
 window.onload = function() {
 const firebaseConfig = {
     apiKey: "AIzaSyCjxJ4TxSjngUdYHuZqEjvlomQVN2OOLqU",
@@ -171,6 +172,7 @@ const firebaseConfig = {
                     return
                 }
                 var messages = Object.values(messages_object.val());
+                var guide = []
                 var unordered = []
                 var ordered = []
                 for (var i, i = 0; i < messages.length; i++) {

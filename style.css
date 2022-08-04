@@ -37,6 +37,8 @@ body{
     letter-spacing: 2px;
     -webkit-user-select: none;
     user-select: none;
+    text-align: center;
+    line-height: 1;
 }
 #join_container{
     width: 100%;
