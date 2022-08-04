@@ -1,4 +1,4 @@
-
+// import { initializeApp } from "firebase/app";
 window.onload = function() {
 const firebaseConfig = {
     apiKey: "AIzaSyCjxJ4TxSjngUdYHuZqEjvlomQVN2OOLqU",
@@ -10,7 +10,7 @@ const firebaseConfig = {
 };
     firebase.initializeApp(firebaseConfig);
     var db = firebase.database()
-    class MEME_CHAT{
+    class GLOBAL_CHAT{
     home(){
         document.body.innerHTML = ''
         this.create_title()
@@ -100,11 +100,18 @@ const firebaseConfig = {
         chat_input.setAttribute('id', 'chat_input')
         chat_input.setAttribute('maxlength', 1000)
         chat_input.placeholder = `${parent.get_name()}. Say something...`
-        chat_input.onkeyup  = function(){
+        chat_input.onkeyup  = function(e){
         if(chat_input.value.length > 0){
             chat_input_send.removeAttribute('disabled')
             chat_input_send.classList.add('enabled')
-            chat_input_send.onclick = function(){
+            chat_input_send.addEventListener('click',sendMessage)
+        }else{
+            chat_input_send.classList.remove('enabled')
+        }
+        if(e.key == 'Enter'){
+            sendMessage()
+        }
+        function sendMessage(){
             chat_input_send.setAttribute('disabled', true)
             chat_input_send.classList.remove('enabled')
             if(chat_input.value.length <= 0){
@@ -114,9 +121,6 @@ const firebaseConfig = {
             parent.send_message(chat_input.value)
             chat_input.value = ''
             chat_input.focus()
-            }
-        }else{
-            chat_input_send.classList.remove('enabled')
         }
     }
     var chat_logout_container = document.createElement('div')
@@ -218,7 +222,7 @@ const firebaseConfig = {
             })
         }
     }
-var app = new MEME_CHAT()
+var app = new GLOBAL_CHAT()
         if(app.get_name() != null){
         app.chat()
     }
