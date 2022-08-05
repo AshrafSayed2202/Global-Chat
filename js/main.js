@@ -49,7 +49,7 @@ const firebaseConfig = {
         join_input.setAttribute('id', 'join_input')
         join_input.setAttribute('maxlength', 15)
         join_input.placeholder = 'Enter Your Name Here'
-        join_input.onkeyup  = function(){
+        join_input.onkeyup  = function(e){
         if(join_input.value.length > 0){
             join_button.classList.add('enabled')
             join_button.onclick = function(){
@@ -59,6 +59,13 @@ const firebaseConfig = {
             }
         }else{
             join_button.classList.remove('enabled')
+        }
+        if(e.key == 'Enter'){
+            if(join_input.value.length > 0){
+                parent.save_name(join_input.value)
+                join_container.remove()
+                parent.create_chat()
+            }
         }
     }
     join_button_container.append(join_button)
