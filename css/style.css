@@ -262,3 +262,45 @@ body{
     background: #D64045;
     border-radius: 5px;
 }
+/* Footer */
+footer{
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 30px   ;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+}
+footer .text{
+    margin-bottom: 20px;
+    color: #fff;
+}
+#logo{
+    background-color: #d64045;
+    font-size: 25px;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%; 
+    letter-spacing: -1px;
+}
+footer ul{
+    list-style: none;
+    display: flex;
+    justify-content: center;
+}
+footer ul a{
+    color: #fff;
+    padding: 5px;
+    margin: 0 10px;
+}
+footer ul li{
+    transition: 0.3s;
+}
+footer ul li:hover{
+    transform: scale(1.5);
+}

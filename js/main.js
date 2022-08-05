@@ -15,10 +15,24 @@ const firebaseConfig = {
         document.body.innerHTML = ''
         this.create_title()
         this.create_join_form()
+        this.create_footer()
     }
     chat(){
         this.create_title()
         this.create_chat()
+    }
+    create_footer(){
+        let footer = document.createElement('footer');
+        footer.innerHTML = `<div class="text"><span id="logo">G</span>lobal Chat <br> &copy; 2022 </div>
+        <div class="socials">
+            <ul>
+                <li><a href="https://www.facebook.com/ashraf.tenshi/" title="facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a></li>
+                <li><a href="https://github.com/ashraf9932" title="github" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a></li>
+                <li><a href="https://www.linkedin.com/in/ashraf-sayed22/" title="linkedin" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a></li>
+                <li><a href="mailto:ashraf.neizk@gmail.com" title="mail" target="_blank"><i class="fa-brands fa-google"></i></a></li>
+            </ul>
+        </div>`
+        document.body.append(footer)
     }
     create_title(){
         var title_container = document.createElement('div')
