@@ -52,8 +52,14 @@ const firebaseConfig = {
         join_container.setAttribute('id', 'join_container')
         var join_inner_container = document.createElement('div')
         join_inner_container.setAttribute('id', 'join_inner_container')
+        var join_image_container = document.createElement('div')
+        join_image_container.setAttribute('id','join_image_container')
+        var join_image = document.createElement('input')
         var join_button_container = document.createElement('div')
         join_button_container.setAttribute('id', 'join_button_container')
+        join_image.setAttribute('type','url')
+        join_image.setAttribute('id','join_image')
+        join_image.placeholder = 'Paste Your Image URL Here'
         var join_button = document.createElement('button')
         join_button.setAttribute('id', 'join_button')
         join_button.innerHTML = 'Join <i class="fas fa-sign-in-alt"></i>'
@@ -70,7 +76,8 @@ const firebaseConfig = {
         if(join_input.value.length > 0){
             join_button.classList.add('enabled')
             join_button.onclick = function(){
-                parent.save_name(join_input.value,join_color.value)
+                parent.save_name(join_input.value,join_color.value,join_image.value)
+                console.log(join_image)
                 join_container.remove()
                 parent.create_chat()
             }
@@ -79,7 +86,7 @@ const firebaseConfig = {
         }
         if(e.key == 'Enter'){
             if(join_input.value.length > 0){
-                parent.save_name(join_input.value,join_color.value)
+                parent.save_name(join_input.value,join_color.value,join_image.value)
                 join_container.remove()
                 parent.create_chat()
             }
@@ -88,7 +95,8 @@ const firebaseConfig = {
     join_button_container.append(join_button)
     join_input_container.append(join_color)
     join_input_container.append(join_input)
-    join_inner_container.append(join_input_container, join_button_container)
+    join_image_container.append(join_image)
+    join_inner_container.append(join_input_container, join_image_container, join_button_container)
     join_container.append(join_inner_container)
     document.body.append(join_container)
     }
@@ -165,9 +173,10 @@ const firebaseConfig = {
     parent.create_load('chat_content_container')
     parent.refresh_chat()
     }
-        save_name(name,color){
+        save_name(name,color,image){
             localStorage.setItem('name', name)
             localStorage.setItem('color', color)
+            localStorage.setItem('image', image)
         }
         send_message(message){
             var parent = this
@@ -179,6 +188,7 @@ const firebaseConfig = {
                 db.ref('chats/' + `message_${index}`).set({
                     name: parent.get_name(),
                     color: parent.get_color(),
+                    image: parent.get_image(),
                     message: message,
                     index: index
                 })
@@ -198,6 +208,14 @@ const firebaseConfig = {
         get_color(){
             if(localStorage.getItem('color') != null){
                 return localStorage.getItem('color')
+            }else{
+                this.home()
+                return null
+            }
+        }
+        get_image(){
+            if(localStorage.getItem('image') != null){
+                return localStorage.getItem('image')
             }else{
                 this.home()
                 return null
@@ -234,8 +252,12 @@ const firebaseConfig = {
                     var name = data.name
                     var message = data.message
                     var color = data.color
+                    var image = data.image
                     var message_container = document.createElement('div')
                     message_container.setAttribute('class', 'message_container')
+                    var user_image = document.createElement('img')
+                    user_image.setAttribute('class','user_image')
+                    image == ""?user_image.src = 'user.webp': user_image.src = image;
                     var message_inner_container = document.createElement('div')
                     message_inner_container.setAttribute('class', 'message_inner_container')
                     var message_user_container = document.createElement('div')
@@ -252,6 +274,7 @@ const firebaseConfig = {
                     message_user_container.append(message_user)
                     message_content_container.append(message_content)
                     message_inner_container.append(message_user_container, message_content_container)
+                    message_container.append(user_image)
                     message_container.append(message_inner_container)
                     chat_content_container.append(message_container)
                 });

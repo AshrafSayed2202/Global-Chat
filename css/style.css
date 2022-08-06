@@ -73,6 +73,27 @@ body{
     border-radius: 50px;
     margin-bottom: 20px;
 }
+#join_image_container{
+    width: 60%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    float: left;
+    margin-bottom: 20px;
+    background-color: #eee;
+    border-radius: 50px;
+}
+#join_image{
+    width: 60%;
+    height: 40px;
+    color: #1D3354;
+    font-family: Varela Round;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    background-color: Transparent;
+}
 #join_input{
     width: 60%;
     height: 40px;
@@ -188,8 +209,14 @@ body{
 }
 .message_container{
     width: 100%;
-    display: inline-block;
+    display: flex;
     margin-bottom: 20px;
+    gap: 10px;
+}
+.user_image{
+    width: 40px;
+    border-radius: 50px;
+    border: #eee 2px solid;
 }
 .message_inner_container{
     width: 100%;
