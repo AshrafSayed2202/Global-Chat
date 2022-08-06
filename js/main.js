@@ -258,7 +258,7 @@ const firebaseConfig = {
                     var user_image = document.createElement('img')
                     user_image.setAttribute('class','user_image')
                     image == ""?user_image.src = 'user.webp': user_image.src = image;
-                    user_image.style.borderColor = `${image}`
+                    user_image.style.borderColor = `${color}`
                     var message_inner_container = document.createElement('div')
                     message_inner_container.setAttribute('class', 'message_inner_container')
                     var message_user_container = document.createElement('div')
