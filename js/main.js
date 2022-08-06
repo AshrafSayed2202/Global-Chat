@@ -63,11 +63,14 @@ const firebaseConfig = {
         join_input.setAttribute('id', 'join_input')
         join_input.setAttribute('maxlength', 15)
         join_input.placeholder = 'Enter Your Name Here'
+        var join_color = document.createElement('input');
+        join_color.setAttribute('id','join_color')
+        join_color.setAttribute('type','color')
         join_input.onkeyup  = function(e){
         if(join_input.value.length > 0){
             join_button.classList.add('enabled')
             join_button.onclick = function(){
-                parent.save_name(join_input.value)
+                parent.save_name(join_input.value,join_color.value)
                 join_container.remove()
                 parent.create_chat()
             }
@@ -76,13 +79,14 @@ const firebaseConfig = {
         }
         if(e.key == 'Enter'){
             if(join_input.value.length > 0){
-                parent.save_name(join_input.value)
+                parent.save_name(join_input.value,join_color.value)
                 join_container.remove()
                 parent.create_chat()
             }
         }
     }
     join_button_container.append(join_button)
+    join_input_container.append(join_color)
     join_input_container.append(join_input)
     join_inner_container.append(join_input_container, join_button_container)
     join_container.append(join_inner_container)
@@ -161,8 +165,9 @@ const firebaseConfig = {
     parent.create_load('chat_content_container')
     parent.refresh_chat()
     }
-        save_name(name){
+        save_name(name,color){
             localStorage.setItem('name', name)
+            localStorage.setItem('color', color)
         }
         send_message(message){
             var parent = this
@@ -173,6 +178,7 @@ const firebaseConfig = {
                 var index = parseFloat(message_object.numChildren()) + 1
                 db.ref('chats/' + `message_${index}`).set({
                     name: parent.get_name(),
+                    color: parent.get_color(),
                     message: message,
                     index: index
                 })
@@ -184,6 +190,14 @@ const firebaseConfig = {
         get_name(){
             if(localStorage.getItem('name') != null){
                 return localStorage.getItem('name')
+            }else{
+                this.home()
+                return null
+            }
+        }
+        get_color(){
+            if(localStorage.getItem('color') != null){
+                return localStorage.getItem('color')
             }else{
                 this.home()
                 return null
@@ -219,6 +233,7 @@ const firebaseConfig = {
                 ordered.forEach(function(data) {
                     var name = data.name
                     var message = data.message
+                    var color = data.color
                     var message_container = document.createElement('div')
                     message_container.setAttribute('class', 'message_container')
                     var message_inner_container = document.createElement('div')
@@ -227,6 +242,7 @@ const firebaseConfig = {
                     message_user_container.setAttribute('class', 'message_user_container')
                     var message_user = document.createElement('p')
                     message_user.setAttribute('class', 'message_user')
+                    message_user.style.color = `${color}`
                     message_user.textContent = `${name}`
                     var message_content_container = document.createElement('div')
                     message_content_container.setAttribute('class', 'message_content_container')

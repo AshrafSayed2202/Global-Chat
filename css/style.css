@@ -53,6 +53,9 @@ body{
 #join_inner_container{
     width: 50%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 @media (max-width:600px) {
     #join_inner_container{
@@ -60,12 +63,15 @@ body{
     }
 }
 #join_input_container{
-    width: 100%;
+    width: 60%;
     height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
     float: left;
+    background-color: #eee;
+    border-radius: 50px;
+    margin-bottom: 20px;
 }
 #join_input{
     width: 60%;
@@ -76,10 +82,14 @@ body{
     font-weight: bold;
     text-align: center;
     background-color: Transparent;
-    border-bottom: 2px dashed #1D3354;
 }
 #join_input:focus{
     box-shadow: 0 10px 30px -17px #1D3354;
+}
+#join_color{
+    width: 20px;
+    height: 23px;
+    cursor: pointer;
 }
 #join_button_container{
     width: 100%;
@@ -97,6 +107,7 @@ body{
     font-weight: bold;
     text-align: center;
     color: #fff;
+    border-radius: 50px;
 }
 #chat_container{
     width: 100%;
