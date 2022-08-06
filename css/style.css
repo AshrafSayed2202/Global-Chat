@@ -270,7 +270,7 @@ span.message_time{
 #title_container.chat_title_container{
     transition: 0.8s;
     transition-timing-function: ease-in-out;
-    height: 100px;
+    height: 175px;
 }
 #title.chat_title{
     transition: 0.8s;
