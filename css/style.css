@@ -133,7 +133,7 @@ body{
 }
 #chat_container{
     width: 100%;
-    height: calc(100vh - 220px);
+    height: calc(100vh - 290px);
     display: flex;
     justify-content: center;
     float: left;
