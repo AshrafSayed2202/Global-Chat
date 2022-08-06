@@ -21,19 +21,6 @@ const firebaseConfig = {
         this.create_title()
         this.create_chat()
     }
-    create_footer(){
-        let footer = document.createElement('footer');
-        footer.innerHTML = `<div class="text"><span id="logo">G</span>lobal Chat <br> &copy; 2022 </div>
-        <div class="socials">
-            <ul>
-                <li><a href="https://www.facebook.com/ashraf.tenshi/" title="facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a></li>
-                <li><a href="https://github.com/ashraf9932" title="github" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a></li>
-                <li><a href="https://www.linkedin.com/in/ashraf-sayed22/" title="linkedin" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a></li>
-                <li><a href="mailto:ashraf.neizk@gmail.com" title="mail" target="_blank"><i class="fa-brands fa-google"></i></a></li>
-            </ul>
-        </div>`
-        document.body.append(footer)
-    }
     create_title(){
         var title_container = document.createElement('div')
         title_container.setAttribute('id', 'title_container')
@@ -42,7 +29,16 @@ const firebaseConfig = {
         var title = document.createElement('h1')
         title.setAttribute('id', 'title')
         title.textContent = 'Global Chat'
+        var socials = document.createElement('div')
+        socials.setAttribute('class','socials')
+        socials.innerHTML = `<ul>
+            <li><a href="https://www.facebook.com/ashraf.tenshi/" title="facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a></li>
+            <li><a href="https://github.com/ashraf9932" title="github" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/ashraf-sayed22/" title="linkedin" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a></li>
+            <li><a href="mailto:ashraf.neizk@gmail.com" title="mail" target="_blank"><i class="fa-brands fa-google"></i></a></li>
+        </ul>`
         title_inner_container.append(title)
+        title_inner_container.append(socials)
         title_container.append(title_inner_container)
         document.body.append(title_container)
     }
