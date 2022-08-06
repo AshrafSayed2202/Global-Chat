@@ -185,12 +185,18 @@ const firebaseConfig = {
             }
             db.ref('chats/').once('value', function(message_object) {
                 var index = parseFloat(message_object.numChildren()) + 1
+                let d = new Date();
+                // let message_time = `${d.getHours()}:${d.getMinutes()}`;
                 db.ref('chats/' + `message_${index}`).set({
                     name: parent.get_name(),
                     color: parent.get_color(),
                     image: parent.get_image(),
                     message: message,
-                    index: index
+                    index: index,
+                    messageTime: {
+                        hour: d.getHours(),
+                        minutes: d.getMinutes()
+                    }
                 })
                 .then(function(){
                     parent.refresh_chat()
@@ -253,12 +259,16 @@ const firebaseConfig = {
                     var message = data.message
                     var color = data.color
                     var image = data.image
+                    // console.log(data.messageTime)
                     var message_container = document.createElement('div')
                     message_container.setAttribute('class', 'message_container')
                     var user_image = document.createElement('img')
                     user_image.setAttribute('class','user_image')
                     image == ""?user_image.src = 'user.webp': user_image.src = image;
                     user_image.style.borderColor = `${color}`
+                    var message_time = document.createElement('span')
+                    message_time.setAttribute('class','message_time')
+                    message_time.innerText = `${data.messageTime.hour}:${data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`
                     var message_inner_container = document.createElement('div')
                     message_inner_container.setAttribute('class', 'message_inner_container')
                     var message_user_container = document.createElement('div')
@@ -277,6 +287,7 @@ const firebaseConfig = {
                     message_inner_container.append(message_user_container, message_content_container)
                     message_container.append(user_image)
                     message_container.append(message_inner_container)
+                    message_container.append(message_time)
                     chat_content_container.append(message_container)
                 });
             chat_content_container.scrollTop = chat_content_container.scrollHeight;
