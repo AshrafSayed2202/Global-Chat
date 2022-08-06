@@ -15,7 +15,7 @@ const firebaseConfig = {
         document.body.innerHTML = ''
         this.create_title()
         this.create_join_form()
-        this.create_footer()
+        // this.create_footer()
     }
     chat(){
         this.create_title()
@@ -259,7 +259,6 @@ const firebaseConfig = {
                     var message = data.message
                     var color = data.color
                     var image = data.image
-                    // console.log(data.messageTime)
                     var message_container = document.createElement('div')
                     message_container.setAttribute('class', 'message_container')
                     var user_image = document.createElement('img')
@@ -268,7 +267,7 @@ const firebaseConfig = {
                     user_image.style.borderColor = `${color}`
                     var message_time = document.createElement('span')
                     message_time.setAttribute('class','message_time')
-                    message_time.innerText = `${data.messageTime.hour}:${data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`
+                    message_time.innerText = `${data.messageTime.hour}:${data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
                     var message_inner_container = document.createElement('div')
                     message_inner_container.setAttribute('class', 'message_inner_container')
                     var message_user_container = document.createElement('div')
