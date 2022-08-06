@@ -133,11 +133,11 @@ body{
 }
 #chat_container{
     width: 100%;
-    height: calc(100vh - 290px);
+    height: calc(100vh - 270px);
     display: flex;
     justify-content: center;
     float: left;
-    margin-top: 40px;
+    margin-top: 20px;
     animation: fadeIn 1s linear;
 }
 #chat_inner_container{
