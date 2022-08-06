@@ -73,7 +73,6 @@ const firebaseConfig = {
             join_button.classList.add('enabled')
             join_button.onclick = function(){
                 parent.save_name(join_input.value,join_color.value,join_image.value)
-                console.log(join_image)
                 join_container.remove()
                 parent.create_chat()
             }
