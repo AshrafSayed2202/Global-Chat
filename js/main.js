@@ -235,8 +235,7 @@ const firebaseConfig = {
                 var ordered = []
                 for (var i, i = 0; i < messages.length; i++) {
                     guide.push(i+1)
-                    unordered.push([messages[i], messages[i].index]);
-                    console.log(messages[messages.length - 1])
+                    unordered.push([messages[i], messages[i].index]);   
                 }
                 guide.forEach(function(key) {
                     var found = false
@@ -257,35 +256,49 @@ const firebaseConfig = {
                     var image = data.image
                     var message_container = document.createElement('div')
                     message_container.setAttribute('class', 'message_container')
-                    var user_image = document.createElement('img')
-                    user_image.setAttribute('class','user_image')
-                    image == ""?user_image.src = 'user.webp': user_image.src = image;
-                    user_image.style.borderColor = `${color}`
                     var message_time = document.createElement('span')
                     message_time.setAttribute('class','message_time')
                     message_time.innerText = `${data.messageTime.hour<10?"0"+data.messageTime.hour:data.messageTime.hour}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
                     var message_inner_container = document.createElement('div')
                     message_inner_container.setAttribute('class', 'message_inner_container')
+                    var message_content = document.createElement('p')
+                    var message_content_container = document.createElement('div')
+                    var user_image = document.createElement('img')
+                    user_image.setAttribute('class','user_image')
+                    image == ""?user_image.src = 'user.webp': user_image.src = image;
+                    user_image.style.borderColor = `${color}`
                     var message_user_container = document.createElement('div')
+                    message_user_container.style.display = 'block'
                     message_user_container.setAttribute('class', 'message_user_container')
                     var message_user = document.createElement('p')
                     message_user.setAttribute('class', 'message_user')
                     message_user.style.color = `${color}`
                     message_user.textContent = `${name}`
-                    var message_content_container = document.createElement('div')
+                    message_user_container.append(message_user)
+                    message_inner_container.append(message_user_container)
+                    message_container.append(user_image)
                     message_content_container.setAttribute('class', 'message_content_container')
-                    var message_content = document.createElement('p')
                     message_content.setAttribute('class', 'message_content')
                     message_content.textContent = `${message}`
-                    message_user_container.append(message_user)
                     message_content_container.append(message_content)
-                    message_inner_container.append(message_user_container, message_content_container)
-                    message_container.append(user_image)
+                    message_inner_container.append(message_content_container)
                     message_container.append(message_inner_container)
                     message_container.append(message_time)
                     chat_content_container.append(message_container)
+                    if(data.index > 1){
+                        if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
+                            message_container.style.paddingLeft = '20px'
+                            message_container.style.borderTopLeftRadius = '15px'
+                            message_container.style.borderBottomLeftRadius = '50px'
+                            user_image.style.display = 'none'
+                            message_user_container.style.display = 'none'
+                            if(message_container.previousSibling.childNodes[1].firstChild.style.display == 'none'){
+                                message_container.previousSibling.style.borderBottomLeftRadius = '15px'
+                            }
+                        }
+                    }
                 });
-            chat_content_container.scrollTop = chat_content_container.scrollHeight;
+                chat_content_container.scrollTop = chat_content_container.scrollHeight;
             })
         }
     }
