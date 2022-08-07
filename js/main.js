@@ -236,6 +236,7 @@ const firebaseConfig = {
                 for (var i, i = 0; i < messages.length; i++) {
                     guide.push(i+1)
                     unordered.push([messages[i], messages[i].index]);
+                    console.log(messages[messages.length - 1])
                 }
                 guide.forEach(function(key) {
                     var found = false
@@ -262,7 +263,7 @@ const firebaseConfig = {
                     user_image.style.borderColor = `${color}`
                     var message_time = document.createElement('span')
                     message_time.setAttribute('class','message_time')
-                    message_time.innerText = `${data.messageTime.hour}:${data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
+                    message_time.innerText = `${data.messageTime.hour<10?"0"+data.messageTime.hour:data.messageTime.hour}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
                     var message_inner_container = document.createElement('div')
                     message_inner_container.setAttribute('class', 'message_inner_container')
                     var message_user_container = document.createElement('div')
