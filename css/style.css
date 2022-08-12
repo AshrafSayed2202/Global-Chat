@@ -246,9 +246,21 @@ body{
 span.message_time{
     position: absolute;
     right: 0;
-    opacity: 0.7;
+    opacity: 0.4;
     font-size: 10px;
     margin-right: 10px;
+    cursor:default;
+}
+span.message_date{
+    position: absolute;
+    right: 0;
+    top: -15px;
+    opacity: 0;
+    transition: 0.3s;
+    transition-delay: 0.7s;
+}
+span.message_time:hover span.message_date{
+    opacity: 1;
 }
 .message_content_container{
     width: 100%;

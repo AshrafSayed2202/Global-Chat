@@ -181,6 +181,7 @@ const firebaseConfig = {
             db.ref('chats/').once('value', function(message_object) {
                 var index = parseFloat(message_object.numChildren()) + 1
                 let d = new Date();
+                let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                 // let message_time = `${d.getHours()}:${d.getMinutes()}`;
                 db.ref('chats/' + `message_${index}`).set({
                     name: parent.get_name(),
@@ -190,7 +191,8 @@ const firebaseConfig = {
                     index: index,
                     messageTime: {
                         hour: d.getHours(),
-                        minutes: d.getMinutes()
+                        minutes: d.getMinutes(),
+                        messageDate: d.getDate()+","+months[d.getMonth()]
                     }
                 })
                 .then(function(){
@@ -258,7 +260,11 @@ const firebaseConfig = {
                     message_container.setAttribute('class', 'message_container')
                     var message_time = document.createElement('span')
                     message_time.setAttribute('class','message_time')
-                    message_time.innerText = `${data.messageTime.hour<10?"0"+data.messageTime.hour:data.messageTime.hour}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
+                    message_time.innerText = `${data.messageTime.hour<10?"0"+data.messageTime.hour:(data.messageTime.hour>12?"0"+(data.messageTime.hour-12):data.messageTime.hour)}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
+                    var message_date = document.createElement('span');
+                    message_date.setAttribute('class','message_date');
+                    message_date.innerText = data.messageTime.messageDate;
+                    message_time.append(message_date)
                     var message_inner_container = document.createElement('div')
                     message_inner_container.setAttribute('class', 'message_inner_container')
                     var message_content = document.createElement('p')
