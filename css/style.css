@@ -220,6 +220,7 @@ body{
     background-color: #eee;
     padding: 10px 30px 10px 10px;
     border-bottom-left-radius: 0;
+    transition: 0.3s;
 }
 .message_container:hover{
     background-color: #ddd;
@@ -242,6 +243,8 @@ body{
 .message_user{
     font-weight: bold;
     font-size: 14px;
+    -webkit-user-select: none;
+    user-select: none;
 }
 span.message_time{
     position: absolute;
