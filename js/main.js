@@ -80,7 +80,7 @@ const firebaseConfig = {
             if(join_input.value.length > 0 && join_password.value.length > 8){
                 join_button.classList.add('enabled')
                 join_button.onclick = function(){
-                    parent.save_name(join_input.value,join_color.value,join_image.value)
+                    parent.save_name(join_input.value,join_password.value,join_color.value,join_image.value)
                     join_container.remove()
                     parent.create_chat()
                 }
@@ -89,7 +89,7 @@ const firebaseConfig = {
             }
             if(e.key == 'Enter'){
                 if(join_input.value.length > 0){
-                    parent.save_name(join_input.value,join_color.value,join_image.value)
+                    parent.save_name(join_input.value,join_password.value,join_color.value,join_image.value)
                     join_container.remove()
                     parent.create_chat()
                 }
@@ -177,8 +177,9 @@ const firebaseConfig = {
     parent.create_load('chat_content_container')
     parent.refresh_chat()
     }
-        save_name(name,color,image){
+        save_name(name,password,color,image){
             localStorage.setItem('name', name)
+            localStorage.setItem('password', password)
             localStorage.setItem('color', color)
             localStorage.setItem('image', image)
         }
@@ -193,6 +194,7 @@ const firebaseConfig = {
                 let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                 db.ref('chats/' + `message_${index}`).set({
                     name: parent.get_name(),
+                    password: parent.get_password(),
                     color: parent.get_color(),
                     image: parent.get_image(),
                     message: message,
@@ -211,6 +213,14 @@ const firebaseConfig = {
         get_name(){
             if(localStorage.getItem('name') != null){
                 return localStorage.getItem('name')
+            }else{
+                this.home()
+                return null
+            }
+        }
+        get_password(){
+            if(localStorage.getItem('password') != null){
+                return localStorage.getItem('password')
             }else{
                 this.home()
                 return null
@@ -301,7 +311,6 @@ const firebaseConfig = {
                     message_container.append(message_deletebtn)
                     chat_content_container.append(message_container)
                     message_container.addEventListener('click',function(){
-                        console.log(localStorage.color)
                         document.querySelectorAll('.message_container').forEach(hideMessageTime)
                         message_container.classList.toggle('shown_time')
                         window.addEventListener('click',(event)=>{
@@ -310,13 +319,14 @@ const firebaseConfig = {
                             }else{
                                 hideMessageTime(message_container)
                             }
-                            if(true){
-                                message_container.childNodes[3].style.display = 'flex'
-                            }
                         })
+                        if(data.password == localStorage.password){
+                            message_container.childNodes[3].style.display = 'flex'
+                        }
                     })
                     function hideMessageTime(e){
                         e.classList.remove('shown_time')
+                        e.childNodes[3].style.display = 'none'
                     }
                     if(data.index > 1){
                         if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
