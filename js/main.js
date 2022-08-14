@@ -285,7 +285,7 @@ const firebaseConfig = {
                     chat_content_container.append(message_container)
                     message_container.addEventListener('click',function(){
                         document.querySelectorAll('.message_container').forEach(hideMessageTime)
-                        message_container.classList.toggle('shown_time')
+                        message_container.classList.add('shown_time')
                         window.addEventListener('click',(event)=>{
                             if(message_container.contains(event.target)){
                                 false
@@ -301,15 +301,32 @@ const firebaseConfig = {
                         e.classList.remove('shown_time')
                         e.childNodes[3].style.display = 'none'
                     }
+                    if(data.password == localStorage.password){
+                        message_container.style.marginLeft = 'initial'
+                        message_container.style.borderBottomLeftRadius = '15px'
+                        message_container.style.backgroundColor = '#D64045'
+                        message_content.style.color = 'white'
+                    }else{
+                        message_container.style.borderBottomRightRadius = '15px'
+                    }
                     if(data.index > 1){
                         if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
                             message_container.style.paddingLeft = '20px'
-                            message_container.style.borderTopLeftRadius = '15px'
-                            message_container.style.borderBottomLeftRadius = '50px'
+                            if(data.password == localStorage.password){
+                                message_container.style.borderTopLeftRadius = '15px'
+                                message_container.style.borderBottomLeftRadius = '50px'
+                            }else{
+                                message_container.style.borderTopRightRadius = '15px'
+                                message_container.style.borderBottomRightRadius = '50px'
+                            }
                             user_image.style.display = 'none'
                             message_user_container.style.display = 'none'
                             if(message_container.previousSibling.childNodes[1].firstChild.style.display == 'none'){
-                                message_container.previousSibling.style.borderBottomLeftRadius = '15px'
+                                if(data.password == localStorage.password){
+                                    message_container.previousSibling.style.borderBottomLeftRadius = '15px'
+                                }else{
+                                    message_container.previousSibling.style.borderBottomRightRadius = '15px'
+                                }
                             }
                         }
                     }

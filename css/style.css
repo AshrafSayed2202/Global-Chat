@@ -240,10 +240,10 @@ body{
     border-radius: 50px;
     background-color: #eee;
     padding: 10px 30px 10px 10px;
-    border-bottom-left-radius: 15px;
     position: relative;
     cursor: pointer;
     transition: margin 0.3s;
+    margin-left: auto;
 }
 .message_container:hover{
     background-color: #ddd;
