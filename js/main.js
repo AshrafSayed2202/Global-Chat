@@ -75,7 +75,7 @@ const firebaseConfig = {
         join_input.onkeyup  = joinEnabel
         join_password.onkeyup  = joinEnabel
         function joinEnabel(e){
-            if(join_input.value.length > 0 && join_password.value.length > 8){
+            if(join_input.value.length > 0 && join_password.value.length >= 8){
                 join_button.classList.add('enabled')
                 join_button.onclick = function(){
                     parent.save_name(join_input.value,join_password.value,join_color.value,join_image.value)
@@ -309,7 +309,7 @@ const firebaseConfig = {
                     }else{
                         message_container.style.borderBottomRightRadius = '15px'
                     }
-                    if(data.index > 1){
+                    if(message_container.previousSibling != null){
                         if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
                             message_container.style.paddingLeft = '20px'
                             if(data.password == localStorage.password){
@@ -345,6 +345,7 @@ const firebaseConfig = {
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
                             db.ref('chats/' + `message_${data.index}`).remove()
+                            console.log(data.index)
                             closeDeleteMessage()
                         }
                         var button_keep = document.createElement('button')
