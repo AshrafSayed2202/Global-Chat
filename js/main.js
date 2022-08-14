@@ -59,6 +59,12 @@ const firebaseConfig = {
         var join_button = document.createElement('button')
         join_button.setAttribute('id', 'join_button')
         join_button.innerHTML = 'Join <i class="fas fa-sign-in-alt"></i>'
+        var join_password_container = document.createElement('div')
+        join_password_container.setAttribute('id','join_password_container')
+        var join_password = document.createElement('input')
+        join_password.setAttribute('type','password')
+        join_password.setAttribute('id','join_password')
+        join_password.placeholder = "Enter Your Password"
         var join_input_container = document.createElement('div')
         join_input_container.setAttribute('id', 'join_input_container')
         var join_input = document.createElement('input')
@@ -68,30 +74,33 @@ const firebaseConfig = {
         var join_color = document.createElement('input');
         join_color.setAttribute('id','join_color')
         join_color.setAttribute('type','color')
-        join_input.onkeyup  = function(e){
-        if(join_input.value.length > 0){
-            join_button.classList.add('enabled')
-            join_button.onclick = function(){
-                parent.save_name(join_input.value,join_color.value,join_image.value)
-                join_container.remove()
-                parent.create_chat()
+        join_input.onkeyup  = joinEnabel
+        join_password.onkeyup  = joinEnabel
+        function joinEnabel(e){
+            if(join_input.value.length > 0 && join_password.value.length > 8){
+                join_button.classList.add('enabled')
+                join_button.onclick = function(){
+                    parent.save_name(join_input.value,join_color.value,join_image.value)
+                    join_container.remove()
+                    parent.create_chat()
+                }
+            }else{
+                join_button.classList.remove('enabled')
             }
-        }else{
-            join_button.classList.remove('enabled')
-        }
-        if(e.key == 'Enter'){
-            if(join_input.value.length > 0){
-                parent.save_name(join_input.value,join_color.value,join_image.value)
-                join_container.remove()
-                parent.create_chat()
+            if(e.key == 'Enter'){
+                if(join_input.value.length > 0){
+                    parent.save_name(join_input.value,join_color.value,join_image.value)
+                    join_container.remove()
+                    parent.create_chat()
+                }
             }
         }
-    }
     join_button_container.append(join_button)
     join_input_container.append(join_color)
     join_input_container.append(join_input)
     join_image_container.append(join_image)
-    join_inner_container.append(join_input_container, join_image_container, join_button_container)
+    join_password_container.append(join_password)
+    join_inner_container.append(join_input_container, join_password_container, join_image_container, join_button_container)
     join_container.append(join_inner_container)
     document.body.append(join_container)
     }
@@ -182,7 +191,6 @@ const firebaseConfig = {
                 var index = parseFloat(message_object.numChildren()) + 1
                 let d = new Date();
                 let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-                // let message_time = `${d.getHours()}:${d.getMinutes()}`;
                 db.ref('chats/' + `message_${index}`).set({
                     name: parent.get_name(),
                     color: parent.get_color(),
@@ -258,9 +266,10 @@ const firebaseConfig = {
                     var image = data.image
                     var message_container = document.createElement('div')
                     message_container.setAttribute('class', 'message_container')
+                    message_container.setAttribute('data-index', data.index)
                     var message_time = document.createElement('span')
                     message_time.setAttribute('class','message_time')
-                    message_time.innerText = `${data.messageTime.messageDate}   ${data.messageTime.hour<10?"0"+data.messageTime.hour:(data.messageTime.hour>12?"0"+(data.messageTime.hour-12):data.messageTime.hour)}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
+                    message_time.innerText = `${data.messageTime.messageDate}  at ${data.messageTime.hour<10?"0"+data.messageTime.hour:(data.messageTime.hour>12?"0"+(data.messageTime.hour-12):data.messageTime.hour)}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
                     var message_inner_container = document.createElement('div')
                     message_inner_container.setAttribute('class', 'message_inner_container')
                     var message_content = document.createElement('p')
@@ -276,6 +285,9 @@ const firebaseConfig = {
                     message_user.setAttribute('class', 'message_user')
                     message_user.style.color = `${color}`
                     message_user.textContent = `${name}`
+                    var message_deletebtn = document.createElement('div')
+                    message_deletebtn.setAttribute('class','message_deletebtn')
+                    message_deletebtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>'
                     message_user_container.append(message_user)
                     message_inner_container.append(message_user_container)
                     message_container.append(user_image)
@@ -286,7 +298,26 @@ const firebaseConfig = {
                     message_inner_container.append(message_content_container)
                     message_container.append(message_inner_container)
                     message_container.append(message_time)
+                    message_container.append(message_deletebtn)
                     chat_content_container.append(message_container)
+                    message_container.addEventListener('click',function(){
+                        console.log(localStorage.color)
+                        document.querySelectorAll('.message_container').forEach(hideMessageTime)
+                        message_container.classList.toggle('shown_time')
+                        window.addEventListener('click',(event)=>{
+                            if(message_container.contains(event.target)){
+                                false
+                            }else{
+                                hideMessageTime(message_container)
+                            }
+                            if(true){
+                                message_container.childNodes[3].style.display = 'flex'
+                            }
+                        })
+                    })
+                    function hideMessageTime(e){
+                        e.classList.remove('shown_time')
+                    }
                     if(data.index > 1){
                         if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
                             message_container.style.paddingLeft = '20px'
@@ -301,22 +332,6 @@ const firebaseConfig = {
                     }
                 });
                 chat_content_container.scrollTop = chat_content_container.scrollHeight;
-                document.querySelectorAll('.message_container').forEach(function(e){
-                    e.addEventListener('click',function(){
-                        document.querySelectorAll('.message_container').forEach(hideMessageTime)
-                        e.classList.toggle('shown_time')
-                        window.addEventListener('click',(event)=>{
-                            if(e.contains(event.target)){
-                                false
-                            }else{
-                                hideMessageTime(e)
-                            }
-                        })
-                    })
-                })
-                function hideMessageTime(e){
-                    e.classList.remove('shown_time')
-                }
             })
         }
     }

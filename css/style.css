@@ -74,6 +74,17 @@ body{
     border-radius: 50px;
     margin-bottom: 20px;
 }
+#join_password_container{
+    width: 60%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    float: left;
+    background-color: #eee;
+    border-radius: 50px;
+    margin-bottom: 20px;
+}
 #join_image_container{
     width: 60%;
     height: 50px;
@@ -96,6 +107,16 @@ body{
     background-color: Transparent;
 }
 #join_input{
+    width: 60%;
+    height: 40px;
+    color: #1D3354;
+    font-family: Varela Round;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    background-color: Transparent;
+}
+#join_password{
     width: 60%;
     height: 40px;
     color: #1D3354;
@@ -265,6 +286,27 @@ span.message_time{
 .message_container.shown_time span.message_time{
     bottom: -15px;
     opacity: 0.4;
+}
+.message_deletebtn{
+    padding: 5px;
+    color: white;
+    background: red;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    opacity: 0.6;
+    transition: 0.3s;
+    right: -40px;
+    display: none;
+    font-size: 12.5px;
+    justify-content: center;
+    align-items: center;
+}
+.message_deletebtn:hover{
+    opacity: 1;
 }
 .message_content_container{
     width: 100%;
