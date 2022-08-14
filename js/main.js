@@ -314,7 +314,36 @@ const firebaseConfig = {
                         }
                     }
                     message_deletebtn.addEventListener('click',function(){
-                        db.ref('chats/' + `message_${data.index}`).remove()
+                        var confirm_delete_message_container = document.createElement('div')
+                        confirm_delete_message_container.setAttribute('id','confirm_delete_message_container')
+                        var confirm_delete_message = document.createElement('div')
+                        confirm_delete_message.setAttribute('id','confirm_delete_message')
+                        var delete_message_text = document.createElement('p')
+                        delete_message_text.setAttribute('id','delete_message_text')
+                        delete_message_text.innerText = 'Delete Message ?'
+                        var buttons_container = document.createElement('div')
+                        buttons_container.setAttribute('id','buttons_container')
+                        var button_delete = document.createElement('button')
+                        button_delete.setAttribute('id','button_delete')
+                        button_delete.innerText = 'Delete'
+                        button_delete.onclick = function(){
+                            db.ref('chats/' + `message_${data.index}`).remove()
+                            closeDeleteMessage()
+                        }
+                        var button_keep = document.createElement('button')
+                        button_keep.setAttribute('id','button_keep')
+                        button_keep.innerText = 'No,Keep'
+                        button_keep.onclick = function(){
+                            closeDeleteMessage()
+                        }
+                        buttons_container.append(button_delete,button_keep)
+                        confirm_delete_message.append(delete_message_text)
+                        confirm_delete_message.append(buttons_container)
+                        confirm_delete_message_container.append(confirm_delete_message)
+                        document.body.append(confirm_delete_message_container)
+                        function closeDeleteMessage(){
+                            confirm_delete_message_container.remove()
+                        }
                     })
                 });
                 chat_content_container.scrollTop = chat_content_container.scrollHeight;

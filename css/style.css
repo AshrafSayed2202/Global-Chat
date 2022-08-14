@@ -240,8 +240,9 @@ body{
     border-radius: 50px;
     background-color: #eee;
     padding: 10px 30px 10px 10px;
-    border-bottom-left-radius: 0;
+    border-bottom-left-radius: 15px;
     position: relative;
+    cursor: pointer;
 }
 .message_container:hover{
     background-color: #ddd;
@@ -289,15 +290,14 @@ span.message_time{
 }
 .message_deletebtn{
     padding: 5px;
-    color: white;
-    background: red;
+    color: rgba(0, 0, 0, 0.7);
+    background-color: #eee;
     border-radius: 50%;
     width: 25px;
     height: 25px;
     text-align: center;
     cursor: pointer;
     position: absolute;
-    opacity: 0.6;
     transition: 0.3s;
     right: -40px;
     display: none;
@@ -306,7 +306,8 @@ span.message_time{
     align-items: center;
 }
 .message_deletebtn:hover{
-    opacity: 1;
+    background-color: #b4352b;
+    color: white;
 }
 .message_content_container{
     width: 100%;
@@ -393,4 +394,59 @@ ul li{
 }
 ul li:hover{
     transform: scale(1.5);
+}
+#confirm_delete_message_container{
+    position: absolute;
+    background-color: rgb(0,0,0,0.5);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#confirm_delete_message{
+    background-color: #eee;
+    width: 450px;
+    height: 200px;
+    border-radius: 25px;
+    overflow: hidden;
+}
+#delete_message_text{
+    background-color: #d64045;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 20px;
+    color: white;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+#buttons_container{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top: 35px;
+}
+#button_delete,#button_keep{
+    padding: 15px;
+    border-radius: 20px;
+    color: white;
+    font-size: 20px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+#button_delete{
+    background-color: #f44336;
+}
+#button_keep{
+    background-color: #4caf50;
+}
+#button_delete:hover{
+    border-radius: 5px;
+    background-color: #b4352b
+}
+#button_keep:hover{
+    border-radius: 5px;
+    background-color: #3e8f40;
 }
