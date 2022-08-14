@@ -220,6 +220,7 @@ body{
     background-color: #eee;
     padding: 10px 30px 10px 10px;
     border-bottom-left-radius: 0;
+    position: relative;
 }
 .message_container:hover{
     background-color: #ddd;
@@ -247,22 +248,23 @@ body{
 }
 span.message_time{
     position: absolute;
-    right: 0;
-    opacity: 0.4;
+    left: 5px;
+    bottom: 5px;
+    opacity: 0;
     font-size: 10px;
     margin-right: 10px;
     cursor:default;
-}
-span.message_date{
-    position: absolute;
-    right: 0;
-    top: -15px;
-    opacity: 0;
+    z-index: -1;
     transition: 0.3s;
-    transition-delay: 0.7s;
+    width: 150px;
 }
-span.message_time:hover span.message_date{
-    opacity: 1;
+.message_container.shown_time{
+    transition: 0.3s;
+    margin-bottom: 25px;
+}
+.message_container.shown_time span.message_time{
+    bottom: -15px;
+    opacity: 0.4;
 }
 .message_content_container{
     width: 100%;

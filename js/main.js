@@ -260,11 +260,7 @@ const firebaseConfig = {
                     message_container.setAttribute('class', 'message_container')
                     var message_time = document.createElement('span')
                     message_time.setAttribute('class','message_time')
-                    message_time.innerText = `${data.messageTime.hour<10?"0"+data.messageTime.hour:(data.messageTime.hour>12?"0"+(data.messageTime.hour-12):data.messageTime.hour)}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
-                    var message_date = document.createElement('span');
-                    message_date.setAttribute('class','message_date');
-                    message_date.innerText = data.messageTime.messageDate;
-                    message_time.append(message_date)
+                    message_time.innerText = `${data.messageTime.messageDate}   ${data.messageTime.hour<10?"0"+data.messageTime.hour:(data.messageTime.hour>12?"0"+(data.messageTime.hour-12):data.messageTime.hour)}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
                     var message_inner_container = document.createElement('div')
                     message_inner_container.setAttribute('class', 'message_inner_container')
                     var message_content = document.createElement('p')
@@ -305,6 +301,22 @@ const firebaseConfig = {
                     }
                 });
                 chat_content_container.scrollTop = chat_content_container.scrollHeight;
+                document.querySelectorAll('.message_container').forEach(function(e){
+                    e.addEventListener('click',function(){
+                        document.querySelectorAll('.message_container').forEach(hideMessageTime)
+                        e.classList.toggle('shown_time')
+                        window.addEventListener('click',(event)=>{
+                            if(e.contains(event.target)){
+                                false
+                            }else{
+                                hideMessageTime(e)
+                            }
+                        })
+                    })
+                })
+                function hideMessageTime(e){
+                    e.classList.remove('shown_time')
+                }
             })
         }
     }
