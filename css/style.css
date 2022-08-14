@@ -243,6 +243,7 @@ body{
     border-bottom-left-radius: 15px;
     position: relative;
     cursor: pointer;
+    transition: margin 0.3s;
 }
 .message_container:hover{
     background-color: #ddd;
