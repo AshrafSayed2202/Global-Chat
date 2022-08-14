@@ -1,4 +1,3 @@
-// import { initializeApp } from "firebase/app";
 window.onload = function() {
 const firebaseConfig = {
     apiKey: "AIzaSyCjxJ4TxSjngUdYHuZqEjvlomQVN2OOLqU",
@@ -15,7 +14,6 @@ const firebaseConfig = {
         document.body.innerHTML = ''
         this.create_title()
         this.create_join_form()
-        // this.create_footer()
     }
     chat(){
         this.create_title()
@@ -193,10 +191,10 @@ const firebaseConfig = {
                 let d = new Date();
                 let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                 db.ref('chats/' + `message_${index}`).set({
-                    name: parent.get_name(),
-                    password: parent.get_password(),
-                    color: parent.get_color(),
-                    image: parent.get_image(),
+                    name: localStorage.name,
+                    password: localStorage.password,
+                    color: localStorage.color,
+                    image: localStorage.image,
                     message: message,
                     index: index,
                     messageTime: {
@@ -213,30 +211,6 @@ const firebaseConfig = {
         get_name(){
             if(localStorage.getItem('name') != null){
                 return localStorage.getItem('name')
-            }else{
-                this.home()
-                return null
-            }
-        }
-        get_password(){
-            if(localStorage.getItem('password') != null){
-                return localStorage.getItem('password')
-            }else{
-                this.home()
-                return null
-            }
-        }
-        get_color(){
-            if(localStorage.getItem('color') != null){
-                return localStorage.getItem('color')
-            }else{
-                this.home()
-                return null
-            }
-        }
-        get_image(){
-            if(localStorage.getItem('image') != null){
-                return localStorage.getItem('image')
             }else{
                 this.home()
                 return null
@@ -276,7 +250,6 @@ const firebaseConfig = {
                     var image = data.image
                     var message_container = document.createElement('div')
                     message_container.setAttribute('class', 'message_container')
-                    message_container.setAttribute('data-index', data.index)
                     var message_time = document.createElement('span')
                     message_time.setAttribute('class','message_time')
                     message_time.innerText = `${data.messageTime.messageDate}  at ${data.messageTime.hour<10?"0"+data.messageTime.hour:(data.messageTime.hour>12?"0"+(data.messageTime.hour-12):data.messageTime.hour)}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
@@ -340,6 +313,9 @@ const firebaseConfig = {
                             }
                         }
                     }
+                    message_deletebtn.addEventListener('click',function(){
+                        db.ref('chats/' + `message_${data.index}`).remove()
+                    })
                 });
                 chat_content_container.scrollTop = chat_content_container.scrollHeight;
             })
