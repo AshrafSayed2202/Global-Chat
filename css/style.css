@@ -414,6 +414,11 @@ ul li:hover{
     border-radius: 25px;
     overflow: hidden;
 }
+@media (max-width:600px) {
+    #confirm_delete_message{
+        width: 80%;
+    }
+}
 #delete_message_text{
     background-color: #d64045;
     padding: 20px 0;
