@@ -298,18 +298,23 @@ const firebaseConfig = {
                             }
                         })
                         if(data.password == localStorage.password){
-                            message_container.childNodes[3].style.display = 'flex'
+                            message_container.childNodes[3].style.right = '-40px'
+                            message_container.childNodes[3].style.opacity = '1'
+                            message_container.childNodes[3].style.zIndex = '0'
                         }
                     })
                     function hideMessageTime(e){
                         e.classList.remove('shown_time')
-                        e.childNodes[3].style.display = 'none'
+                        e.childNodes[3].style.right = '10px'
+                        e.childNodes[3].style.opacity = '0'
+                        e.childNodes[3].style.zIndex = '-1'
                     }
                     if(data.password == localStorage.password){
                         message_container.style.marginLeft = 'initial'
                         message_container.style.borderBottomLeftRadius = '15px'
                         message_container.style.backgroundColor = '#D64045'
                         message_content.style.color = 'white'
+                        message_container.childNodes[2].style.left = '-10px'
                     }else{
                         message_container.style.borderBottomRightRadius = '15px'
                     }
@@ -348,11 +353,14 @@ const firebaseConfig = {
                         button_delete.setAttribute('id','button_delete')
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
-                            db.ref('chats/' + `message_${data.index}`).update({
-                                deleted: true
-                            })
-                            console.log(messages)
-                            closeDeleteMessage()
+                            if(data.password == localStorage.password){
+                                db.ref('chats/' + `message_${data.index}`).update({
+                                    deleted: true
+                                })
+                                closeDeleteMessage()
+                            }else{
+                                window.alert('You can\'t delete this')
+                            }
                         }
                         var button_keep = document.createElement('button')
                         button_keep.setAttribute('id','button_keep')

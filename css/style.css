@@ -178,6 +178,7 @@ body{
     font-family: Varela Round;
     padding: 15px;
     position: relative;
+    overflow-x: hidden;
 }
 #chat_input_container{
     width: 100%;
@@ -271,15 +272,15 @@ body{
 }
 span.message_time{
     position: absolute;
-    left: 5px;
+    right: -5px;
     bottom: 5px;
     opacity: 0;
     font-size: 10px;
-    margin-right: 10px;
-    cursor:default;
+    cursor: default;
     z-index: -1;
     transition: 0.3s;
-    width: 150px;
+    width: 120px;
+    text-align: center;
 }
 .message_container.shown_time{
     transition: 0.3s;
@@ -300,11 +301,13 @@ span.message_time{
     cursor: pointer;
     position: absolute;
     transition: 0.3s;
-    right: -40px;
-    display: none;
+    right: 10px;
     font-size: 12.5px;
+    display: flex;
     justify-content: center;
     align-items: center;
+    z-index: -1;
+    opacity: 0;
 }
 .message_deletebtn:hover{
     background-color: #b4352b;
