@@ -201,7 +201,8 @@ const firebaseConfig = {
                         hour: d.getHours(),
                         minutes: d.getMinutes(),
                         messageDate: d.getDate()+","+months[d.getMonth()]
-                    }
+                    },
+                    deleted: false
                 })
                 .then(function(){
                     parent.refresh_chat()
@@ -244,6 +245,9 @@ const firebaseConfig = {
                     })
                 })
                 ordered.forEach(function(data) {
+                    if(data.deleted == true){
+                        return false
+                    }
                     var name = data.name
                     var message = data.message
                     var color = data.color
@@ -344,8 +348,10 @@ const firebaseConfig = {
                         button_delete.setAttribute('id','button_delete')
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
-                            db.ref('chats/' + `message_${data.index}`).remove()
-                            console.log(data.index)
+                            db.ref('chats/' + `message_${data.index}`).update({
+                                deleted: true
+                            })
+                            console.log(messages)
                             closeDeleteMessage()
                         }
                         var button_keep = document.createElement('button')
