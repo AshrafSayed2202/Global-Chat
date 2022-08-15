@@ -305,7 +305,15 @@ const firebaseConfig = {
                             message_container.childNodes[3].style.right = '-32px'
                             message_container.childNodes[3].style.opacity = '1'
                             message_container.childNodes[3].style.zIndex = '0'
-                            message_container.childNodes[4].style.right = '-32px'
+                            if(message_container.previousSibling != null){
+                                if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
+                                    message_container.childNodes[4].style.right = '-60px'
+                                }else{
+                                    message_container.childNodes[4].style.right = '-32px'
+                                }
+                            }else{
+                                message_container.childNodes[4].style.right = '-32px'
+                            }
                             message_container.childNodes[4].style.opacity = '1'
                             message_container.childNodes[4].style.zIndex = '0'
                         }else{
@@ -339,6 +347,10 @@ const firebaseConfig = {
                     if(message_container.previousSibling != null){
                         if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
                             message_container.style.paddingLeft = '20px'
+                            message_container.childNodes[3].style.top = '7px'
+                            message_container.childNodes[3].style.borderBottomLeftRadius = '50%'
+                            message_container.childNodes[4].style.bottom = '10px'
+                            message_container.childNodes[4].style.borderTopLeftRadius = '50%'
                             if(data.password == localStorage.password){
                                 message_container.style.borderTopLeftRadius = '15px'
                                 message_container.style.borderBottomLeftRadius = '50px'
@@ -373,7 +385,7 @@ const firebaseConfig = {
                         button_delete.onclick = function(){
                             if(data.password == localStorage.password){
                                 db.ref('chats/' + `message_${data.index}`).update({
-                                    deleted: true
+                                    deleted: true   
                                 })
                                 closeDeleteMessage()
                             }else{
@@ -396,9 +408,22 @@ const firebaseConfig = {
                         }
                     })
                     message_replybtn.addEventListener('click',function(){
-                        var clonedMessage = message_container.cloneNode(true);
-                        chat_input_container.insertBefore(clonedMessage,chat_input_container.firstChild)
+                        var cloned_message = message_container.cloneNode(true).childNodes[1].childNodes[1];
+                        cloned_message.setAttribute('class','cloned_message')
+                        var close_cloned_message = document.createElement('span')
+                        close_cloned_message.setAttribute('class','close_cloned_message')
+                        close_cloned_message.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>'
+                        close_cloned_message.addEventListener('click',()=>{
+                            deleteReplyMessage()
+                        })
+                        cloned_message.append(close_cloned_message)
+                        chat_input_container.insertBefore(cloned_message,chat_input_container.firstChild)
                     })
+                    function deleteReplyMessage(){
+                        if(chat_input_container.childNodes[0].className == 'cloned_message'){
+                            chat_input_container.childNodes[0].remove()
+                        }
+                    }
                 });
                 chat_content_container.scrollTop = chat_content_container.scrollHeight;
             })
