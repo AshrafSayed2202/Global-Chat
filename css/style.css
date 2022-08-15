@@ -4,6 +4,8 @@ body{
     font-weight: 900;
     overflow: hidden;
     animation: blur 0.5s ease-out;
+    background:linear-gradient(#d6404533,#d640451f), url(../background.png);
+    background-position: center;
 }
 *{
     outline: none;
@@ -19,7 +21,6 @@ body{
     justify-content: center;
     align-items: center;
     background-color: #D64045;
-    border-bottom: 5px solid #fff;
     box-shadow: 0 0 30px -18px #D64045;
 }
 #title_inner_container{
@@ -158,12 +159,12 @@ body{
     display: flex;
     justify-content: center;
     float: left;
-    margin-top: 20px;
     animation: fadeIn 1s linear;
 }
 #chat_inner_container{
     width: 40%;
     height: 100%;
+    background-color: #fff;
 }
 @media (max-width:767px) {
     #chat_inner_container{
@@ -221,11 +222,20 @@ body{
     justify-content: center;
     align-items: center;
     float: left;
-    margin-top: 20px;
+    padding: 20px 0;
+    position: relative;
+    width: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ccc;
+    border-bottom-right-radius: 50px;
+    border-bottom-left-radius: 50px;
+    margin-top: 2px;
 }
 #chat_logout{
     color: #D64045;
     cursor: pointer;
+    background-color: transparent;
 }
 #chat_logout:hover{
     text-decoration: underline;
@@ -245,6 +255,7 @@ body{
     cursor: pointer;
     transition: margin 0.3s;
     margin-left: auto;
+    box-shadow: 9px 9px 18px -17px;
 }
 .message_container:hover{
     background-color: #ddd;
@@ -289,6 +300,7 @@ span.message_time{
 .message_container.shown_time span.message_time{
     bottom: -15px;
     opacity: 0.4;
+    z-index: 0;
 }
 .message_deletebtn,.message_replybtn{
     padding: 5px;
@@ -317,10 +329,10 @@ span.message_time{
     bottom: 3px;
     border-top-left-radius: 5px;
 }
-/* .message_deletebtn:hover,.message_replybtn:hover{
+.message_deletebtn:hover,.message_replybtn:hover{
     background-color: #b4352b;
     color: white;
-} */
+}
 .message_content_container{
     width: 100%;
     display: inline-block;
@@ -421,7 +433,7 @@ ul li:hover{
 #confirm_delete_message{
     background-color: #eee;
     width: 450px;
-    height: 200px;
+    height: 175px;
     border-radius: 25px;
     overflow: hidden;
 }
@@ -446,7 +458,7 @@ ul li:hover{
     margin-top: 35px;
 }
 #button_delete,#button_keep{
-    padding: 15px;
+    padding: 5px 15px;
     border-radius: 20px;
     color: white;
     font-size: 20px;

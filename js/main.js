@@ -308,14 +308,6 @@ const firebaseConfig = {
                             message_container.childNodes[4].style.right = '-32px'
                             message_container.childNodes[4].style.opacity = '1'
                             message_container.childNodes[4].style.zIndex = '0'
-                            message_container.childNodes[3].addEventListener('mouseenter',()=>{message_container.childNodes[3].style.backgroundColor = '#b4352b'})
-                            message_container.childNodes[3].addEventListener('mouseenter',()=>{message_container.childNodes[3].style.color = '#fff'})
-                            message_container.childNodes[3].addEventListener('mouseleave',()=>{message_container.childNodes[3].style.backgroundColor = '#eee'})
-                            message_container.childNodes[3].addEventListener('mouseleave',()=>{message_container.childNodes[3].style.color = '#000000b3'})
-                            message_container.childNodes[4].addEventListener('mouseenter',()=>{message_container.childNodes[4].style.backgroundColor = '#b4352b'})
-                            message_container.childNodes[4].addEventListener('mouseenter',()=>{message_container.childNodes[4].style.color = '#fff'})
-                            message_container.childNodes[4].addEventListener('mouseleave',()=>{message_container.childNodes[4].style.backgroundColor = '#eee'})
-                            message_container.childNodes[4].addEventListener('mouseleave',()=>{message_container.childNodes[4].style.color = '#000000b3'})
                         }else{
                             message_container.childNodes[4].style.left = '-32px'
                             message_container.childNodes[4].style.transform = 'rotateY(180deg)'
@@ -402,6 +394,10 @@ const firebaseConfig = {
                         function closeDeleteMessage(){
                             confirm_delete_message_container.remove()
                         }
+                    })
+                    message_replybtn.addEventListener('click',function(){
+                        var clonedMessage = message_container.cloneNode(true);
+                        chat_input_container.insertBefore(clonedMessage,chat_input_container.firstChild)
                     })
                 });
                 chat_content_container.scrollTop = chat_content_container.scrollHeight;
