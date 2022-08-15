@@ -275,6 +275,9 @@ const firebaseConfig = {
                     var message_deletebtn = document.createElement('div')
                     message_deletebtn.setAttribute('class','message_deletebtn')
                     message_deletebtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>'
+                    var message_replybtn = document.createElement('div')
+                    message_replybtn.setAttribute('class','message_replybtn')
+                    message_replybtn.innerHTML = '<i class="fa-solid fa-reply"></i>'
                     message_user_container.append(message_user)
                     message_inner_container.append(message_user_container)
                     message_container.append(user_image)
@@ -286,6 +289,7 @@ const firebaseConfig = {
                     message_container.append(message_inner_container)
                     message_container.append(message_time)
                     message_container.append(message_deletebtn)
+                    message_container.append(message_replybtn)
                     chat_content_container.append(message_container)
                     message_container.addEventListener('click',function(){
                         document.querySelectorAll('.message_container').forEach(hideMessageTime)
@@ -298,9 +302,28 @@ const firebaseConfig = {
                             }
                         })
                         if(data.password == localStorage.password){
-                            message_container.childNodes[3].style.right = '-40px'
+                            message_container.childNodes[3].style.right = '-32px'
                             message_container.childNodes[3].style.opacity = '1'
                             message_container.childNodes[3].style.zIndex = '0'
+                            message_container.childNodes[4].style.right = '-32px'
+                            message_container.childNodes[4].style.opacity = '1'
+                            message_container.childNodes[4].style.zIndex = '0'
+                            message_container.childNodes[3].addEventListener('mouseenter',()=>{message_container.childNodes[3].style.backgroundColor = '#b4352b'})
+                            message_container.childNodes[3].addEventListener('mouseenter',()=>{message_container.childNodes[3].style.color = '#fff'})
+                            message_container.childNodes[3].addEventListener('mouseleave',()=>{message_container.childNodes[3].style.backgroundColor = '#eee'})
+                            message_container.childNodes[3].addEventListener('mouseleave',()=>{message_container.childNodes[3].style.color = '#000000b3'})
+                            message_container.childNodes[4].addEventListener('mouseenter',()=>{message_container.childNodes[4].style.backgroundColor = '#b4352b'})
+                            message_container.childNodes[4].addEventListener('mouseenter',()=>{message_container.childNodes[4].style.color = '#fff'})
+                            message_container.childNodes[4].addEventListener('mouseleave',()=>{message_container.childNodes[4].style.backgroundColor = '#eee'})
+                            message_container.childNodes[4].addEventListener('mouseleave',()=>{message_container.childNodes[4].style.color = '#000000b3'})
+                        }else{
+                            message_container.childNodes[4].style.left = '-32px'
+                            message_container.childNodes[4].style.transform = 'rotateY(180deg)'
+                            message_container.childNodes[4].style.opacity = '1'
+                            message_container.childNodes[4].style.zIndex = '0'
+                            message_container.childNodes[4].style.borderTopLeftRadius = '50%'
+                            message_container.childNodes[4].addEventListener('mouseenter',()=>{message_container.childNodes[4].style.backgroundColor = '#ddd'})
+                            message_container.childNodes[4].addEventListener('mouseleave',()=>{message_container.childNodes[4].style.backgroundColor = '#eee'})
                         }
                     })
                     function hideMessageTime(e){
@@ -308,6 +331,9 @@ const firebaseConfig = {
                         e.childNodes[3].style.right = '10px'
                         e.childNodes[3].style.opacity = '0'
                         e.childNodes[3].style.zIndex = '-1'
+                        e.childNodes[4].style.right = '10px'
+                        e.childNodes[4].style.opacity = '0'
+                        e.childNodes[4].style.zIndex = '-1'
                     }
                     if(data.password == localStorage.password){
                         message_container.style.marginLeft = 'initial'
