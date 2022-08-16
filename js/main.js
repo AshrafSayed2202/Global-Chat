@@ -134,7 +134,9 @@ const firebaseConfig = {
         var chat_input = document.createElement('input')
         chat_input.setAttribute('id', 'chat_input')
         chat_input.setAttribute('maxlength', 1000)
-        chat_input.placeholder = `${parent.get_name()}. Say something...`
+        chat_input.placeholder = `Say something...`
+        chat_input.onfocus = ()=>{chat_input.placeholder = ''}
+        chat_input.onblur = ()=>{chat_input.placeholder = 'Say something...'}
         chat_input.onkeyup  = function(e){
         if(chat_input.value.length > 0){
             chat_input_send.removeAttribute('disabled')
@@ -285,9 +287,11 @@ const firebaseConfig = {
                     message_user.textContent = `${name}`
                     var message_deletebtn = document.createElement('div')
                     message_deletebtn.setAttribute('class','message_deletebtn')
+                    message_deletebtn.setAttribute('title','Delete Message')
                     message_deletebtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>'
                     var message_replybtn = document.createElement('div')
                     message_replybtn.setAttribute('class','message_replybtn')
+                    message_replybtn.setAttribute('title','Reply')
                     message_replybtn.innerHTML = '<i class="fa-solid fa-reply"></i>'
                     message_user_container.append(message_user)
                     message_inner_container.append(message_user_container)
@@ -321,6 +325,7 @@ const firebaseConfig = {
                                 })
                                 realMessage.classList.add('active_real_message')
                             }
+                            window.onclick = (event)=>{repliedTo.contains(event.target)?false:document.querySelectorAll('.message_container').forEach((e)=>{e.classList.remove('active_real_message')});}
                         })
                         if(data.password == localStorage.password){
                             repliedTo.style.borderBottomLeftRadius = '5px'
