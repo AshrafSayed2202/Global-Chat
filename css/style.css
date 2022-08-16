@@ -247,6 +247,7 @@ body{
 .message_container{
     width: -moz-fit-content;
     width: fit-content;
+    max-width: 80%;
     display: flex;
     margin-bottom: 5px;
     gap: 10px;

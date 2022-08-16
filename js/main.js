@@ -298,7 +298,7 @@ const firebaseConfig = {
                     message_container.append(user_image)
                     message_content_container.setAttribute('class', 'message_content_container')
                     message_content.setAttribute('class', 'message_content')
-                    message_content.textContent = `${message}`
+                    message_content.innerHTML = message
                     message_content_container.append(message_content)
                     message_inner_container.append(message_content_container)
                     message_container.append(message_inner_container)
