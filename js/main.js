@@ -191,6 +191,7 @@ const firebaseConfig = {
             if(chat_input_container.childNodes[0].className == 'cloned_message'){
                 replyMessage = {
                     message:chat_input_container.childNodes[0].childNodes[0].textContent,
+                    index:chat_input_container.childNodes[0].dataset.index
                 }
                 console.log()
             }
@@ -263,6 +264,7 @@ const firebaseConfig = {
                     var image = data.image
                     var message_container = document.createElement('div')
                     message_container.setAttribute('class', 'message_container')
+                    message_container.setAttribute('data-index',data.index)
                     var message_time = document.createElement('span')
                     message_time.setAttribute('class','message_time')
                     message_time.innerText = `${data.messageTime.messageDate}  at ${data.messageTime.hour<10?"0"+data.messageTime.hour:(data.messageTime.hour>12?"0"+(data.messageTime.hour-12):data.messageTime.hour)}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
@@ -308,6 +310,9 @@ const firebaseConfig = {
                         repliedToMessage.textContent = data.reply.message
                         repliedTo.append(repliedToMessage)
                         message_container.append(repliedTo)
+                        repliedTo.addEventListener('click',()=>{
+                            document.querySelector(`.message_container[data-index="${data.reply.index}"]`).scrollIntoViewIfNeeded()
+                        })
                         if(data.password == localStorage.password){
                             repliedTo.style.borderBottomLeftRadius = '5px'
                         }else{
@@ -435,6 +440,7 @@ const firebaseConfig = {
                         deleteReplyMessage()
                         var cloned_message = message_container.cloneNode(true).childNodes[1].childNodes[1];
                         cloned_message.setAttribute('class','cloned_message')
+                        cloned_message.setAttribute('data-index',data.index)
                         var close_cloned_message = document.createElement('span')
                         close_cloned_message.setAttribute('class','close_cloned_message')
                         close_cloned_message.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>'
@@ -454,9 +460,7 @@ const firebaseConfig = {
     function deleteReplyMessage(){
         if(chat_input_container.childNodes[0].className == 'cloned_message'){
             chat_input_container.childNodes[0].style.opacity = '0'
-            setTimeout(()=>{
                 chat_input_container.childNodes[0].remove()
-            },0)
         }
     }
 var app = new GLOBAL_CHAT()

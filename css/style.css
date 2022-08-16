@@ -183,6 +183,7 @@ body{
     padding: 15px;
     position: relative;
     overflow-x: hidden;
+    scroll-behavior: smooth;
 }
 #chat_input_container{
     width: 100%;
