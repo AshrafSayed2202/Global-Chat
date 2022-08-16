@@ -529,3 +529,7 @@ ul li:hover{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.active_real_message{
+    outline:1px dashed #D64045;
+    background-color: #ccc;
+}

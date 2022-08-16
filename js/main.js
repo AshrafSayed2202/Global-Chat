@@ -302,7 +302,7 @@ const firebaseConfig = {
                     message_container.append(message_deletebtn)
                     message_container.append(message_replybtn)
                     if(data.reply != undefined){
-                        message_container.style.marginTop = '45px'
+                        message_container.style.marginTop = '30px'
                         var repliedTo = document.createElement('div')
                         var repliedToMessage = document.createElement('p')
                         repliedToMessage.setAttribute('class','repliedTo-message')
@@ -311,14 +311,25 @@ const firebaseConfig = {
                         repliedTo.append(repliedToMessage)
                         message_container.append(repliedTo)
                         repliedTo.addEventListener('click',()=>{
-                            document.querySelector(`.message_container[data-index="${data.reply.index}"]`).scrollIntoView({behavior: 'smooth'})
+                            let realMessage = document.querySelector(`.message_container[data-index="${data.reply.index}"]`)
+                            if(realMessage == undefined){
+                                window.alert('This Message was Deleted')
+                            }else{
+                                realMessage.scrollIntoView({behavior: 'smooth'})
+                                document.querySelectorAll('.message_container').forEach((e)=>{
+                                    e.classList.remove('active_real_message')
+                                })
+                                realMessage.classList.add('active_real_message')
+                            }
                         })
                         if(data.password == localStorage.password){
                             repliedTo.style.borderBottomLeftRadius = '5px'
                             repliedTo.style.left = '0'
+                            message_container.style.borderTopLeftRadius = '15px'
                         }else{
                             repliedTo.style.borderBottomRightRadius = '5px'
                             repliedTo.style.right = '0'
+                            message_container.style.borderTopRightRadius = '15px'
                         }
                     }
                     chat_content_container.append(message_container)
