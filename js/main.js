@@ -301,11 +301,18 @@ const firebaseConfig = {
                     message_container.append(message_replybtn)
                     if(data.reply != undefined){
                         message_container.style.marginTop = '45px'
-                        console.log(data.reply.message)
                         var repliedTo = document.createElement('div')
+                        var repliedToMessage = document.createElement('p')
+                        repliedToMessage.setAttribute('class','repliedTo-message')
                         repliedTo.setAttribute('class','repliedTo')
-                        repliedTo.textContent = data.reply.message
+                        repliedToMessage.textContent = data.reply.message
+                        repliedTo.append(repliedToMessage)
                         message_container.append(repliedTo)
+                        if(data.password == localStorage.password){
+                            repliedTo.style.borderBottomLeftRadius = '5px'
+                        }else{
+                            repliedTo.style.borderBottomRightRadius = '5px'
+                        }
                     }
                     chat_content_container.append(message_container)
                     message_container.addEventListener('click',function(){

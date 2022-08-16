@@ -512,18 +512,20 @@ ul li:hover{
 }
 .repliedTo{
     position: absolute;
-    background-color: #eee;
-    color: silver;
+    background-color: #ccc;
     width: -moz-fit-content;
     width: fit-content;
     max-width: 150px;
     padding: 9px;
     padding-bottom: 3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     left: 0;
     top: 0;
     transform: translateY(-100%);
     border-radius: 15px;
+    opacity: 0.5;
+}
+.repliedTo-message{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
