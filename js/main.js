@@ -156,6 +156,7 @@ const firebaseConfig = {
             parent.send_message(chat_input.value)
             chat_input.value = ''
             chat_input.focus()
+            deleteReplyMessage()
         }
     }
     var chat_logout_container = document.createElement('div')
@@ -186,6 +187,13 @@ const firebaseConfig = {
             if(parent.get_name() == null && message == null){
                 return
             }
+            var replyMessage = {}
+            if(chat_input_container.childNodes[0].className == 'cloned_message'){
+                replyMessage = {
+                    message:chat_input_container.childNodes[0].childNodes[0].textContent,
+                }
+                console.log()
+            }
             db.ref('chats/').once('value', function(message_object) {
                 var index = parseFloat(message_object.numChildren()) + 1
                 let d = new Date();
@@ -202,7 +210,8 @@ const firebaseConfig = {
                         minutes: d.getMinutes(),
                         messageDate: d.getDate()+","+months[d.getMonth()]
                     },
-                    deleted: false
+                    deleted: false,
+                    reply:replyMessage
                 })
                 .then(function(){
                     parent.refresh_chat()
@@ -290,6 +299,14 @@ const firebaseConfig = {
                     message_container.append(message_time)
                     message_container.append(message_deletebtn)
                     message_container.append(message_replybtn)
+                    if(data.reply != undefined){
+                        message_container.style.marginTop = '45px'
+                        console.log(data.reply.message)
+                        var repliedTo = document.createElement('div')
+                        repliedTo.setAttribute('class','repliedTo')
+                        repliedTo.textContent = data.reply.message
+                        message_container.append(repliedTo)
+                    }
                     chat_content_container.append(message_container)
                     message_container.addEventListener('click',function(){
                         document.querySelectorAll('.message_container').forEach(hideMessageTime)
@@ -408,25 +425,31 @@ const firebaseConfig = {
                         }
                     })
                     message_replybtn.addEventListener('click',function(){
+                        deleteReplyMessage()
                         var cloned_message = message_container.cloneNode(true).childNodes[1].childNodes[1];
                         cloned_message.setAttribute('class','cloned_message')
                         var close_cloned_message = document.createElement('span')
                         close_cloned_message.setAttribute('class','close_cloned_message')
                         close_cloned_message.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>'
+                        setTimeout(()=>{cloned_message.style.opacity = '1'},0)
                         close_cloned_message.addEventListener('click',()=>{
                             deleteReplyMessage()
                         })
+                        chat_input.focus()
                         cloned_message.append(close_cloned_message)
                         chat_input_container.insertBefore(cloned_message,chat_input_container.firstChild)
                     })
-                    function deleteReplyMessage(){
-                        if(chat_input_container.childNodes[0].className == 'cloned_message'){
-                            chat_input_container.childNodes[0].remove()
-                        }
-                    }
                 });
                 chat_content_container.scrollTop = chat_content_container.scrollHeight;
             })
+        }
+    }
+    function deleteReplyMessage(){
+        if(chat_input_container.childNodes[0].className == 'cloned_message'){
+            chat_input_container.childNodes[0].style.opacity = '0'
+            setTimeout(()=>{
+                chat_input_container.childNodes[0].remove()
+            },0)
         }
     }
 var app = new GLOBAL_CHAT()

@@ -167,6 +167,7 @@ body{
     background-color: #fff;
     border-bottom-right-radius: 20px;
     border-bottom-left-radius: 20px;
+    border-top: 3px solid #eee;
 }
 @media (max-width:767px) {
     #chat_inner_container{
@@ -484,14 +485,16 @@ ul li:hover{
 }
 .cloned_message{
     position: absolute;
-    top: 0;
-    transform: translate(10px,-100%);
-    background-color: #eee;
+    top: 0px;
+    transform: translate(10px, -100%);
+    background-color: rgb(238, 238, 238);
     width: 60%;
     padding: 10px;
-    border-bottom: 1px dashed #d64045;
+    border-bottom: 1px dashed rgb(214, 64, 69);
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
+    transition: 0.25s;
+    opacity: 0;
 }
 .cloned_message .message_content{
     color: #00000098 !important;
@@ -506,4 +509,21 @@ ul li:hover{
 }
 .close_cloned_message:hover{
     color: #919191;
+}
+.repliedTo{
+    position: absolute;
+    background-color: #eee;
+    color: silver;
+    width: -moz-fit-content;
+    width: fit-content;
+    max-width: 150px;
+    padding: 9px;
+    padding-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    left: 0;
+    top: 0;
+    transform: translateY(-100%);
+    border-radius: 15px;
 }
