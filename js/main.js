@@ -311,12 +311,14 @@ const firebaseConfig = {
                         repliedTo.append(repliedToMessage)
                         message_container.append(repliedTo)
                         repliedTo.addEventListener('click',()=>{
-                            document.querySelector(`.message_container[data-index="${data.reply.index}"]`).scrollIntoViewIfNeeded()
+                            document.querySelector(`.message_container[data-index="${data.reply.index}"]`).scrollIntoView({behavior: 'smooth'})
                         })
                         if(data.password == localStorage.password){
                             repliedTo.style.borderBottomLeftRadius = '5px'
+                            repliedTo.style.left = '0'
                         }else{
                             repliedTo.style.borderBottomRightRadius = '5px'
+                            repliedTo.style.right = '0'
                         }
                     }
                     chat_content_container.append(message_container)

@@ -183,7 +183,6 @@ body{
     padding: 15px;
     position: relative;
     overflow-x: hidden;
-    scroll-behavior: smooth;
 }
 #chat_input_container{
     width: 100%;
@@ -519,11 +518,11 @@ ul li:hover{
     max-width: 150px;
     padding: 9px;
     padding-bottom: 3px;
-    left: 0;
     top: 0;
     transform: translateY(-100%);
     border-radius: 15px;
     opacity: 0.5;
+    font-size: 10px;
 }
 .repliedTo-message{
     white-space: nowrap;
