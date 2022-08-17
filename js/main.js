@@ -218,7 +218,10 @@ const firebaseConfig = {
                     messageTime: {
                         hour: d.getHours(),
                         minutes: d.getMinutes(),
-                        messageDate: d.getDate()+","+months[d.getMonth()]
+                        messageDate: {
+                            day: d.getDate(),
+                            month:months[d.getMonth()]
+                        }
                     },
                     deleted: false,
                     reply:replyMessage
@@ -286,6 +289,9 @@ const firebaseConfig = {
                         }
                         return false
                     }
+                    let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+                    let d = new Date()
+                    console.log(d.getDate()+","+months[d.getMonth()] == data.messageTime.messageDate.day+","+data.messageTime.messageDate.month);
                     var name = data.name
                     var message = data.message
                     var color = data.color
@@ -295,7 +301,7 @@ const firebaseConfig = {
                     message_container.setAttribute('data-index',data.index)
                     var message_time = document.createElement('span')
                     message_time.setAttribute('class','message_time')
-                    message_time.innerText = `${data.messageTime.messageDate}  at ${data.messageTime.hour<10?"0"+data.messageTime.hour:(data.messageTime.hour>12?"0"+(data.messageTime.hour-12):data.messageTime.hour)}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
+                    message_time.innerText = `${data.messageTime.messageDate.day+","+data.messageTime.messageDate.month == d.getDate()+","+months[d.getMonth()]?'Today':(data.messageTime.messageDate.day+","+data.messageTime.messageDate.month == d.getDate()-1+","+months[d.getMonth()]?'Yesterday':data.messageTime.messageDate.day+","+data.messageTime.messageDate.month)}  at ${data.messageTime.hour<10?"0"+data.messageTime.hour:(data.messageTime.hour>12?"0"+(data.messageTime.hour-12):data.messageTime.hour)}:${data.messageTime.minutes<10?"0"+data.messageTime.minutes:data.messageTime.minutes} ${data.messageTime.hour>11?"PM":"AM"}`;
                     var message_inner_container = document.createElement('div')
                     message_inner_container.setAttribute('class', 'message_inner_container')
                     var message_content = document.createElement('p')
