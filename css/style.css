@@ -486,7 +486,8 @@ ul li:hover{
 .cloned_message{
     position: absolute;
     top: 0px;
-    transform: translate(10px, -100%);
+    left: 50%;
+    transform: translate(-50%, -100%);
     background-color: rgb(238, 238, 238);
     width: 60%;
     padding: 10px;

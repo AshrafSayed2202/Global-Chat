@@ -282,19 +282,19 @@ const firebaseConfig = {
                             }else{
                                 unWantedMessage.style.transform = 'translateX(150%)'
                             }
-                            if(unWantedMessage.childNodes[0].style.display == 'block'){
-                                unWantedMessage.nextSibling.childNodes[0].style.display = 'block'
-                                unWantedMessage.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
-                                unWantedMessage.nextSibling.style.paddingLeft = '10px'
-                                if(data.password == localStorage.password){
-                                    unWantedMessage.nextSibling.style.borderTopLeftRadius = '50px'
-                                    unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
-                                }else{
-                                    unWantedMessage.nextSibling.style.borderTopRightRadius = '50px'
-                                    unWantedMessage.nextSibling.style.borderBottomRightRadius = '15px'
-                                }
-                            }
                             setTimeout(function(){
+                                if(unWantedMessage.childNodes[0].style.display == 'block'){
+                                    unWantedMessage.nextSibling.childNodes[0].style.display = 'block'
+                                    unWantedMessage.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
+                                    unWantedMessage.nextSibling.style.paddingLeft = '10px'
+                                    if(data.password == localStorage.password){
+                                        unWantedMessage.nextSibling.style.borderTopLeftRadius = '50px'
+                                        unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
+                                    }else{
+                                        unWantedMessage.nextSibling.style.borderTopRightRadius = '50px'
+                                        unWantedMessage.nextSibling.style.borderBottomRightRadius = '15px'
+                                    }
+                                }
                                 unWantedMessage.remove()
                             },300)
                         }
