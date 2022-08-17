@@ -291,7 +291,6 @@ const firebaseConfig = {
                     }
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                     let d = new Date()
-                    console.log(d.getDate()+","+months[d.getMonth()] == data.messageTime.messageDate.day+","+data.messageTime.messageDate.month);
                     var name = data.name
                     var message = data.message
                     var color = data.color
@@ -308,6 +307,7 @@ const firebaseConfig = {
                     var message_content_container = document.createElement('div')
                     var user_image = document.createElement('img')
                     user_image.setAttribute('class','user_image')
+                    user_image.style.display = 'block'
                     image == ""?user_image.src = 'user.webp': user_image.src = image;
                     user_image.style.borderColor = `${color}`
                     var message_user_container = document.createElement('div')
@@ -432,10 +432,10 @@ const firebaseConfig = {
                             message_container.childNodes[4].style.borderTopLeftRadius = '50%'
                             if(data.password == localStorage.password){
                                 message_container.style.borderTopLeftRadius = '15px'
-                                message_container.style.borderBottomLeftRadius = '50px'
+                                message_container.style.borderBottomLeftRadius = '40px'
                             }else{
                                 message_container.style.borderTopRightRadius = '15px'
-                                message_container.style.borderBottomRightRadius = '50px'
+                                message_container.style.borderBottomRightRadius = '40px'
                             }
                             user_image.style.display = 'none'
                             message_user_container.style.display = 'none'
@@ -469,6 +469,14 @@ const firebaseConfig = {
                                 closeDeleteMessage()
                             }else{
                                 window.alert('You can\'t delete this')
+                            }
+                            if(message_container.nextSibling != null && message_container.childNodes[0].style.display == "block"){
+                                if(message_container.nextSibling.childNodes[0].style.display == 'none'){
+                                    message_container.nextSibling.childNodes[0].style.display = 'block'
+                                    message_container.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
+                                    message_container.nextSibling.style.borderTopLeftRadius = '50px'
+                                    message_container.nextSibling.style.paddingLeft = '10px'
+                                }
                             }
                         }
                         var button_keep = document.createElement('button')
