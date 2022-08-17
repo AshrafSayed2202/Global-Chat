@@ -483,6 +483,20 @@ ul li:hover{
     border-radius: 5px;
     background-color: #3e8f40;
 }
+/* .animate_remove_left{
+    animation: animate_remove 0.3s linear;
+}
+.animate_remove_right{
+    animation: animate_remove 0.3s linear;
+}
+@keyframes animate_remove{
+    0%{
+        transform: translateX(0px);
+    }
+    100%{
+        transform: translateX(-100px);
+    }
+} */
 .cloned_message{
     position: absolute;
     top: 0px;

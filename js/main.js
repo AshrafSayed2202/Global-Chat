@@ -273,7 +273,17 @@ const firebaseConfig = {
                 ordered.forEach(function(data) {    
                     if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
-                        data.deleted == true && chat_content_container.contains(unWantedMessage)?unWantedMessage.remove():false;
+                        if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
+                            unWantedMessage.style.transition = '0.3s'
+                            if(data.password == localStorage.password){
+                                unWantedMessage.style.transform = 'translateX(-150%)'
+                            }else{
+                                unWantedMessage.style.transform = 'translateX(150%)'
+                            }
+                            setTimeout(function(){
+                                unWantedMessage.remove()
+                            },300)
+                        }
                         return false
                     }
                     var name = data.name
