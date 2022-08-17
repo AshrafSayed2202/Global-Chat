@@ -242,7 +242,6 @@ const firebaseConfig = {
         refresh_chat(){
             var chat_content_container = document.getElementById('chat_content_container')
             db.ref('Messages/').on('value', function(messages_object) {
-                console.log(messages_object.val());
                 if(document.querySelector('.loader_container') != null){
                     document.querySelector('.loader_container').remove()
                 }
@@ -273,7 +272,7 @@ const firebaseConfig = {
                         }
                     })
                 })
-                ordered.forEach(function(data) {    
+                ordered.forEach(function(data) {
                     if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
                         if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
@@ -282,6 +281,18 @@ const firebaseConfig = {
                                 unWantedMessage.style.transform = 'translateX(-150%)'
                             }else{
                                 unWantedMessage.style.transform = 'translateX(150%)'
+                            }
+                            if(unWantedMessage.childNodes[0].style.display == 'block'){
+                                unWantedMessage.nextSibling.childNodes[0].style.display = 'block'
+                                unWantedMessage.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
+                                unWantedMessage.nextSibling.style.paddingLeft = '10px'
+                                if(data.password == localStorage.password){
+                                    unWantedMessage.nextSibling.style.borderTopLeftRadius = '50px'
+                                    unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
+                                }else{
+                                    unWantedMessage.nextSibling.style.borderTopRightRadius = '50px'
+                                    unWantedMessage.nextSibling.style.borderBottomRightRadius = '15px'
+                                }
                             }
                             setTimeout(function(){
                                 unWantedMessage.remove()
@@ -344,7 +355,7 @@ const firebaseConfig = {
                         var repliedToMessage = document.createElement('p')
                         repliedToMessage.setAttribute('class','repliedTo-message')
                         repliedTo.setAttribute('class','repliedTo')
-                        repliedToMessage.textContent = data.reply.message
+                        repliedToMessage.textContent = "reply: "+data.reply.message
                         repliedTo.append(repliedToMessage)
                         message_container.append(repliedTo)
                         repliedTo.addEventListener('click',()=>{
@@ -477,14 +488,6 @@ const firebaseConfig = {
                             }else{
                                 window.alert('You can\'t delete this')
                             }
-                            // if(message_container.nextSibling != null && message_container.childNodes[0].style.display == "block"){
-                            //     if(message_container.nextSibling.childNodes[0].style.display == 'none'){
-                            //         message_container.nextSibling.childNodes[0].style.display = 'block'
-                            //         message_container.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
-                            //         message_container.nextSibling.style.borderTopLeftRadius = '50px'
-                            //         message_container.nextSibling.style.paddingLeft = '10px'
-                            //     }
-                            // }
                         }
                         var button_keep = document.createElement('button')
                         button_keep.setAttribute('id','button_keep')

@@ -515,7 +515,7 @@ ul li:hover{
     background-color: #ccc;
     width: -moz-fit-content;
     width: fit-content;
-    max-width: 150px;
+    max-width: 170px;
     padding: 9px;
     padding-bottom: 3px;
     top: 0;
@@ -532,4 +532,13 @@ ul li:hover{
 .active_real_message{
     outline:1px dashed #D64045;
     background-color: #ccc;
+    animation: active_real_message 0.4s linear infinite alternate;
+}
+@keyframes active_real_message {
+    0%{
+        transform: translateX(0px);
+    }
+    100%{
+        transform: translateX(5px);
+    }
 }
