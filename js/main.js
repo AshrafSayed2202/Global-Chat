@@ -309,6 +309,7 @@ const firebaseConfig = {
                     user_image.setAttribute('class','user_image')
                     user_image.style.display = 'block'
                     image == ""?user_image.src = 'user.webp': user_image.src = image;
+                    user_image.onerror = (e)=>{e.target.src = 'user.webp';user_image.onerror = null}
                     user_image.style.borderColor = `${color}`
                     var message_user_container = document.createElement('div')
                     message_user_container.style.display = 'block'
@@ -352,6 +353,7 @@ const firebaseConfig = {
                                 window.alert('This Message was Deleted')
                             }else{
                                 realMessage.scrollIntoView({behavior: 'smooth'})
+                                realMessage.ariaPressed
                                 document.querySelectorAll('.message_container').forEach((e)=>{
                                     e.classList.remove('active_real_message')
                                 })
@@ -373,6 +375,11 @@ const firebaseConfig = {
                     message_container.addEventListener('click',function(){
                         document.querySelectorAll('.message_container').forEach(hideMessageTime)
                         message_container.classList.add('shown_time')
+                        if(message_container.nextSibling != null && message_container.nextSibling.childNodes[5] != null){
+                            if(message_container.nextSibling.childNodes[5].classList.contains('repliedTo')){
+                                message_container.style.marginBottom = '45px'
+                            }
+                        }
                         window.addEventListener('click',(event)=>{
                             if(message_container.contains(event.target)){
                                 false
@@ -470,14 +477,14 @@ const firebaseConfig = {
                             }else{
                                 window.alert('You can\'t delete this')
                             }
-                            if(message_container.nextSibling != null && message_container.childNodes[0].style.display == "block"){
-                                if(message_container.nextSibling.childNodes[0].style.display == 'none'){
-                                    message_container.nextSibling.childNodes[0].style.display = 'block'
-                                    message_container.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
-                                    message_container.nextSibling.style.borderTopLeftRadius = '50px'
-                                    message_container.nextSibling.style.paddingLeft = '10px'
-                                }
-                            }
+                            // if(message_container.nextSibling != null && message_container.childNodes[0].style.display == "block"){
+                            //     if(message_container.nextSibling.childNodes[0].style.display == 'none'){
+                            //         message_container.nextSibling.childNodes[0].style.display = 'block'
+                            //         message_container.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
+                            //         message_container.nextSibling.style.borderTopLeftRadius = '50px'
+                            //         message_container.nextSibling.style.paddingLeft = '10px'
+                            //     }
+                            // }
                         }
                         var button_keep = document.createElement('button')
                         button_keep.setAttribute('id','button_keep')
