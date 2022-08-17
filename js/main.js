@@ -78,6 +78,13 @@ const firebaseConfig = {
             if(join_input.value.length > 0 && join_password.value.length >= 8){
                 join_button.classList.add('enabled')
                 join_button.onclick = function(){
+                    var user_id = 1
+                    db.ref('Users/' + `user_${user_id}`).set({
+                        userName:join_input.value,
+                        userPassword:join_password.value,
+                        userColor:join_color.value,
+                        userImage:join_image.value
+                    })
                     parent.save_name(join_input.value,join_password.value,join_color.value,join_image.value)
                     join_container.remove()
                     parent.create_chat()
@@ -197,11 +204,11 @@ const firebaseConfig = {
                 }
                 console.log()
             }
-            db.ref('chats/').once('value', function(message_object) {
+            db.ref('Messages/').once('value', function(message_object) {
                 var index = parseFloat(message_object.numChildren()) + 1
                 let d = new Date();
                 let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-                db.ref('chats/' + `message_${index}`).set({
+                db.ref('Messages/' + `message_${index}`).set({
                     name: localStorage.name,
                     password: localStorage.password,
                     color: localStorage.color,
@@ -231,8 +238,11 @@ const firebaseConfig = {
         }
         refresh_chat(){
             var chat_content_container = document.getElementById('chat_content_container')
-            db.ref('chats/').on('value', function(messages_object) {
-                chat_content_container.innerHTML = ''
+            db.ref('Messages/').on('value', function(messages_object) {
+                console.log(messages_object.val());
+                if(document.querySelector('.loader_container') != null){
+                    document.querySelector('.loader_container').remove()
+                }
                 if(messages_object.numChildren() == 0){
                     return
                 }
@@ -240,7 +250,11 @@ const firebaseConfig = {
                 var guide = []
                 var unordered = []
                 var ordered = []
-                for (var i, i = 0; i < messages.length; i++) {
+                var limit = 0
+                if(messages.length > 100){
+                    limit = messages.length - 100
+                }
+                for (var i = limit; i < messages.length; i++) {
                     guide.push(i+1)
                     unordered.push([messages[i], messages[i].index]);   
                 }
@@ -256,8 +270,10 @@ const firebaseConfig = {
                         }
                     })
                 })
-                ordered.forEach(function(data) {
-                    if(data.deleted == true){
+                ordered.forEach(function(data) {    
+                    if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
+                        let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
+                        data.deleted == true && chat_content_container.contains(unWantedMessage)?unWantedMessage.remove():false;
                         return false
                     }
                     var name = data.name
@@ -431,7 +447,7 @@ const firebaseConfig = {
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
                             if(data.password == localStorage.password){
-                                db.ref('chats/' + `message_${data.index}`).update({
+                                db.ref('Messages/' + `message_${data.index}`).update({
                                     deleted: true   
                                 })
                                 closeDeleteMessage()
