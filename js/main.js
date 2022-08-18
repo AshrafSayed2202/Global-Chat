@@ -249,6 +249,7 @@ const firebaseConfig = {
                     return
                 }
                 var messages = Object.values(messages_object.val());
+                console.log(messages[0],messages[0].index)
                 var guide = []
                 var unordered = []
                 var ordered = []
@@ -261,17 +262,19 @@ const firebaseConfig = {
                     unordered.push([messages[i], messages[i].index]);   
                 }
                 guide.forEach(function(key) {
-                    var found = false
+                    var found = true
                     unordered = unordered.filter(function(item) {
-                        if(!found && item[1] == key) {
+                        if(found && item[1] == key) {
                             ordered.push(item[0])
-                            found = true
+                            found = false
                             return false
                         }else{
                             return true
                         }
                     })
                 })
+                guide = []
+                unordered = []
                 ordered.forEach(function(data) {
                     if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
