@@ -407,6 +407,11 @@ const firebaseConfig = {
                                 false
                             }else{
                                 hideMessageTime(message_container)
+                                if(message_container.nextSibling != null && message_container.nextSibling.childNodes[5] != null){
+                                    if(message_container.nextSibling.childNodes[5].classList.contains('repliedTo')){
+                                        message_container.style.marginBottom = '0px'
+                                    }
+                                }
                             }
                         })
                         if(data.password == localStorage.password){
