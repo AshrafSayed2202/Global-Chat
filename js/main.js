@@ -249,7 +249,6 @@ const firebaseConfig = {
                     return
                 }
                 var messages = Object.values(messages_object.val());
-                console.log(messages[0],messages[0].index)
                 var guide = []
                 var unordered = []
                 var ordered = []
@@ -275,7 +274,8 @@ const firebaseConfig = {
                 })
                 guide = []
                 unordered = []
-                ordered.forEach(function(data) {
+                ordered.forEach(createMessage);
+                function createMessage(data){
                     if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
                         if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
@@ -286,16 +286,24 @@ const firebaseConfig = {
                                 unWantedMessage.style.transform = 'translateX(150%)'
                             }
                             setTimeout(function(){
-                                if(unWantedMessage.childNodes[0].style.display == 'block'){
-                                    unWantedMessage.nextSibling.childNodes[0].style.display = 'block'
-                                    unWantedMessage.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
-                                    unWantedMessage.nextSibling.style.paddingLeft = '10px'
-                                    if(data.password == localStorage.password){
-                                        unWantedMessage.nextSibling.style.borderTopLeftRadius = '50px'
-                                        unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
-                                    }else{
-                                        unWantedMessage.nextSibling.style.borderTopRightRadius = '50px'
-                                        unWantedMessage.nextSibling.style.borderBottomRightRadius = '15px'
+                                if(unWantedMessage.nextSibling != null){
+                                    if(unWantedMessage.childNodes[0].style.display == 'block'){
+                                        if(unWantedMessage.nextSibling.childNodes[0].style.display = 'none'){
+                                            if(data.password == localStorage.password){
+                                                unWantedMessage.nextSibling.style.borderTopLeftRadius = '50px'
+                                                if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
+                                                    unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
+                                                }
+                                            }else{
+                                                unWantedMessage.nextSibling.style.borderTopRightRadius = '50px'
+                                                if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
+                                                    unWantedMessage.nextSibling.style.borderBottomRightRadius = '15px'
+                                                }
+                                            }
+                                            unWantedMessage.nextSibling.childNodes[0].style.display = 'block'
+                                            unWantedMessage.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
+                                            unWantedMessage.nextSibling.style.paddingLeft = '10px'
+                                        }
                                     }
                                 }
                                 unWantedMessage.remove()
@@ -523,7 +531,7 @@ const firebaseConfig = {
                         cloned_message.append(close_cloned_message)
                         chat_input_container.insertBefore(cloned_message,chat_input_container.firstChild)
                     })
-                });
+                }
                 chat_content_container.scrollTop = chat_content_container.scrollHeight;
             })
         }
