@@ -78,16 +78,18 @@ const firebaseConfig = {
             if(join_input.value.length > 0 && join_password.value.length >= 8){
                 join_button.classList.add('enabled')
                 join_button.onclick = function(){
-                    var user_id = 1
-                    db.ref('Users/' + `user_${user_id}`).set({
-                        userName:join_input.value,
-                        userPassword:join_password.value,
-                        userColor:join_color.value,
-                        userImage:join_image.value
+                    db.ref('Users/').once('value', function(user_object) {
+                        var user_id = parseFloat(user_object.numChildren()) + 1
+                        db.ref('Users/' + `user_${user_id}`).set({
+                            userName:join_input.value,
+                            userPassword:join_password.value,
+                            userColor:join_color.value,
+                            userImage:join_image.value
+                        })
+                        parent.save_name(join_input.value,join_password.value,join_color.value,join_image.value)
+                        join_container.remove()
+                        parent.create_chat()
                     })
-                    parent.save_name(join_input.value,join_password.value,join_color.value,join_image.value)
-                    join_container.remove()
-                    parent.create_chat()
                 }
             }else{
                 join_button.classList.remove('enabled')
