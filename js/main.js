@@ -42,43 +42,155 @@ const firebaseConfig = {
     }
     create_join_form(){
         var parent = this;
+        document.getElementById('title_container').remove()
         var join_container = document.createElement('div')
-        join_container.setAttribute('id', 'join_container')
-        var join_inner_container = document.createElement('div')
-        join_inner_container.setAttribute('id', 'join_inner_container')
-        var join_image_container = document.createElement('div')
-        join_image_container.setAttribute('id','join_image_container')
-        var join_image = document.createElement('input')
-        var join_button_container = document.createElement('div')
-        join_button_container.setAttribute('id', 'join_button_container')
-        join_image.setAttribute('type','url')
-        join_image.setAttribute('id','join_image')
-        join_image.placeholder = 'Paste Your Image URL Here'
-        var join_button = document.createElement('button')
-        join_button.setAttribute('id', 'join_button')
-        join_button.innerHTML = 'Join <i class="fas fa-sign-in-alt"></i>'
-        var join_password_container = document.createElement('div')
-        join_password_container.setAttribute('id','join_password_container')
-        var join_password = document.createElement('input')
-        join_password.setAttribute('type','password')
-        join_password.setAttribute('id','join_password')
-        join_password.placeholder = "Enter Your Password"
-        var join_input_container = document.createElement('div')
-        join_input_container.setAttribute('id', 'join_input_container')
-        var join_input = document.createElement('input')
-        join_input.setAttribute('id', 'join_input')
-        join_input.setAttribute('maxlength', 15)
-        join_input.placeholder = 'Enter Your Name Here'
-        var join_color = document.createElement('input');
-        join_color.setAttribute('id','join_color')
-        join_color.setAttribute('type','color')
-        join_input.onkeyup  = joinEnabel
-        join_password.onkeyup  = joinEnabel
+        join_container.setAttribute('class','container')
+        var signInSignUp = document.createElement('div')
+        signInSignUp.setAttribute('class','signin-signup')
+        // sign in
+        var sign_in_form = document.createElement('form')
+        sign_in_form.setAttribute('action',"")
+        sign_in_form.setAttribute('class','sign-in-form')
+        var sign_in_title = document.createElement('h2')
+        sign_in_title.setAttribute('class','title')
+        sign_in_title.innerText = 'Sign in'
+        var sign_in_user_input_field = document.createElement('div')
+        sign_in_user_input_field.setAttribute('class','input-field')
+        sign_in_user_input_field.innerHTML = '<i class="fas fa-user"></i>'
+        var sign_in_user_input = document.createElement('input')
+        sign_in_user_input.type = 'text'
+        sign_in_user_input.placeholder = 'Username'
+        sign_in_user_input_field.append(sign_in_user_input)
+        var sign_in_password_input_field = document.createElement('div')
+        sign_in_password_input_field.setAttribute('class','input-field')
+        sign_in_password_input_field.innerHTML = '<i class="fas fa-lock"></i>'
+        var sign_in_password_input = document.createElement('input')
+        sign_in_password_input.type = "password"
+        sign_in_password_input.placeholder = "Password"
+        sign_in_password_input_field.append(sign_in_password_input)
+        var sign_in_submit = document.createElement('input')
+        sign_in_submit.type = 'submit'
+        sign_in_submit.value = 'Login'
+        sign_in_submit.setAttribute('class','btn')
+        var sign_in_social_text = document.createElement('p')
+        sign_in_social_text.setAttribute('class','social-text')
+        sign_in_social_text.innerText = 'Or Sign in with social platform'
+        var sign_in_social_media = document.createElement('div')
+        sign_in_social_media.setAttribute('class','social-media')
+        sign_in_social_media.innerHTML = `<a href="#" class="social-icon"><i class="fab fa-facebook"></i></a><a href="" class="social-icon"><i class="fab fa-twitter"></i></a><a href="" class="social-icon"><i class="fab fa-google"></i></a><a href="" class="social-icon"><i class="fab fa-linkedin-in"></i></a>`
+        var sign_in_account_text = document.createElement('p')
+        sign_in_account_text.innerText = "Don't have an account? "
+        var sign_up_btn2 = document.createElement('a')
+        sign_up_btn2.href = '#'
+        sign_up_btn2.id ='sign-up-btn2'
+        sign_up_btn2.innerText = 'Sign up'
+        sign_up_btn2.addEventListener('click',()=>{join_container.classList.add('sign-up-mode2')})
+        sign_in_account_text.append(sign_up_btn2)
+        sign_in_form.append(sign_in_title,sign_in_user_input_field,sign_in_password_input_field,sign_in_submit,sign_in_social_text,sign_in_social_media,sign_in_account_text)
+        // sign up
+        var sign_up_form = document.createElement('form')
+        sign_up_form.setAttribute('action',"")
+        sign_up_form.setAttribute('class','sign-up-form')
+        var sign_up_title = document.createElement('h2')
+        sign_up_title.setAttribute('class','title')
+        sign_up_title.innerText = 'Sign up'
+        var sign_up_user_input_field = document.createElement('div')
+        sign_up_user_input_field.setAttribute('class','input-field')
+        sign_up_user_input_field.innerHTML = `<i class="fas fa-user"></i>`
+        var sign_up_user_input = document.createElement('input')
+        sign_up_user_input.type = 'text'
+        sign_up_user_input.placeholder = 'Username'
+        sign_up_user_input_field.append(sign_up_user_input)
+        var sign_up_email_input_field = document.createElement('div')
+        sign_up_email_input_field.setAttribute('class','input-field')
+        sign_up_email_input_field.innerHTML = `<i class="fas fa-envelope"></i>`
+        var sign_up_email_input = document.createElement('input')
+        sign_up_email_input.type = 'text'
+        sign_up_email_input.placeholder = 'Email'
+        sign_up_email_input_field.append(sign_up_email_input)
+        var sign_up_password_input_field = document.createElement('div')
+        sign_up_password_input_field.setAttribute('class','input-field')
+        sign_up_password_input_field.innerHTML = `<i class="fas fa-lock"></i>`
+        var sign_up_password_input = document.createElement('input')
+        sign_up_password_input.type = 'password'
+        sign_up_password_input.placeholder = 'Password'
+        sign_up_password_input_field.append(sign_up_password_input)
+        var sign_up_submit = document.createElement('input')
+        sign_up_submit.type = 'submit'
+        sign_up_submit.value = 'Sign up'
+        sign_up_submit.setAttribute('class','btn')
+        var sign_up_social_text = document.createElement('p')
+        sign_up_social_text.setAttribute('class','social-text')
+        sign_up_social_text.innerText = 'Or Sign in with social platform'
+        var sign_up_social_media = document.createElement('div')
+        sign_up_social_media.setAttribute('class','social-media')
+        sign_up_social_media.innerHTML = `<a href="#" class="social-icon"><i class="fab fa-facebook"></i></a><a href="" class="social-icon"><i class="fab fa-twitter"></i></a><a href="" class="social-icon"><i class="fab fa-google"></i></a><a href="" class="social-icon"><i class="fab fa-linkedin-in"></i></a>`
+        var sign_up_account_text = document.createElement('p')
+        sign_up_account_text.setAttribute('class','account-text')
+        sign_up_account_text.innerText = 'Already have an account? '
+        var sign_in_btn2 = document.createElement('a')
+        sign_in_btn2.href = '#'
+        sign_in_btn2.id = 'sign-in-btn2'
+        sign_in_btn2.innerText = 'Sign in'
+        sign_in_btn2.addEventListener('click',()=>{join_container.classList.remove('sign-up-mode2')})
+        sign_up_account_text.append(sign_in_btn2)
+        sign_up_form.append(sign_up_title,sign_up_user_input_field,sign_up_email_input_field,sign_up_password_input_field,sign_up_submit,sign_up_social_text,sign_up_social_media,sign_up_account_text)
+        // Append forms
+        signInSignUp.append(sign_in_form,sign_up_form)
+        // panels
+        var panels_container = document.createElement('div')
+        panels_container.setAttribute('class','panels-container')
+        // panel left
+        var panel_left = document.createElement('div')
+        panel_left.classList.add('panel','left-panel')
+        var left_panel_content = document.createElement('div')
+        left_panel_content.setAttribute('class','content')
+        var left_panel_h3 = document.createElement('h3')
+        left_panel_h3.innerText = 'Member of Global chat?'
+        var left_panel_p = document.createElement('p')
+        left_panel_p.innerText = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque accusantium dolor, eos'
+        var left_panel_btn = document.createElement('button')
+        left_panel_btn.setAttribute('class','btn')
+        left_panel_btn.id = 'sign-in-btn'
+        left_panel_btn.innerText = 'Sign in'
+        left_panel_btn.addEventListener('click',()=>{join_container.classList.remove('sign-up-mode')})
+        left_panel_content.append(left_panel_h3,left_panel_p,left_panel_btn)
+        var left_panel_img = document.createElement('img')
+        left_panel_img.setAttribute('class','image')
+        left_panel_img.src = 'signin.svg'
+        left_panel_img.alt = ''
+        panel_left.append(left_panel_content,left_panel_img)
+        // panel right
+        var panel_right = document.createElement('div')
+        panel_right.classList.add('panel','right-panel')
+        var right_panel_content = document.createElement('div')
+        right_panel_content.setAttribute('class','content')
+        var right_panel_h3 = document.createElement('h3')
+        right_panel_h3.innerText = 'New to Global chat?'
+        var right_panel_p = document.createElement('p')
+        right_panel_p.innerText = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque accusantium dolor, eos'
+        var right_panel_btn = document.createElement('button')
+        right_panel_btn.setAttribute('class','btn')
+        right_panel_btn.id = 'sign-up-btn'
+        right_panel_btn.innerText = 'Sign up'
+        right_panel_btn.addEventListener('click',()=>{join_container.classList.add('sign-up-mode')})
+        right_panel_content.append(right_panel_h3,right_panel_p,right_panel_btn)
+        var right_panel_img = document.createElement('img')
+        right_panel_img.setAttribute('class','image')
+        right_panel_img.src = 'signup.svg'
+        right_panel_img.alt = ''
+        panel_right.append(right_panel_content,right_panel_img)
+        // Append panels
+        panels_container.append(panel_left,panel_right)
+        // Append all
+        join_container.append(signInSignUp,panels_container)
         function joinEnabel(e){
             if(join_input.value.length > 0 && join_password.value.length >= 8){
                 join_button.classList.add('enabled')
                 join_button.onclick = function(){
                     db.ref('Users/').once('value', function(user_object) {
+                        var validateUser = Object.values(user_object.val())
+                        console.log(validateUser);
                         var user_id = parseFloat(user_object.numChildren()) + 1
                         db.ref('Users/' + `user_${user_id}`).set({
                             userName:join_input.value,
@@ -95,20 +207,13 @@ const firebaseConfig = {
                 join_button.classList.remove('enabled')
             }
             if(e.key == 'Enter'){
-                if(join_input.value.length > 0){
+                if(join_input.value.length > 0 && join_password.value.length >= 8){
                     parent.save_name(join_input.value,join_password.value,join_color.value,join_image.value)
                     join_container.remove()
                     parent.create_chat()
                 }
             }
         }
-    join_button_container.append(join_button)
-    join_input_container.append(join_color)
-    join_input_container.append(join_input)
-    join_image_container.append(join_image)
-    join_password_container.append(join_password)
-    join_inner_container.append(join_input_container, join_password_container, join_image_container, join_button_container)
-    join_container.append(join_inner_container)
     document.body.append(join_container)
     }
     create_load(container_id){
