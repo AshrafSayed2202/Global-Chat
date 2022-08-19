@@ -288,7 +288,7 @@ const firebaseConfig = {
                             setTimeout(function(){
                                 if(unWantedMessage.nextSibling != null){
                                     if(unWantedMessage.childNodes[0].style.display == 'block'){
-                                        if(unWantedMessage.nextSibling.childNodes[0].style.display = 'none'){
+                                        if(unWantedMessage.nextSibling.childNodes[0].style.display == 'none'){
                                             if(data.password == localStorage.password){
                                                 unWantedMessage.nextSibling.style.borderTopLeftRadius = '50px'
                                                 if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
