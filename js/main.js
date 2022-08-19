@@ -100,7 +100,18 @@ const firebaseConfig = {
         var sign_up_user_input = document.createElement('input')
         sign_up_user_input.type = 'text'
         sign_up_user_input.placeholder = 'Username'
-        sign_up_user_input_field.append(sign_up_user_input)
+        var sign_up_color_input = document.createElement('input')
+        sign_up_color_input.setAttribute('class','color-input')
+        sign_up_color_input.type = 'color'
+        sign_up_color_input.value = '#ffb317'
+        sign_up_user_input_field.append(sign_up_color_input,sign_up_user_input)
+        var sign_up_image_input_field = document.createElement('div')
+        sign_up_image_input_field.setAttribute('class','input-field')
+        sign_up_image_input_field.innerHTML = `<i class="fa-solid fa-camera"></i>`
+        var sign_up_image_input = document.createElement('input')
+        sign_up_image_input.type = 'url'
+        sign_up_image_input.placeholder = 'Image link'
+        sign_up_image_input_field.append(sign_up_image_input)
         var sign_up_email_input_field = document.createElement('div')
         sign_up_email_input_field.setAttribute('class','input-field')
         sign_up_email_input_field.innerHTML = `<i class="fas fa-envelope"></i>`
@@ -134,7 +145,7 @@ const firebaseConfig = {
         sign_in_btn2.innerText = 'Sign in'
         sign_in_btn2.addEventListener('click',()=>{join_container.classList.remove('sign-up-mode2')})
         sign_up_account_text.append(sign_in_btn2)
-        sign_up_form.append(sign_up_title,sign_up_user_input_field,sign_up_email_input_field,sign_up_password_input_field,sign_up_submit,sign_up_social_text,sign_up_social_media,sign_up_account_text)
+        sign_up_form.append(sign_up_title,sign_up_user_input_field,sign_up_image_input_field,sign_up_email_input_field,sign_up_password_input_field,sign_up_submit,sign_up_social_text,sign_up_social_media,sign_up_account_text)
         // Append forms
         signInSignUp.append(sign_in_form,sign_up_form)
         // panels

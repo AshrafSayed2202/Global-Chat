@@ -113,7 +113,6 @@ form.sign-up-form {
     color: #d64045;
     margin-bottom: 10px;
 }
-
 .input-field {
     width: 100%;
     height: 50px;
@@ -131,8 +130,7 @@ form.sign-up-form {
     color: #666;
     font-size: 18px;
 }
-
-.input-field input {
+.input-field input:not(input.color-input) {
     flex: 5;
     background: none;
     border: none;
@@ -142,7 +140,25 @@ form.sign-up-form {
     font-weight: 600;
     color: #444;
 }
-
+.input-field input.color-input{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    width: 30px;
+    height: 33px;
+    margin-right: 15px;
+}
+.input-field input.color-input::-webkit-color-swatch{
+    border-radius: 50%;
+    border: 2px solid #ccc;
+}
+.input-field input.color-input::-moz-color-swatch{
+    border-radius: 50%;
+    border: 2px solid #ccc;
+}
 .btn {
     width: 150px;
     height: 50px;
