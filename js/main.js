@@ -77,7 +77,7 @@ const firebaseConfig = {
         sign_in_social_text.innerText = 'Or Sign in with social platform'
         var sign_in_social_media = document.createElement('div')
         sign_in_social_media.setAttribute('class','social-media')
-        sign_in_social_media.innerHTML = `<a href="#" class="social-icon"><i class="fab fa-facebook"></i></a><a href="" class="social-icon"><i class="fab fa-twitter"></i></a><a href="" class="social-icon"><i class="fab fa-google"></i></a><a href="" class="social-icon"><i class="fab fa-linkedin-in"></i></a>`
+        sign_in_social_media.innerHTML = `<a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a><a href="#" class="social-icon"><i class="fab fa-twitter"></i></a><a href="#" class="social-icon"><i class="fab fa-google"></i></a><a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>`
         var sign_in_account_text = document.createElement('p')
         sign_in_account_text.innerText = "Don't have an account? "
         var sign_up_btn2 = document.createElement('a')
@@ -100,6 +100,7 @@ const firebaseConfig = {
         var sign_up_user_input = document.createElement('input')
         sign_up_user_input.type = 'text'
         sign_up_user_input.placeholder = 'Username'
+        sign_up_user_input.oninput = ()=>{if(/^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/.test(sign_up_user_input.value)){sign_up_user_input_field.style.border = "3px solid green"}else{sign_up_user_input_field.style.border = '2px solid #d64045'}}
         var sign_up_color_input = document.createElement('input')
         sign_up_color_input.setAttribute('class','color-input')
         sign_up_color_input.type = 'color'
@@ -118,6 +119,7 @@ const firebaseConfig = {
         var sign_up_email_input = document.createElement('input')
         sign_up_email_input.type = 'text'
         sign_up_email_input.placeholder = 'Email'
+        sign_up_email_input.oninput = ()=>{if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_up_email_input.value)){sign_up_email_input_field.style.border = "3px solid green"}else{sign_up_email_input_field.style.border = '2px solid #d64045'}}
         sign_up_email_input_field.append(sign_up_email_input)
         var sign_up_password_input_field = document.createElement('div')
         sign_up_password_input_field.setAttribute('class','input-field')
@@ -125,17 +127,33 @@ const firebaseConfig = {
         var sign_up_password_input = document.createElement('input')
         sign_up_password_input.type = 'password'
         sign_up_password_input.placeholder = 'Password'
+        sign_up_password_input.oninput = ()=>{if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){sign_up_password_input_field.style.border = "3px solid green"}else{sign_up_password_input_field.style.border = '2px solid #d64045'}}
         sign_up_password_input_field.append(sign_up_password_input)
         var sign_up_submit = document.createElement('input')
         sign_up_submit.type = 'submit'
         sign_up_submit.value = 'Sign up'
         sign_up_submit.setAttribute('class','btn')
+        sign_up_submit.addEventListener('click',()=>{
+            if(/^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/.test(sign_up_user_input.value)){
+                if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_up_email_input.value)){
+                    if( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){
+                        console.log('everything is good')
+                    }else{
+                        console.log('password is wrong');
+                    }
+                }else{
+                    console.log('email is wrong');
+                }
+            }else{
+                console.log('username is wrong');
+            }
+        })
         var sign_up_social_text = document.createElement('p')
         sign_up_social_text.setAttribute('class','social-text')
         sign_up_social_text.innerText = 'Or Sign in with social platform'
         var sign_up_social_media = document.createElement('div')
         sign_up_social_media.setAttribute('class','social-media')
-        sign_up_social_media.innerHTML = `<a href="#" class="social-icon"><i class="fab fa-facebook"></i></a><a href="" class="social-icon"><i class="fab fa-twitter"></i></a><a href="" class="social-icon"><i class="fab fa-google"></i></a><a href="" class="social-icon"><i class="fab fa-linkedin-in"></i></a>`
+        sign_up_social_media.innerHTML = `<a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a><a href="#" class="social-icon"><i class="fab fa-twitter"></i></a><a href="#" class="social-icon"><i class="fab fa-google"></i></a><a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>`
         var sign_up_account_text = document.createElement('p')
         sign_up_account_text.setAttribute('class','account-text')
         sign_up_account_text.innerText = 'Already have an account? '
