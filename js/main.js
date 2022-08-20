@@ -1,4 +1,5 @@
-window.onload = function() {
+import {  } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"
+import {  } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"
 const firebaseConfig = {
     apiKey: "AIzaSyCjxJ4TxSjngUdYHuZqEjvlomQVN2OOLqU",
     authDomain: "global-chat-cb729.firebaseapp.com",
@@ -7,8 +8,10 @@ const firebaseConfig = {
     messagingSenderId: "7814295286",
     appId: "1:7814295286:web:da5d1756080bb7d86c46d7"
 };
-    firebase.initializeApp(firebaseConfig);
-    var db = firebase.database()
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database()
+var auth = firebase.auth()
+window.onload = function() {
     class GLOBAL_CHAT{
     home(){
         document.body.innerHTML = ''
@@ -133,11 +136,25 @@ const firebaseConfig = {
         sign_up_submit.type = 'submit'
         sign_up_submit.value = 'Sign up'
         sign_up_submit.setAttribute('class','btn')
-        sign_up_submit.addEventListener('click',()=>{
+        sign_up_submit.addEventListener('click',(e)=>{
+            e.preventDefault()
             if(/^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/.test(sign_up_user_input.value)){
                 if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_up_email_input.value)){
                     if( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){
-                        console.log('everything is good')
+                        const consle = auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value)
+                        consle.catch(async function(error){
+                            const validate = await error.message
+                            return validate
+                        }).then((error)=>{
+                                if(error != 'The email address is already in use by another account.'){
+                                    parent.save_name(sign_up_user_input.value,sign_up_email_input.value,sign_up_password_input.value,sign_up_color_input.value,sign_up_image_input.value)
+                                    join_container.remove()
+                                    parent.create_title()
+                                    parent.create_chat()
+                                }else{
+                                    window.alert(error)
+                                }
+                        })
                     }else{
                         console.log('password is wrong');
                     }
@@ -213,37 +230,7 @@ const firebaseConfig = {
         panels_container.append(panel_left,panel_right)
         // Append all
         join_container.append(signInSignUp,panels_container)
-        function joinEnabel(e){
-            if(join_input.value.length > 0 && join_password.value.length >= 8){
-                join_button.classList.add('enabled')
-                join_button.onclick = function(){
-                    db.ref('Users/').once('value', function(user_object) {
-                        var validateUser = Object.values(user_object.val())
-                        console.log(validateUser);
-                        var user_id = parseFloat(user_object.numChildren()) + 1
-                        db.ref('Users/' + `user_${user_id}`).set({
-                            userName:join_input.value,
-                            userPassword:join_password.value,
-                            userColor:join_color.value,
-                            userImage:join_image.value
-                        })
-                        parent.save_name(join_input.value,join_password.value,join_color.value,join_image.value)
-                        join_container.remove()
-                        parent.create_chat()
-                    })
-                }
-            }else{
-                join_button.classList.remove('enabled')
-            }
-            if(e.key == 'Enter'){
-                if(join_input.value.length > 0 && join_password.value.length >= 8){
-                    parent.save_name(join_input.value,join_password.value,join_color.value,join_image.value)
-                    join_container.remove()
-                    parent.create_chat()
-                }
-            }
-        }
-    document.body.append(join_container)
+        document.body.append(join_container)
     }
     create_load(container_id){
         var parent = this;
@@ -308,7 +295,7 @@ const firebaseConfig = {
     chat_logout_container.setAttribute('id', 'chat_logout_container')
     var chat_logout = document.createElement('button')
     chat_logout.setAttribute('id', 'chat_logout')
-    chat_logout.textContent = `${parent.get_name()} • logout`
+    chat_logout.textContent = ` • logout`
     chat_logout.onclick = function(){
         localStorage.clear()
         parent.home()
@@ -321,15 +308,16 @@ const firebaseConfig = {
     parent.create_load('chat_content_container')
     parent.refresh_chat()
     }
-        save_name(name,password,color,image){
+        save_name(name,email,password,color,image){
             localStorage.setItem('name', name)
+            localStorage.setItem('email', email)
             localStorage.setItem('password', password)
             localStorage.setItem('color', color)
             localStorage.setItem('image', image)
         }
         send_message(message){
             var parent = this
-            if(parent.get_name() == null && message == null){
+            if(auth.onAuthStateChanged((user) => {user.uid}) != null && message == null){
                 return
             }
             var replyMessage = {}
@@ -346,7 +334,7 @@ const firebaseConfig = {
                 let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                 db.ref('Messages/' + `message_${index}`).set({
                     name: localStorage.name,
-                    password: localStorage.password,
+                    user: auth.currentUser.uid,
                     color: localStorage.color,
                     image: localStorage.image,
                     message: message,
@@ -366,14 +354,6 @@ const firebaseConfig = {
                     parent.refresh_chat()
                 })
             })
-        }
-        get_name(){
-            if(localStorage.getItem('name') != null){
-                return localStorage.getItem('name')
-            }else{
-                this.home()
-                return null
-            }
         }
         refresh_chat(){
             var chat_content_container = document.getElementById('chat_content_container')
@@ -684,7 +664,12 @@ const firebaseConfig = {
         }
     }
 var app = new GLOBAL_CHAT()
-        if(app.get_name() != null){
+// app.chat()
+auth.onAuthStateChanged((user)=>{
+    if(user == null){
+        app.home()
+    }else{
         app.chat()
     }
+})
 }
