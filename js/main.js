@@ -13,16 +13,16 @@ var db = firebase.database()
 var auth = firebase.auth()
 window.onload = function() {
     class GLOBAL_CHAT{
-    home(){
+        home(){
         document.body.innerHTML = ''
         this.create_title()
         this.create_join_form()
-    }
-    chat(){
+        }
+        chat(){
         this.create_title()
         this.create_chat()
-    }
-    create_title(){
+        }
+        create_title(){
         var title_container = document.createElement('div')
         title_container.setAttribute('id', 'title_container')
         var title_inner_container = document.createElement('div')
@@ -42,8 +42,8 @@ window.onload = function() {
         title_inner_container.append(socials)
         title_container.append(title_inner_container)
         document.body.append(title_container)
-    }
-    create_join_form(){
+        }
+        create_join_form(){
         var parent = this;
         document.getElementById('title_container').remove()
         var join_container = document.createElement('div')
@@ -83,7 +83,6 @@ window.onload = function() {
                 if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_in_password_input.value)){
                     auth.signInWithEmailAndPassword(sign_in_user_input.value, sign_in_password_input.value)
                     .then((userCredential) => {
-                        console.log(userCredential.user);
                         var user = userCredential.user;
                     })
                     .catch((error) => {
@@ -173,8 +172,6 @@ window.onload = function() {
                                         providerId:sign_up_user_input.value,
                                         photoURL:sign_up_image_input.value
                                     })
-                                    console.log(auth.currentUser);
-                                    parent.save_name(sign_up_user_input.value,sign_up_email_input.value,sign_up_password_input.value,sign_up_color_input.value,sign_up_image_input.value)
                                     join_container.remove()
                                     parent.chat()
                                 }else{
@@ -257,8 +254,8 @@ window.onload = function() {
         // Append all
         join_container.append(signInSignUp,panels_container)
         document.body.append(join_container)
-    }
-    create_load(container_id){
+        }
+        create_load(container_id){
         var parent = this;
         var container = document.getElementById(container_id)
         container.innerHTML = ''
@@ -268,8 +265,8 @@ window.onload = function() {
         loader.setAttribute('class', 'loader')
         loader_container.append(loader)
         container.append(loader_container)
-    }
-    create_chat(){
+        }
+        create_chat(){
         var parent = this;
         var title_container = document.getElementById('title_container')
         var title = document.getElementById('title')
@@ -324,7 +321,6 @@ window.onload = function() {
     chat_logout.textContent = ` • logout`
     chat_logout.onclick = function(){
         auth.signOut().then(()=>{
-            console.log('sign out done');
         }).catch((error)=>{
             console.log(error.message);
         })
@@ -336,13 +332,6 @@ window.onload = function() {
     document.body.append(chat_container)
     parent.create_load('chat_content_container')
     parent.refresh_chat()
-    }
-        save_name(name,email,password,color,image){
-            localStorage.setItem('name', name)
-            localStorage.setItem('email', email)
-            localStorage.setItem('password', password)
-            localStorage.setItem('color', color)
-            localStorage.setItem('image', image)
         }
         send_message(message){
             var parent = this
@@ -355,17 +344,16 @@ window.onload = function() {
                     message:chat_input_container.childNodes[0].childNodes[0].textContent,
                     index:chat_input_container.childNodes[0].dataset.index
                 }
-                console.log()
             }
             db.ref('Messages/').once('value', function(message_object) {
                 var index = parseFloat(message_object.numChildren()) + 1
                 let d = new Date();
                 let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                 db.ref('Messages/' + `message_${index}`).set({
-                    name: localStorage.name,
+                    name: auth.currentUser.displayName,
                     user: auth.currentUser.uid,
-                    color: localStorage.color,
-                    image: localStorage.image,
+                    // color: localStorage.color,
+                    image: auth.currentUser.photoURL,
                     message: message,
                     index: index,
                     messageTime: {
@@ -425,7 +413,7 @@ window.onload = function() {
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
                         if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
                             unWantedMessage.style.transition = '0.3s'
-                            if(data.password == localStorage.password){
+                            if(data.user == auth.currentUser.uid){
                                 unWantedMessage.style.transform = 'translateX(-150%)'
                             }else{
                                 unWantedMessage.style.transform = 'translateX(150%)'
@@ -434,7 +422,7 @@ window.onload = function() {
                                 if(unWantedMessage.nextSibling != null){
                                     if(unWantedMessage.childNodes[0].style.display == 'block'){
                                         if(unWantedMessage.nextSibling.childNodes[0].style.display == 'none'){
-                                            if(data.password == localStorage.password){
+                                            if(data.user == auth.currentUser.uid){
                                                 unWantedMessage.nextSibling.style.borderTopLeftRadius = '50px'
                                                 if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
                                                     unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
@@ -528,7 +516,7 @@ window.onload = function() {
                             }
                             window.onclick = (event)=>{repliedTo.contains(event.target)?false:document.querySelectorAll('.message_container').forEach((e)=>{e.classList.remove('active_real_message')});}
                         })
-                        if(data.password == localStorage.password){
+                        if(data.user == auth.currentUser.uid){
                             repliedTo.style.borderBottomLeftRadius = '5px'
                             repliedTo.style.left = '0'
                             message_container.style.borderTopLeftRadius = '15px'
@@ -559,7 +547,7 @@ window.onload = function() {
                                 }
                             }
                         })
-                        if(data.password == localStorage.password){
+                        if(data.user == auth.currentUser.uid){
                             message_container.childNodes[3].style.right = '-32px'
                             message_container.childNodes[3].style.opacity = '1'
                             message_container.childNodes[3].style.zIndex = '0'
@@ -593,7 +581,7 @@ window.onload = function() {
                         e.childNodes[4].style.opacity = '0'
                         e.childNodes[4].style.zIndex = '-1'
                     }
-                    if(data.password == localStorage.password){
+                    if(data.user == auth.currentUser.uid){
                         message_container.style.marginLeft = 'initial'
                         message_container.style.borderBottomLeftRadius = '15px'
                         message_container.style.backgroundColor = '#D64045'
@@ -609,7 +597,7 @@ window.onload = function() {
                             message_container.childNodes[3].style.borderBottomLeftRadius = '50%'
                             message_container.childNodes[4].style.bottom = '10px'
                             message_container.childNodes[4].style.borderTopLeftRadius = '50%'
-                            if(data.password == localStorage.password){
+                            if(data.user == auth.currentUser.uid){
                                 message_container.style.borderTopLeftRadius = '15px'
                                 message_container.style.borderBottomLeftRadius = '40px'
                             }else{
@@ -619,7 +607,7 @@ window.onload = function() {
                             user_image.style.display = 'none'
                             message_user_container.style.display = 'none'
                             if(message_container.previousSibling.childNodes[1].firstChild.style.display == 'none'){
-                                if(data.password == localStorage.password){
+                                if(data.user == auth.currentUser.uid){
                                     message_container.previousSibling.style.borderBottomLeftRadius = '15px'
                                 }else{
                                     message_container.previousSibling.style.borderBottomRightRadius = '15px'
@@ -641,7 +629,7 @@ window.onload = function() {
                         button_delete.setAttribute('id','button_delete')
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
-                            if(data.password == localStorage.password){
+                            if(data.user == auth.currentUser.uid){
                                 db.ref('Messages/' + `message_${data.index}`).update({
                                     deleted: true   
                                 })
