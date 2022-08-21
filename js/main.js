@@ -299,6 +299,7 @@ window.onload = function() {
         var chat_input = document.createElement('input')
         chat_input.setAttribute('id', 'chat_input')
         chat_input.setAttribute('maxlength', 1000)
+        chat_input.setAttribute('autocomplete', 'off')
         chat_input.placeholder = `Say something...`
         chat_input.onfocus = ()=>{chat_input.placeholder = ''}
         chat_input.onblur = ()=>{chat_input.placeholder = 'Say something...'}
@@ -325,6 +326,7 @@ window.onload = function() {
             chat_input.focus()
             deleteReplyMessage()
         }
+        parent.refresh_chat()
     }
     var chat_logout = document.createElement('div')
     chat_logout.setAttribute('id', 'chat_logout')
