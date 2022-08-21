@@ -445,7 +445,7 @@ a {
     gap: 10px;
     justify-content: center;
     align-items: center;
-    border-radius: 50px;
+    border-radius: 35px;
     background-color: #eee;
     padding: 10px 30px 10px 10px;
     position: relative;
@@ -462,6 +462,7 @@ a {
     border-radius: 50px;
     border: 2px solid;
     outline: 2px dashed #ccc;
+    align-self:flex-start;
 }
 .message_inner_container{
     width: 100%;
@@ -581,7 +582,7 @@ span.message_time{
     100% {}
 }
 ::selection {
-    background-color: #D64045;
+    background-color: #e68d90;
     color: #fff;
 }
 ::-webkit-scrollbar {

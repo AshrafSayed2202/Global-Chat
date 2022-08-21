@@ -84,7 +84,6 @@ window.onload = function() {
                     auth.signInWithEmailAndPassword(sign_in_user_input.value, sign_in_password_input.value)
                     .then((userCredential) => {
                         var user = userCredential.user;
-                        console.log(user);
                     })
                     .catch((error) => {
                         window.alert(error.message)
@@ -164,7 +163,15 @@ window.onload = function() {
             if(/^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/.test(sign_up_user_input.value)){
                 if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_up_email_input.value)){
                     if( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){
-                        auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value).catch(async function(error){
+                        auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value).then((cred)=>{
+                            db.ref(`users/${cred.user.uid}`).set({
+                                name:sign_up_user_input.value,
+                                email:sign_up_email_input.value,
+                                image:sign_up_image_input.value,
+                                color:sign_up_color_input.value,
+                                bio:''
+                            })
+                        }).catch(async function(error){
                             const validate = await error.message
                             return validate
                         }).then((error)=>{
@@ -343,34 +350,37 @@ window.onload = function() {
             var replyMessage = {}
             if(chat_input_container.childNodes[0].className == 'cloned_message'){
                 replyMessage = {
-                    message:chat_input_container.childNodes[0].childNodes[0].textContent,
+                    message:chat_input_container.childNodes[0].childNodes[0].innerHTML,
                     index:chat_input_container.childNodes[0].dataset.index
                 }
             }
-            db.ref('Messages/').once('value', function(message_object) {
-                var index = parseFloat(message_object.numChildren()) + 1
-                let d = new Date();
-                let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-                db.ref('Messages/' + `message_${index}`).set({
-                    name: auth.currentUser.displayName,
-                    user: auth.currentUser.uid,
-                    color: localStorage.color,
-                    image: auth.currentUser.photoURL,
-                    message: message,
-                    index: index,
-                    messageTime: {
-                        hour: d.getHours(),
-                        minutes: d.getMinutes(),
-                        messageDate: {
-                            day: d.getDate(),
-                            month:months[d.getMonth()]
-                        }
-                    },
-                    deleted: false,
-                    reply:replyMessage
-                })
-                .then(function(){
-                    parent.refresh_chat()
+            db.ref(`users/${auth.currentUser.uid}`).on('value',(user)=>{
+                user = user.val()
+                db.ref('Messages/').once('value', function(message_object) {
+                    var index = parseFloat(message_object.numChildren()) + 1
+                    let d = new Date();
+                    let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+                    db.ref('Messages/' + `message_${index}`).set({
+                        name: user.name,
+                        user: auth.currentUser.uid,
+                        color: user.color,
+                        image: user.image,
+                        message: message,
+                        index: index,
+                        messageTime: {
+                            hour: d.getHours(),
+                            minutes: d.getMinutes(),
+                            messageDate: {
+                                day: d.getDate(),
+                                month:months[d.getMonth()]
+                            }
+                        },
+                        deleted: false,
+                        reply:replyMessage
+                    })
+                    .then(function(){
+                        parent.refresh_chat()
+                    })
                 })
             })
         }
@@ -425,12 +435,12 @@ window.onload = function() {
                                     if(unWantedMessage.childNodes[0].style.display == 'block'){
                                         if(unWantedMessage.nextSibling.childNodes[0].style.display == 'none'){
                                             if(data.user == auth.currentUser.uid){
-                                                unWantedMessage.nextSibling.style.borderTopLeftRadius = '50px'
+                                                unWantedMessage.nextSibling.style.borderTopLeftRadius = '35px'
                                                 if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
                                                     unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
                                                 }
                                             }else{
-                                                unWantedMessage.nextSibling.style.borderTopRightRadius = '50px'
+                                                unWantedMessage.nextSibling.style.borderTopRightRadius = '35px'
                                                 if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
                                                     unWantedMessage.nextSibling.style.borderBottomRightRadius = '15px'
                                                 }
@@ -501,7 +511,7 @@ window.onload = function() {
                         var repliedToMessage = document.createElement('p')
                         repliedToMessage.setAttribute('class','repliedTo-message')
                         repliedTo.setAttribute('class','repliedTo')
-                        repliedToMessage.textContent = "reply: "+data.reply.message
+                        repliedToMessage.innerHTML = "reply: "+data.reply.message
                         repliedTo.append(repliedToMessage)
                         message_container.append(repliedTo)
                         repliedTo.addEventListener('click',()=>{
@@ -682,6 +692,7 @@ window.onload = function() {
                 chat_input_container.childNodes[0].remove()
         }
     }
+    // <img style="width:100%;border-radius:20px;border: 5px solid #972e31;" src=""></img>
 var app = new GLOBAL_CHAT()
 auth.onAuthStateChanged((user)=>{
     if(user == null){
