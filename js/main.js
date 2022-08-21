@@ -11,6 +11,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database()
 var auth = firebase.auth()
+var facebookProvider = new firebase.auth.FacebookAuthProvider();
 window.onload = function() {
     class GLOBAL_CHAT{
         home(){
@@ -102,7 +103,19 @@ window.onload = function() {
         sign_in_social_text.innerText = 'Or Sign in with social platform'
         var sign_in_social_media = document.createElement('div')
         sign_in_social_media.setAttribute('class','social-media')
-        sign_in_social_media.innerHTML = `<a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a><a href="#" class="social-icon"><i class="fab fa-twitter"></i></a><a href="#" class="social-icon"><i class="fab fa-google"></i></a><a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>`
+        var sign_in_facebook = document.createElement('span')
+        sign_in_facebook.setAttribute('class','social-icon')
+        sign_in_facebook.innerHTML = '<i class="fa-brands fa-facebook-f"></i>'
+        var sign_in_twitter = document.createElement('span')
+        sign_in_twitter.setAttribute('class','social-icon')
+        sign_in_twitter.innerHTML = '<i class="fab fa-twitter"></i>'
+        var sign_in_google = document.createElement('span')
+        sign_in_google.setAttribute('class','social-icon')
+        sign_in_google.innerHTML = '<i class="fab fa-google"></i>'
+        var sign_in_linkedin = document.createElement('span')
+        sign_in_linkedin.setAttribute('class','social-icon')
+        sign_in_linkedin.innerHTML = '<i class="fab fa-linkedin-in"></i>'
+        sign_in_social_media.append(sign_in_facebook,sign_in_twitter,sign_in_google,sign_in_linkedin)
         var sign_in_account_text = document.createElement('p')
         sign_in_account_text.innerText = "Don't have an account? "
         var sign_up_btn2 = document.createElement('a')
@@ -205,7 +218,19 @@ window.onload = function() {
         sign_up_social_text.innerText = 'Or Sign in with social platform'
         var sign_up_social_media = document.createElement('div')
         sign_up_social_media.setAttribute('class','social-media')
-        sign_up_social_media.innerHTML = `<a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a><a href="#" class="social-icon"><i class="fab fa-twitter"></i></a><a href="#" class="social-icon"><i class="fab fa-google"></i></a><a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>`
+        var sign_up_facebook = document.createElement('span')
+        sign_up_facebook.setAttribute('class','social-icon')
+        sign_up_facebook.innerHTML = '<i class="fa-brands fa-facebook-f"></i>'
+        var sign_up_twitter = document.createElement('span')
+        sign_up_twitter.setAttribute('class','social-icon')
+        sign_up_twitter.innerHTML = '<i class="fab fa-twitter"></i>'
+        var sign_up_google = document.createElement('span')
+        sign_up_google.setAttribute('class','social-icon')
+        sign_up_google.innerHTML = '<i class="fab fa-google"></i>'
+        var sign_up_linkedin = document.createElement('span')
+        sign_up_linkedin.setAttribute('class','social-icon')
+        sign_up_linkedin.innerHTML = '<i class="fab fa-linkedin-in"></i>'
+        sign_up_social_media.append(sign_up_facebook,sign_up_twitter,sign_up_google,sign_up_linkedin)
         var sign_up_account_text = document.createElement('p')
         sign_up_account_text.setAttribute('class','account-text')
         sign_up_account_text.innerText = 'Already have an account? '
@@ -216,6 +241,12 @@ window.onload = function() {
         sign_in_btn2.addEventListener('click',()=>{join_container.classList.remove('sign-up-mode2')})
         sign_up_account_text.append(sign_in_btn2)
         sign_up_form.append(sign_up_title,sign_up_user_input_field,sign_up_image_input_field,sign_up_email_input_field,sign_up_password_input_field,sign_up_submit,sign_up_social_text,sign_up_social_media,sign_up_account_text)
+        var facebook_join = [sign_in_facebook,sign_up_facebook]
+        facebook_join.forEach((e)=>{
+            e.addEventListener('click',()=>{
+                firebase.auth().signInWithRedirect(facebookProvider);
+            })
+        })
         // Append forms
         signInSignUp.append(sign_in_form,sign_up_form)
         // panels

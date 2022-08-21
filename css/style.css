@@ -199,12 +199,8 @@ form.sign-up-form {
     border-radius: 50px;
     margin: 0 5px;
     transition: 0.3s;
+    cursor: pointer;
 }
-
-a {
-    text-decoration: none;
-}
-
 .social-icon:hover {
     color: #d64045;
     border-color: #d64045;
