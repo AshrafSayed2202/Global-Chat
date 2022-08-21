@@ -84,14 +84,17 @@ window.onload = function() {
                     auth.signInWithEmailAndPassword(sign_in_user_input.value, sign_in_password_input.value)
                     .then((userCredential) => {
                         var user = userCredential.user;
+                        console.log(user);
                     })
                     .catch((error) => {
-                        console.log(error.message,error.code);
+                        window.alert(error.message)
                     });
                 }else{
+                    sign_in_password_input_field.style.border = '3px solid red'
                     sign_in_password_input.focus()
                 }
             }else{
+                sign_in_user_input_field.style.border = '3px solid red'
                 sign_in_user_input.focus()
             }
         })
@@ -161,8 +164,7 @@ window.onload = function() {
             if(/^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/.test(sign_up_user_input.value)){
                 if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_up_email_input.value)){
                     if( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){
-                        const consle = auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value)
-                        consle.catch(async function(error){
+                        auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value).catch(async function(error){
                             const validate = await error.message
                             return validate
                         }).then((error)=>{
@@ -179,13 +181,16 @@ window.onload = function() {
                                 }
                         })
                     }else{
-                        console.log('password is wrong');
+                        sign_up_password_input_field.style.border = '3px solid red'
+                        sign_up_password_input.focus()
                     }
                 }else{
-                    console.log('email is wrong');
+                    sign_up_email_input_field.style.border = '3px solid red'
+                    sign_up_email_input.focus()
                 }
             }else{
-                console.log('username is wrong');
+                sign_up_user_input_field.style.border = '3px solid red'
+                sign_up_user_input.focus()
             }
         })
         var sign_up_social_text = document.createElement('p')
@@ -314,20 +319,17 @@ window.onload = function() {
             deleteReplyMessage()
         }
     }
-    var chat_logout_container = document.createElement('div')
-    chat_logout_container.setAttribute('id', 'chat_logout_container')
-    var chat_logout = document.createElement('button')
+    var chat_logout = document.createElement('div')
     chat_logout.setAttribute('id', 'chat_logout')
-    chat_logout.textContent = ` • logout`
+    chat_logout.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i>`
     chat_logout.onclick = function(){
         auth.signOut().then(()=>{
         }).catch((error)=>{
             console.log(error.message);
         })
     }
-    chat_logout_container.append(chat_logout)
     chat_input_container.append(chat_input, chat_input_send)
-    chat_inner_container.append(chat_content_container, chat_input_container, chat_logout_container)
+    chat_inner_container.append(chat_content_container, chat_input_container, chat_logout)
     chat_container.append(chat_inner_container)
     document.body.append(chat_container)
     parent.create_load('chat_content_container')
@@ -352,7 +354,7 @@ window.onload = function() {
                 db.ref('Messages/' + `message_${index}`).set({
                     name: auth.currentUser.displayName,
                     user: auth.currentUser.uid,
-                    // color: localStorage.color,
+                    color: localStorage.color,
                     image: auth.currentUser.photoURL,
                     message: message,
                     index: index,

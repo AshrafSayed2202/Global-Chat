@@ -350,7 +350,7 @@ a {
 /* End sign-in sign-up */
 #chat_container{
     width: 100%;
-    height: calc(100vh - 270px);
+    height: calc(100vh - 200px);
     display: flex;
     justify-content: center;
     float: left;
@@ -415,28 +415,26 @@ a {
     background-color: Transparent;
     cursor: pointer;
 }
-#chat_logout_container{
+#chat_logout{
     display: flex;
     justify-content: center;
     align-items: center;
-    float: left;
     padding: 20px 0;
-    position: relative;
-    width: 50%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #ccc;
-    border-bottom-right-radius: 50px;
-    border-bottom-left-radius: 50px;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    right: 25px;
+    top: 100px;
+    background-color: #eee;
+    border-radius: 50px;
     margin-top: 2px;
-}
-#chat_logout{
-    color: #D64045;
+    color: #000000b3;
     cursor: pointer;
-    background-color: transparent;
+    transition: 0.3s;
 }
 #chat_logout:hover{
-    text-decoration: underline;
+    background-color: #aaa;
+    color: white;
 }
 .message_container{
     width: -moz-fit-content;
