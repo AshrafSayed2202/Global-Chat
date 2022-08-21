@@ -62,7 +62,8 @@ window.onload = function() {
         sign_in_user_input_field.innerHTML = '<i class="fas fa-user"></i>'
         var sign_in_user_input = document.createElement('input')
         sign_in_user_input.type = 'text'
-        sign_in_user_input.placeholder = 'Username'
+        sign_in_user_input.placeholder = 'Email'
+        sign_in_user_input.oninput = ()=>{if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_in_user_input.value)){sign_in_user_input_field.style.border = "3px solid green"}else{sign_in_user_input_field.style.border = '2px solid #d64045'}}
         sign_in_user_input_field.append(sign_in_user_input)
         var sign_in_password_input_field = document.createElement('div')
         sign_in_password_input_field.setAttribute('class','input-field')
@@ -70,11 +71,31 @@ window.onload = function() {
         var sign_in_password_input = document.createElement('input')
         sign_in_password_input.type = "password"
         sign_in_password_input.placeholder = "Password"
+        sign_in_password_input.oninput = ()=>{if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_in_password_input.value)){sign_in_password_input_field.style.border = "3px solid green"}else{sign_in_password_input_field.style.border = '2px solid #d64045'}}
         sign_in_password_input_field.append(sign_in_password_input)
         var sign_in_submit = document.createElement('input')
         sign_in_submit.type = 'submit'
         sign_in_submit.value = 'Login'
         sign_in_submit.setAttribute('class','btn')
+        sign_in_submit.addEventListener('click',(e)=>{
+            e.preventDefault()
+            if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_in_user_input.value)){
+                if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_in_password_input.value)){
+                    auth.signInWithEmailAndPassword(sign_in_user_input.value, sign_in_password_input.value)
+                    .then((userCredential) => {
+                        console.log(userCredential.user);
+                        var user = userCredential.user;
+                    })
+                    .catch((error) => {
+                        console.log(error.message,error.code);
+                    });
+                }else{
+                    sign_in_password_input.focus()
+                }
+            }else{
+                sign_in_user_input.focus()
+            }
+        })
         var sign_in_social_text = document.createElement('p')
         sign_in_social_text.setAttribute('class','social-text')
         sign_in_social_text.innerText = 'Or Sign in with social platform'
@@ -147,10 +168,15 @@ window.onload = function() {
                             return validate
                         }).then((error)=>{
                                 if(error != 'The email address is already in use by another account.'){
+                                    auth.currentUser.updateProfile({
+                                        displayName:sign_up_user_input.value,
+                                        providerId:sign_up_user_input.value,
+                                        photoURL:sign_up_image_input.value
+                                    })
+                                    console.log(auth.currentUser);
                                     parent.save_name(sign_up_user_input.value,sign_up_email_input.value,sign_up_password_input.value,sign_up_color_input.value,sign_up_image_input.value)
                                     join_container.remove()
-                                    parent.create_title()
-                                    parent.create_chat()
+                                    parent.chat()
                                 }else{
                                     window.alert(error)
                                 }
@@ -297,8 +323,11 @@ window.onload = function() {
     chat_logout.setAttribute('id', 'chat_logout')
     chat_logout.textContent = ` • logout`
     chat_logout.onclick = function(){
-        localStorage.clear()
-        parent.home()
+        auth.signOut().then(()=>{
+            console.log('sign out done');
+        }).catch((error)=>{
+            console.log(error.message);
+        })
     }
     chat_logout_container.append(chat_logout)
     chat_input_container.append(chat_input, chat_input_send)
@@ -664,12 +693,12 @@ window.onload = function() {
         }
     }
 var app = new GLOBAL_CHAT()
-// app.chat()
 auth.onAuthStateChanged((user)=>{
     if(user == null){
         app.home()
     }else{
-        app.chat()
+        document.body.innerHTML = '';
+        app.chat();
     }
 })
 }
