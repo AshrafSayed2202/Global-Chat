@@ -161,6 +161,106 @@ form.sign-up-form {
     border-radius: 50%;
     border: 2px solid #ccc;
 }
+.forget-password{
+    font-size: 12px;
+    font-weight: 400;
+    cursor: pointer;
+}
+.forget-password:hover{
+    text-decoration: underline;
+    color: #d64045;
+}
+.reset_password_container{
+    position: absolute;
+    background-color: #eeeeeec9;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: 0.5s;
+    opacity: 0;
+}
+.reset_password{
+    height: 240px;
+    width: 500px;
+    max-width: 100%;
+    background: #d64045;
+    border-radius: 10px;
+    box-shadow: 11px 10px 34px -13px;
+}
+.reset_password_message{
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 5px;
+    margin-top: 20px;
+    text-align: center;
+}
+.dont_forget{
+    color: #eee;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 800;
+}
+.reset_password_input_field{
+    width: 80%;
+    height: 50px;
+    background: #f0f0f0;
+    margin: 15px auto;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+.reset_password_input_field input{
+    /* flex: 5; */
+    background: none;
+    border: none;
+    outline: none;
+    width: 80%;
+    font-size: 18px;
+    font-weight: 600;
+    color: #444;
+    text-align: center;
+}
+.reset_password_input_field input::placeholder{
+    text-align: center;
+}
+.reset_btn{
+    text-align: center;
+    cursor: pointer;
+    width: 100px;
+    margin: auto;
+    padding: 5px;
+    background-color: #4caf50;
+    color: white;
+    font-weight: 400;
+    text-transform: uppercase;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+.reset_btn:hover{
+    background-color: #009688;
+}
+.remembered{
+    color: #87ed8b;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    width: -moz-fit-content;
+    width: fit-content;
+    margin: 10px auto;
+}
+.remembered:hover{
+    color: #5ea560;
+    text-decoration: underline;
+}
 .btn {
     width: 150px;
     height: 50px;

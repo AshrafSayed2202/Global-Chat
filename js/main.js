@@ -73,6 +73,72 @@ window.onload = function() {
         sign_in_password_input.placeholder = "Password"
         sign_in_password_input.oninput = ()=>{if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_in_password_input.value)){sign_in_password_input_field.style.border = "3px solid green"}else{sign_in_password_input_field.style.border = '2px solid #d64045'}}
         sign_in_password_input_field.append(sign_in_password_input)
+        var forget_password = document.createElement('p')
+        forget_password.setAttribute('class','forget-password')
+        forget_password.textContent = 'Forget your password ?🤔'
+        forget_password.addEventListener('click',()=>{
+            window.onkeyup = function(e){
+                if(e.key == 'Escape'){
+                    closeForgetPassword()
+                }
+            }
+            var reset_password_container = document.createElement('div')
+            reset_password_container.setAttribute('class','reset_password_container')
+            setTimeout(()=>{
+                reset_password_container.style.opacity = '1'
+            },0)
+            var reset_password = document.createElement('div')
+            reset_password.setAttribute('class','reset_password')
+            var reset_password_message = document.createElement('p')
+            reset_password_message.setAttribute('class','reset_password_message')
+            reset_password_message.textContent = 'Enter you email address and you will receive reset password link'
+            var dont_forget = document.createElement('p')
+            dont_forget.setAttribute('class','dont_forget')
+            dont_forget.textContent = '⚠️Don\'t forget to check your SPAM folder⚠️'
+            var reset_password_input_field = document.createElement('div')
+            reset_password_input_field.setAttribute('class','reset_password_input_field')
+            var reset_password_input = document.createElement('input')
+            reset_password_input.type = 'email'
+            reset_password_input.placeholder = 'Email Address'
+            reset_password_input.onkeyup = (e)=>{
+                if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(reset_password_input.value)){
+                    reset_password_input_field.style.border = '3px solid green'
+                }else{
+                    reset_password_input_field.style.border = '3px solid #d64045'
+                }
+                if(e.key == 'Enter'){
+                    sendTheReset()
+                }
+            }
+            reset_password_input_field.append(reset_password_input)
+            var reset_btn = document.createElement('div')
+            reset_btn.setAttribute('class','reset_btn')
+            reset_btn.textContent = 'Reset'
+            reset_btn.addEventListener('click',sendTheReset)
+            var remembered = document.createElement('div')
+            remembered.setAttribute('class','remembered')
+            remembered.textContent = 'No problem I remembered it'
+            remembered.addEventListener('click',closeForgetPassword)
+            reset_password.append(reset_password_message,dont_forget,reset_password_input_field,reset_btn,remembered)
+            reset_password_container.append(reset_password)
+            document.body.append(reset_password_container)
+            function sendTheReset(){
+                auth.sendPasswordResetEmail(reset_password_input.value)
+                .then(()=>{
+                    //Password reset email sent
+                    closeForgetPassword()
+                })
+                .catch((error)=>{
+                    window.alert(error.message)
+                })
+            }
+            function closeForgetPassword(){
+                reset_password_container.style.opacity = '0'
+                setTimeout(()=>{
+                    reset_password_container.remove()
+                },300)
+            }
+        })
         var sign_in_submit = document.createElement('input')
         sign_in_submit.type = 'submit'
         sign_in_submit.value = 'Login'
@@ -106,7 +172,7 @@ window.onload = function() {
         sign_up_btn2.innerText = 'Sign up'
         sign_up_btn2.addEventListener('click',()=>{join_container.classList.add('sign-up-mode2')})
         sign_in_account_text.append(sign_up_btn2)
-        sign_in_form.append(sign_in_title,sign_in_user_input_field,sign_in_password_input_field,sign_in_submit,sign_in_account_text)
+        sign_in_form.append(sign_in_title,sign_in_user_input_field,sign_in_password_input_field,forget_password,sign_in_submit,sign_in_account_text)
         // sign up
         var sign_up_form = document.createElement('form')
         sign_up_form.setAttribute('action',"")
@@ -310,7 +376,6 @@ window.onload = function() {
                     chat_input_send.removeAttribute('disabled')
                     chat_input_send.classList.add('enabled')
                     chat_input_send.addEventListener('click',sendMessage)
-                    chat_input_send.click()
                 }else{
                     chat_input_send.classList.remove('enabled')
                 }
