@@ -123,7 +123,9 @@ form.sign-up-form {
     display: flex;
     align-items: center;
 }
-
+.input-field.optional{
+    border: 2px dashed #aaa;
+}
 .input-field i {
     flex: 1;
     text-align: center;

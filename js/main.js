@@ -127,7 +127,7 @@ window.onload = function() {
         sign_up_color_input.value = '#ffb317'
         sign_up_user_input_field.append(sign_up_color_input,sign_up_user_input)
         var sign_up_image_input_field = document.createElement('div')
-        sign_up_image_input_field.setAttribute('class','input-field')
+        sign_up_image_input_field.setAttribute('class','input-field optional')
         sign_up_image_input_field.innerHTML = `<i class="fa-solid fa-camera"></i>`
         var sign_up_image_input = document.createElement('input')
         sign_up_image_input.type = 'url'
@@ -310,6 +310,7 @@ window.onload = function() {
                     chat_input_send.removeAttribute('disabled')
                     chat_input_send.classList.add('enabled')
                     chat_input_send.addEventListener('click',sendMessage)
+                    chat_input_send.click()
                 }else{
                     chat_input_send.classList.remove('enabled')
                 }
@@ -348,7 +349,7 @@ window.onload = function() {
         send_message(message){
             var parent = this
             console.log();
-            if(auth.currentUser.uid == null || message == null){
+            if(auth.currentUser.uid != null && message == null){
                 return
             }
             var replyMessage = {}
@@ -389,12 +390,12 @@ window.onload = function() {
             })
         }
         refresh_chat(){
+            var parent = this
             var chat_content_container = document.getElementById('chat_content_container')
             db.ref('Messages/').on('value', function(messages_object) {
                 if(document.querySelector('.loader_container') != null){
                     document.querySelector('.loader_container').remove()
                 }
-                console.log(messages_object.numChildren());
                 if(messages_object.numChildren() == 0){
                     return
                 }
@@ -403,11 +404,7 @@ window.onload = function() {
                 var guide = []
                 var unordered = []
                 var ordered = []
-                var limit = 0
-                if(messages.length > 100){
-                    limit = messages.length - 100
-                }
-                for (var i = limit; i < messages.length; i++) {
+                for (var i = 0; i < messages.length; i++) {
                     guide.push(i+1)
                     unordered.push([messages[i], messages[i].index]);   
                 }
@@ -423,9 +420,8 @@ window.onload = function() {
                         }
                     })
                 })
-                guide = []
-                unordered = []
-                ordered.forEach(createMessage);
+                var newOrdered = ordered.slice(-50)
+                newOrdered.forEach(createMessage);
                 function createMessage(data){
                     if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
