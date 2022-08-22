@@ -127,6 +127,7 @@ window.onload = function() {
                 .then(()=>{
                     //Password reset email sent
                     closeForgetPassword()
+                    window.alert('✅Reset mail sent')
                 })
                 .catch((error)=>{
                     window.alert(error.message)
