@@ -310,74 +310,73 @@ window.onload = function() {
         container.append(loader_container)
         }
         create_chat(){
-        var parent = this;
-        var title_container = document.getElementById('title_container')
-        var title = document.getElementById('title')
-        title_container.classList.add('chat_title_container')
-        title.classList.add('chat_title')
-        var chat_container = document.createElement('div')
-        chat_container.setAttribute('id', 'chat_container')
-        var chat_inner_container = document.createElement('div')
-        chat_inner_container.setAttribute('id', 'chat_inner_container')
-        var chat_content_container = document.createElement('div')
-        chat_content_container.setAttribute('id', 'chat_content_container')
-        var chat_input_container = document.createElement('div')
-        chat_input_container.setAttribute('id', 'chat_input_container')
-        var chat_input_send = document.createElement('button')
-        chat_input_send.setAttribute('id', 'chat_input_send')
-        chat_input_send.setAttribute('disabled', true)
-        chat_input_send.innerHTML = `<i class="far fa-paper-plane"></i>`
-        var chat_input = document.createElement('input')
-        chat_input.setAttribute('id', 'chat_input')
-        chat_input.setAttribute('maxlength', 1000)
-        chat_input.setAttribute('autocomplete', 'off')
-        chat_input.placeholder = `Say something...`
-        chat_input.onfocus = ()=>{chat_input.placeholder = ''}
-        chat_input.onblur = ()=>{chat_input.placeholder = 'Say something...'}
-        chat_input.onkeyup  = function(e){
-        if(chat_input.value.length > 0){
-            chat_input_send.removeAttribute('disabled')
-            chat_input_send.classList.add('enabled')
-            chat_input_send.addEventListener('click',sendMessage)
-        }else{
-            chat_input_send.classList.remove('enabled')
-        }
-        if(e.key == 'Enter'){
-            sendMessage()
-        }
-        function sendMessage(){
+            var parent = this;
+            var title_container = document.getElementById('title_container')
+            var title = document.getElementById('title')
+            title_container.classList.add('chat_title_container')
+            title.classList.add('chat_title')
+            var chat_container = document.createElement('div')
+            chat_container.setAttribute('id', 'chat_container')
+            var chat_inner_container = document.createElement('div')
+            chat_inner_container.setAttribute('id', 'chat_inner_container')
+            var chat_content_container = document.createElement('div')
+            chat_content_container.setAttribute('id', 'chat_content_container')
+            var chat_input_container = document.createElement('div')
+            chat_input_container.setAttribute('id', 'chat_input_container')
+            var chat_input_send = document.createElement('button')
+            chat_input_send.setAttribute('id', 'chat_input_send')
             chat_input_send.setAttribute('disabled', true)
-            chat_input_send.classList.remove('enabled')
-            if(chat_input.value.length <= 0){
-                return
+            chat_input_send.innerHTML = `<i class="far fa-paper-plane"></i>`
+            var chat_input = document.createElement('input')
+            chat_input.setAttribute('id', 'chat_input')
+            chat_input.setAttribute('maxlength', 1000)
+            chat_input.setAttribute('autocomplete', 'off')
+            chat_input.placeholder = `Say something...`
+            chat_input.onfocus = ()=>{chat_input.placeholder = ''}
+            chat_input.onblur = ()=>{chat_input.placeholder = 'Say something...'}
+            chat_input.onkeyup  = function(e){
+                if(chat_input.value.length > 0){
+                    chat_input_send.removeAttribute('disabled')
+                    chat_input_send.classList.add('enabled')
+                    chat_input_send.addEventListener('click',sendMessage)
+                }else{
+                    chat_input_send.classList.remove('enabled')
+                }
+                if(e.key == 'Enter'){
+                    sendMessage()
+                }
+                function sendMessage(){
+                    chat_input_send.setAttribute('disabled', true)
+                    chat_input_send.classList.remove('enabled')
+                    if(chat_input.value.length <= 0){
+                        return
+                    }
+                    parent.create_load('chat_content_container')
+                    parent.send_message(chat_input.value)
+                    chat_input.value = ''
+                    chat_input.focus()
+                    deleteReplyMessage()
+                }
             }
+            var chat_logout = document.createElement('div')
+            chat_logout.setAttribute('id', 'chat_logout')
+            chat_logout.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i>`
+            chat_logout.onclick = function(){
+                auth.signOut().then(()=>{
+                }).catch((error)=>{
+                    console.log(error.message);
+                })
+            }
+            chat_input_container.append(chat_input, chat_input_send)
+            chat_inner_container.append(chat_content_container, chat_input_container, chat_logout)
+            chat_container.append(chat_inner_container)
+            document.body.append(chat_container)
             parent.create_load('chat_content_container')
-            parent.send_message(chat_input.value)
-            chat_input.value = ''
-            chat_input.focus()
-            deleteReplyMessage()
-        }
-        parent.refresh_chat()
-    }
-    var chat_logout = document.createElement('div')
-    chat_logout.setAttribute('id', 'chat_logout')
-    chat_logout.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i>`
-    chat_logout.onclick = function(){
-        auth.signOut().then(()=>{
-        }).catch((error)=>{
-            console.log(error.message);
-        })
-    }
-    chat_input_container.append(chat_input, chat_input_send)
-    chat_inner_container.append(chat_content_container, chat_input_container, chat_logout)
-    chat_container.append(chat_inner_container)
-    document.body.append(chat_container)
-    parent.create_load('chat_content_container')
-    parent.refresh_chat()
+            parent.refresh_chat()
         }
         send_message(message){
             var parent = this
-            if(auth.onAuthStateChanged((user) => {user.uid}) != null && message == null){
+            if(auth.currentUser.uid != null && message == null){
                 return
             }
             var replyMessage = {}
@@ -393,7 +392,7 @@ window.onload = function() {
                     var index = parseFloat(message_object.numChildren()) + 1
                     let d = new Date();
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-                    db.ref('Messages/' + `message_${index}`).set({
+                    db.ref('Messages/' + `${index}`).set({
                         name: user.name,
                         user: auth.currentUser.uid,
                         color: user.color,
@@ -418,75 +417,54 @@ window.onload = function() {
             })
         }
         refresh_chat(){
+            var parent = this;
             var chat_content_container = document.getElementById('chat_content_container')
-            db.ref('Messages/').on('value', function(messages_object) {
+            var messages = []
+            db.ref('Messages/').on('child_added', function(messages_object) {
                 if(document.querySelector('.loader_container') != null){
                     document.querySelector('.loader_container').remove()
                 }
                 if(messages_object.numChildren() == 0){
                     return
                 }
-                var messages = Object.values(messages_object.val());
-                var guide = []
-                var unordered = []
-                var ordered = []
-                var limit = 0
-                if(messages.length > 100){
-                    limit = messages.length - 100
-                }
-                for (var i = limit; i < messages.length; i++) {
-                    guide.push(i+1)
-                    unordered.push([messages[i], messages[i].index]);   
-                }
-                guide.forEach(function(key) {
-                    var found = true
-                    unordered = unordered.filter(function(item) {
-                        if(found && item[1] == key) {
-                            ordered.push(item[0])
-                            found = false
-                            return false
-                        }else{
-                            return true
-                        }
-                    })
-                })
-                guide = []
-                unordered = []
-                ordered.forEach(createMessage);
+                messages.push(messages_object.val())
+                messages.forEach(createMessage);
                 function createMessage(data){
                     if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
-                        if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
-                            unWantedMessage.style.transition = '0.3s'
-                            if(data.user == auth.currentUser.uid){
-                                unWantedMessage.style.transform = 'translateX(-150%)'
-                            }else{
-                                unWantedMessage.style.transform = 'translateX(150%)'
-                            }
-                            setTimeout(function(){
-                                if(unWantedMessage.nextSibling != null){
-                                    if(unWantedMessage.childNodes[0].style.display == 'block'){
-                                        if(unWantedMessage.nextSibling.childNodes[0].style.display == 'none'){
-                                            if(data.user == auth.currentUser.uid){
-                                                unWantedMessage.nextSibling.style.borderTopLeftRadius = '35px'
-                                                if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
-                                                    unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
+                        // db.ref('Messages/').on('child_changed', function(messages_object) {
+                            if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
+                                unWantedMessage.style.transition = '0.3s'
+                                if(data.user == auth.currentUser.uid){
+                                    unWantedMessage.style.transform = 'translateX(-150%)'
+                                }else{
+                                    unWantedMessage.style.transform = 'translateX(150%)'
+                                }
+                                setTimeout(function(){
+                                    if(unWantedMessage.nextSibling != null){
+                                        if(unWantedMessage.childNodes[0].style.display == 'block'){
+                                            if(unWantedMessage.nextSibling.childNodes[0].style.display == 'none'){
+                                                if(data.user == auth.currentUser.uid){
+                                                    unWantedMessage.nextSibling.style.borderTopLeftRadius = '35px'
+                                                    if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
+                                                        unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
+                                                    }
+                                                }else{
+                                                    unWantedMessage.nextSibling.style.borderTopRightRadius = '35px'
+                                                    if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
+                                                        unWantedMessage.nextSibling.style.borderBottomRightRadius = '15px'
+                                                    }
                                                 }
-                                            }else{
-                                                unWantedMessage.nextSibling.style.borderTopRightRadius = '35px'
-                                                if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
-                                                    unWantedMessage.nextSibling.style.borderBottomRightRadius = '15px'
-                                                }
+                                                unWantedMessage.nextSibling.childNodes[0].style.display = 'block'
+                                                unWantedMessage.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
+                                                unWantedMessage.nextSibling.style.paddingLeft = '10px'
                                             }
-                                            unWantedMessage.nextSibling.childNodes[0].style.display = 'block'
-                                            unWantedMessage.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
-                                            unWantedMessage.nextSibling.style.paddingLeft = '10px'
                                         }
                                     }
-                                }
-                                unWantedMessage.remove()
-                            },300)
-                        }
+                                    unWantedMessage.remove()
+                                },300)
+                            }
+                        // })
                         return false
                     }
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -675,13 +653,14 @@ window.onload = function() {
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
                             if(data.user == auth.currentUser.uid){
-                                db.ref('Messages/' + `message_${data.index}`).update({
+                                db.ref('Messages/' + `${data.index}`).update({
                                     deleted: true   
                                 })
                                 closeDeleteMessage()
                             }else{
                                 window.alert('You can\'t delete this')
                             }
+                            parent.refresh_chat()
                         }
                         var button_keep = document.createElement('button')
                         button_keep.setAttribute('id','button_keep')
