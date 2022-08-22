@@ -11,7 +11,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database()
 var auth = firebase.auth()
-var facebookProvider = new firebase.auth.FacebookAuthProvider();
 window.onload = function() {
     class GLOBAL_CHAT{
         home(){
@@ -98,25 +97,8 @@ window.onload = function() {
                 sign_in_user_input.focus()
             }
         })
-        var sign_in_social_text = document.createElement('p')
-        sign_in_social_text.setAttribute('class','social-text')
-        sign_in_social_text.innerText = 'Or Sign in with social platform'
-        var sign_in_social_media = document.createElement('div')
-        sign_in_social_media.setAttribute('class','social-media')
-        var sign_in_facebook = document.createElement('span')
-        sign_in_facebook.setAttribute('class','social-icon')
-        sign_in_facebook.innerHTML = '<i class="fa-brands fa-facebook-f"></i>'
-        var sign_in_twitter = document.createElement('span')
-        sign_in_twitter.setAttribute('class','social-icon')
-        sign_in_twitter.innerHTML = '<i class="fab fa-twitter"></i>'
-        var sign_in_google = document.createElement('span')
-        sign_in_google.setAttribute('class','social-icon')
-        sign_in_google.innerHTML = '<i class="fab fa-google"></i>'
-        var sign_in_linkedin = document.createElement('span')
-        sign_in_linkedin.setAttribute('class','social-icon')
-        sign_in_linkedin.innerHTML = '<i class="fab fa-linkedin-in"></i>'
-        sign_in_social_media.append(sign_in_facebook,sign_in_twitter,sign_in_google,sign_in_linkedin)
         var sign_in_account_text = document.createElement('p')
+        sign_in_account_text.setAttribute('class','account-text')
         sign_in_account_text.innerText = "Don't have an account? "
         var sign_up_btn2 = document.createElement('a')
         sign_up_btn2.href = '#'
@@ -124,7 +106,7 @@ window.onload = function() {
         sign_up_btn2.innerText = 'Sign up'
         sign_up_btn2.addEventListener('click',()=>{join_container.classList.add('sign-up-mode2')})
         sign_in_account_text.append(sign_up_btn2)
-        sign_in_form.append(sign_in_title,sign_in_user_input_field,sign_in_password_input_field,sign_in_submit,sign_in_social_text,sign_in_social_media,sign_in_account_text)
+        sign_in_form.append(sign_in_title,sign_in_user_input_field,sign_in_password_input_field,sign_in_submit,sign_in_account_text)
         // sign up
         var sign_up_form = document.createElement('form')
         sign_up_form.setAttribute('action',"")
@@ -167,6 +149,14 @@ window.onload = function() {
         sign_up_password_input.placeholder = 'Password'
         sign_up_password_input.oninput = ()=>{if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){sign_up_password_input_field.style.border = "3px solid green"}else{sign_up_password_input_field.style.border = '2px solid #d64045'}}
         sign_up_password_input_field.append(sign_up_password_input)
+        var sign_up_confirm_password_input_field = document.createElement('div')
+        sign_up_confirm_password_input_field.setAttribute('class','input-field')
+        sign_up_confirm_password_input_field.innerHTML = `<i class="fas fa-lock"></i>`
+        var sign_up_confirm_password_input = document.createElement('input')
+        sign_up_confirm_password_input.type = 'password'
+        sign_up_confirm_password_input.placeholder = 'Confirm Password'
+        sign_up_confirm_password_input.oninput = ()=>{if(sign_up_confirm_password_input.value == sign_up_password_input.value){sign_up_confirm_password_input_field.style.border = "3px solid green"}else{sign_up_confirm_password_input_field.style.border = '2px solid #d64045'}}
+        sign_up_confirm_password_input_field.append(sign_up_confirm_password_input)
         var sign_up_submit = document.createElement('input')
         sign_up_submit.type = 'submit'
         sign_up_submit.value = 'Sign up'
@@ -176,30 +166,35 @@ window.onload = function() {
             if(/^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/.test(sign_up_user_input.value)){
                 if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_up_email_input.value)){
                     if( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){
-                        auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value).then((cred)=>{
-                            db.ref(`users/${cred.user.uid}`).set({
-                                name:sign_up_user_input.value,
-                                email:sign_up_email_input.value,
-                                image:sign_up_image_input.value,
-                                color:sign_up_color_input.value,
-                                bio:''
+                        if(sign_up_confirm_password_input.value == sign_up_password_input.value){
+                            auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value).then((cred)=>{
+                                db.ref(`users/${cred.user.uid}`).set({
+                                    name:sign_up_user_input.value,
+                                    email:sign_up_email_input.value,
+                                    image:sign_up_image_input.value,
+                                    color:sign_up_color_input.value,
+                                    bio:''
+                                })
+                            }).catch(async function(error){
+                                const validate = await error.message
+                                return validate
+                            }).then((error)=>{
+                                    if(error != 'The email address is already in use by another account.'){
+                                        auth.currentUser.updateProfile({
+                                            displayName:sign_up_user_input.value,
+                                            providerId:sign_up_user_input.value,
+                                            photoURL:sign_up_image_input.value
+                                        })
+                                        join_container.remove()
+                                        parent.chat()
+                                    }else{
+                                        window.alert(error)
+                                    }
                             })
-                        }).catch(async function(error){
-                            const validate = await error.message
-                            return validate
-                        }).then((error)=>{
-                                if(error != 'The email address is already in use by another account.'){
-                                    auth.currentUser.updateProfile({
-                                        displayName:sign_up_user_input.value,
-                                        providerId:sign_up_user_input.value,
-                                        photoURL:sign_up_image_input.value
-                                    })
-                                    join_container.remove()
-                                    parent.chat()
-                                }else{
-                                    window.alert(error)
-                                }
-                        })
+                        }else{
+                            sign_up_confirm_password_input_field.style.border = '3px solid red'
+                            sign_up_confirm_password_input.focus()
+                        }
                     }else{
                         sign_up_password_input_field.style.border = '3px solid red'
                         sign_up_password_input.focus()
@@ -213,24 +208,6 @@ window.onload = function() {
                 sign_up_user_input.focus()
             }
         })
-        var sign_up_social_text = document.createElement('p')
-        sign_up_social_text.setAttribute('class','social-text')
-        sign_up_social_text.innerText = 'Or Sign in with social platform'
-        var sign_up_social_media = document.createElement('div')
-        sign_up_social_media.setAttribute('class','social-media')
-        var sign_up_facebook = document.createElement('span')
-        sign_up_facebook.setAttribute('class','social-icon')
-        sign_up_facebook.innerHTML = '<i class="fa-brands fa-facebook-f"></i>'
-        var sign_up_twitter = document.createElement('span')
-        sign_up_twitter.setAttribute('class','social-icon')
-        sign_up_twitter.innerHTML = '<i class="fab fa-twitter"></i>'
-        var sign_up_google = document.createElement('span')
-        sign_up_google.setAttribute('class','social-icon')
-        sign_up_google.innerHTML = '<i class="fab fa-google"></i>'
-        var sign_up_linkedin = document.createElement('span')
-        sign_up_linkedin.setAttribute('class','social-icon')
-        sign_up_linkedin.innerHTML = '<i class="fab fa-linkedin-in"></i>'
-        sign_up_social_media.append(sign_up_facebook,sign_up_twitter,sign_up_google,sign_up_linkedin)
         var sign_up_account_text = document.createElement('p')
         sign_up_account_text.setAttribute('class','account-text')
         sign_up_account_text.innerText = 'Already have an account? '
@@ -240,13 +217,7 @@ window.onload = function() {
         sign_in_btn2.innerText = 'Sign in'
         sign_in_btn2.addEventListener('click',()=>{join_container.classList.remove('sign-up-mode2')})
         sign_up_account_text.append(sign_in_btn2)
-        sign_up_form.append(sign_up_title,sign_up_user_input_field,sign_up_image_input_field,sign_up_email_input_field,sign_up_password_input_field,sign_up_submit,sign_up_social_text,sign_up_social_media,sign_up_account_text)
-        var facebook_join = [sign_in_facebook,sign_up_facebook]
-        facebook_join.forEach((e)=>{
-            e.addEventListener('click',()=>{
-                firebase.auth().signInWithRedirect(facebookProvider);
-            })
-        })
+        sign_up_form.append(sign_up_title,sign_up_user_input_field,sign_up_image_input_field,sign_up_email_input_field,sign_up_password_input_field,sign_up_confirm_password_input_field,sign_up_submit,sign_up_account_text)
         // Append forms
         signInSignUp.append(sign_in_form,sign_up_form)
         // panels
@@ -376,7 +347,8 @@ window.onload = function() {
         }
         send_message(message){
             var parent = this
-            if(auth.currentUser.uid != null && message == null){
+            console.log();
+            if(auth.currentUser.uid == null || message == null){
                 return
             }
             var replyMessage = {}
@@ -392,7 +364,7 @@ window.onload = function() {
                     var index = parseFloat(message_object.numChildren()) + 1
                     let d = new Date();
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-                    db.ref('Messages/' + `${index}`).set({
+                    db.ref('Messages/' + `message_${index}`).set({
                         name: user.name,
                         user: auth.currentUser.uid,
                         color: user.color,
@@ -417,54 +389,77 @@ window.onload = function() {
             })
         }
         refresh_chat(){
-            var parent = this;
             var chat_content_container = document.getElementById('chat_content_container')
-            var messages = []
-            db.ref('Messages/').on('child_added', function(messages_object) {
+            db.ref('Messages/').on('value', function(messages_object) {
                 if(document.querySelector('.loader_container') != null){
                     document.querySelector('.loader_container').remove()
                 }
+                console.log(messages_object.numChildren());
                 if(messages_object.numChildren() == 0){
                     return
                 }
-                messages.push(messages_object.val())
-                messages.forEach(createMessage);
+                var messages = []
+                messages = Object.values(messages_object.val());
+                var guide = []
+                var unordered = []
+                var ordered = []
+                var limit = 0
+                if(messages.length > 100){
+                    limit = messages.length - 100
+                }
+                for (var i = limit; i < messages.length; i++) {
+                    guide.push(i+1)
+                    unordered.push([messages[i], messages[i].index]);   
+                }
+                guide.forEach(function(key) {
+                    var found = true
+                    unordered = unordered.filter(function(item) {
+                        if(found && item[1] == key) {
+                            ordered.push(item[0])
+                            found = false
+                            return false
+                        }else{
+                            return true
+                        }
+                    })
+                })
+                guide = []
+                unordered = []
+                ordered.forEach(createMessage);
                 function createMessage(data){
                     if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
-                        // db.ref('Messages/').on('child_changed', function(messages_object) {
-                            if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
-                                unWantedMessage.style.transition = '0.3s'
-                                if(data.user == auth.currentUser.uid){
-                                    unWantedMessage.style.transform = 'translateX(-150%)'
-                                }else{
-                                    unWantedMessage.style.transform = 'translateX(150%)'
-                                }
-                                setTimeout(function(){
-                                    if(unWantedMessage.nextSibling != null){
-                                        if(unWantedMessage.childNodes[0].style.display == 'block'){
-                                            if(unWantedMessage.nextSibling.childNodes[0].style.display == 'none'){
-                                                if(data.user == auth.currentUser.uid){
-                                                    unWantedMessage.nextSibling.style.borderTopLeftRadius = '35px'
-                                                    if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
-                                                        unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
-                                                    }
-                                                }else{
-                                                    unWantedMessage.nextSibling.style.borderTopRightRadius = '35px'
-                                                    if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
-                                                        unWantedMessage.nextSibling.style.borderBottomRightRadius = '15px'
-                                                    }
+                        if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
+                            unWantedMessage.style.transition = '0.3s'
+                            if(data.user == auth.currentUser.uid){
+                                unWantedMessage.style.transform = 'translateX(-150%)'
+                            }else{
+                                unWantedMessage.style.transform = 'translateX(150%)'
+                            }
+                            setTimeout(function(){
+                                if(unWantedMessage.nextSibling != null){
+                                    if(unWantedMessage.childNodes[0].style.display == 'block'){
+                                        if(unWantedMessage.nextSibling.childNodes[0].style.display == 'none'){
+                                            if(data.user == auth.currentUser.uid){
+                                                unWantedMessage.nextSibling.style.borderTopLeftRadius = '35px'
+                                                if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
+                                                    unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
                                                 }
-                                                unWantedMessage.nextSibling.childNodes[0].style.display = 'block'
-                                                unWantedMessage.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
-                                                unWantedMessage.nextSibling.style.paddingLeft = '10px'
+                                            }else{
+                                                unWantedMessage.nextSibling.style.borderTopRightRadius = '35px'
+                                                if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
+                                                    unWantedMessage.nextSibling.style.borderBottomRightRadius = '15px'
+                                                }
                                             }
+                                            unWantedMessage.nextSibling.childNodes[0].style.display = 'block'
+                                            unWantedMessage.nextSibling.childNodes[1].childNodes[0].style.display = 'block'
+                                            unWantedMessage.nextSibling.style.paddingLeft = '10px'
                                         }
                                     }
-                                    unWantedMessage.remove()
-                                },300)
-                            }
-                        // })
+                                }
+                                unWantedMessage.remove()
+                            },300)
+                        }
                         return false
                     }
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -653,14 +648,13 @@ window.onload = function() {
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
                             if(data.user == auth.currentUser.uid){
-                                db.ref('Messages/' + `${data.index}`).update({
+                                db.ref('Messages/' + `message_${data.index}`).update({
                                     deleted: true   
                                 })
                                 closeDeleteMessage()
                             }else{
                                 window.alert('You can\'t delete this')
                             }
-                            parent.refresh_chat()
                         }
                         var button_keep = document.createElement('button')
                         button_keep.setAttribute('id','button_keep')
