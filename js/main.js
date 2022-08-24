@@ -436,6 +436,55 @@ window.onload = function() {
                 var join_btn = document.createElement('div')
                 join_btn.setAttribute('class','join_btn')
                 join_btn.textContent = "Join Room"
+                join_btn.addEventListener('click',()=>{
+                    join_buttons.innerHTML = ''
+                    var join_room_name_field = document.createElement('div')
+                    join_room_name_field.setAttribute('class','input-field')
+                    join_room_name_field.style.width = '80%'
+                    join_room_name_field.style.margin = 'auto'
+                    var join_room_name = document.createElement('input')
+                    join_room_name.placeholder = 'Room Name'
+                    join_room_name.setAttribute('class','creat_room_input')
+                    var confirm_room_name = document.createElement('div')
+                    confirm_room_name.textContent = 'Confirm'
+                    confirm_room_name.setAttribute('class','join_btn')
+                    confirm_room_name.addEventListener('click',confrimRoomName)
+                    function confrimRoomName(){
+                        db.ref(`Rooms/`).once('value',(rooms_object)=>{
+                            if(join_room_name.value.length >= 5 && rooms_object.val()[`${join_room_name.value}`] != undefined){
+                                var room_password_field = document.createElement('div')
+                                room_password_field.setAttribute('class','input-field')
+                                room_password_field.style.width = '80%'
+                                room_password_field.style.margin = '25px auto'
+                                var room_password = document.createElement('input')
+                                room_password.type = 'password'
+                                room_password.placeholder = 'Room Password'
+                                room_password.setAttribute('class','creat_room_input')
+                                room_password_field.append(room_password)
+                                join_room_name.setAttribute('disabled','')
+                                join_room_name_field.style.backgroundColor = '#ccc'
+                                confirm_room_name.remove()
+                                var confirm_room_create = document.createElement('div')
+                                confirm_room_create.textContent = 'Join Room'
+                                confirm_room_create.setAttribute('class','join_btn')
+                                confirm_room_create.addEventListener('click',confirmRoomPassword)
+                                function confirmRoomPassword(){
+                                    db.ref(`Rooms/${join_room_name.value}`).once('value',(e)=>{
+                                        if(room_password.value.length >= 5 && room_password.value == e.val().password){
+                                            document.body.innerHTML = ''
+                                            parent.chat(join_room_name.value)
+                                            closeJoinRoom()
+                                        }
+                                    })
+                                }
+                                join_buttons.append(room_password_field,confirm_room_create)
+                            }
+                        })
+                    }
+                    join_room_name_field.append(join_room_name)
+                    join_buttons.append(join_room_name_field,confirm_room_name)
+                    
+                })
                 var create_btn = document.createElement('div')
                 create_btn.setAttribute('class','join_btn')
                 create_btn.textContent = "Create New Room"
@@ -448,6 +497,11 @@ window.onload = function() {
                     var creat_room_name = document.createElement('input')
                     creat_room_name.placeholder = 'Room Name'
                     creat_room_name.setAttribute('class','creat_room_input')
+                    creat_room_name.onkeyup = (e)=>{
+                        if(e.key == "Enter"){
+                            confrimRoomName()
+                        }
+                    }
                     var confirm_room_name = document.createElement('div')
                     confirm_room_name.textContent = 'Confirm'
                     confirm_room_name.setAttribute('class','join_btn')
@@ -463,6 +517,11 @@ window.onload = function() {
                                 room_password.type = 'password'
                                 room_password.placeholder = 'Room Password'
                                 room_password.setAttribute('class','creat_room_input')
+                                room_password.onkeyup = (e)=>{
+                                    if(e.key == 'Enter'){
+                                        confirmRoomPassword()
+                                    }
+                                }
                                 room_password_field.append(room_password)
                                 creat_room_name.setAttribute('disabled','')
                                 creat_room_name_field.style.backgroundColor = '#ccc'
