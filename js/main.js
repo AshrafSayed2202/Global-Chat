@@ -445,6 +445,11 @@ window.onload = function() {
                     var join_room_name = document.createElement('input')
                     join_room_name.placeholder = 'Room Name'
                     join_room_name.setAttribute('class','creat_room_input')
+                    join_room_name.onkeyup = (e)=>{
+                        if(e.key == "Enter"){
+                            confrimRoomName()
+                        }
+                    }
                     var confirm_room_name = document.createElement('div')
                     confirm_room_name.textContent = 'Confirm'
                     confirm_room_name.setAttribute('class','join_btn')
@@ -460,6 +465,11 @@ window.onload = function() {
                                 room_password.type = 'password'
                                 room_password.placeholder = 'Room Password'
                                 room_password.setAttribute('class','creat_room_input')
+                                room_password.onkeyup = (e)=>{
+                                    if(e.key == "Enter"){
+                                        confirmRoomPassword()
+                                    }
+                                }
                                 room_password_field.append(room_password)
                                 join_room_name.setAttribute('disabled','')
                                 join_room_name_field.style.backgroundColor = '#ccc'
