@@ -460,7 +460,6 @@ form.sign-up-form {
     background-color: #f5d9dccf;
     border-bottom-right-radius: 20px;
     border-bottom-left-radius: 20px;
-    border-top: 3px solid #eee;
 }
 @media (max-width:767px) {
     #chat_inner_container{
@@ -476,6 +475,15 @@ form.sign-up-form {
     padding: 15px;
     position: relative;
     overflow-x: hidden;
+}
+.chat_name_container{
+    background-color: #d6404594;
+    color: white;
+    text-align: center;
+    font-weight: 400;
+    border-bottom: 3px solid #eee;
+    border-top: 1px dashed;
+    padding: 5px;
 }
 #chat_input_container{
     width: 100%;

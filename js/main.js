@@ -20,7 +20,7 @@ window.onload = function() {
         }
         chat(){
         this.create_title()
-        this.create_chat()
+        this.create_chat('Global')
         }
         create_title(){
         var title_container = document.createElement('div')
@@ -347,7 +347,7 @@ window.onload = function() {
         loader_container.append(loader)
         container.append(loader_container)
         }
-        create_chat(){
+        create_chat(chat_name){
             var parent = this;
             var title_container = document.getElementById('title_container')
             var title = document.getElementById('title')
@@ -359,6 +359,9 @@ window.onload = function() {
             chat_inner_container.setAttribute('id', 'chat_inner_container')
             var chat_content_container = document.createElement('div')
             chat_content_container.setAttribute('id', 'chat_content_container')
+            var chat_name_container = document.createElement('div')
+            chat_name_container.setAttribute('class','chat_name_container')
+            chat_name_container.textContent = chat_name
             var chat_input_container = document.createElement('div')
             chat_input_container.setAttribute('id', 'chat_input_container')
             var chat_input_send = document.createElement('button')
@@ -390,7 +393,7 @@ window.onload = function() {
                         return
                     }
                     parent.create_load('chat_content_container')
-                    parent.send_message(chat_input.value)
+                    parent.send_message(chat_input.value,chat_name)
                     chat_input.value = ''
                     chat_input.focus()
                     deleteReplyMessage()
@@ -405,14 +408,14 @@ window.onload = function() {
                     console.log(error.message);
                 })
             }
-            chat_input_container.append(chat_input, chat_input_send)
-            chat_inner_container.append(chat_content_container, chat_input_container, chat_logout)
+            chat_input_container.append(chat_input,chat_input_send)
+            chat_inner_container.append(chat_name_container,chat_content_container, chat_input_container, chat_logout)
             chat_container.append(chat_inner_container)
             document.body.append(chat_container)
             parent.create_load('chat_content_container')
-            parent.refresh_chat()
+            parent.refresh_chat(chat_name)
         }
-        send_message(message){
+        send_message(message,chatName){
             var parent = this
             console.log();
             if(auth.currentUser.uid != null && message == null){
@@ -427,15 +430,17 @@ window.onload = function() {
             }
             db.ref(`users/${auth.currentUser.uid}`).on('value',(user)=>{
                 user = user.val()
-                db.ref('Messages/').once('value', function(message_object) {
+                db.ref(`Messages/${chatName}`).once('value', function(message_object) {
                     var index = parseFloat(message_object.numChildren()) + 1
                     let d = new Date();
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-                    db.ref('Messages/' + `message_${index}`).set({
-                        name: user.name,
-                        user: auth.currentUser.uid,
-                        color: user.color,
-                        image: user.image,
+                    db.ref(`Messages/${chatName}/message_${index}`).set({
+                        user: {
+                            uid:auth.currentUser.uid,
+                            name:user.name,
+                            color:user.color,
+                            image:user.image
+                        },
                         message: message,
                         index: index,
                         messageTime: {
@@ -450,15 +455,15 @@ window.onload = function() {
                         reply:replyMessage
                     })
                     .then(function(){
-                        parent.refresh_chat()
+                        parent.refresh_chat(chatName)
                     })
                 })
             })
         }
-        refresh_chat(){
+        refresh_chat(chatName){
             var parent = this
             var chat_content_container = document.getElementById('chat_content_container')
-            db.ref('Messages/').on('value', function(messages_object) {
+            db.ref(`Messages/${chatName}`).on('value', function(messages_object) {
                 if(document.querySelector('.loader_container') != null){
                     document.querySelector('.loader_container').remove()
                 }
@@ -493,7 +498,7 @@ window.onload = function() {
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
                         if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
                             unWantedMessage.style.transition = '0.3s'
-                            if(data.user == auth.currentUser.uid){
+                            if(data.user.uid == auth.currentUser.uid){
                                 unWantedMessage.style.transform = 'translateX(-150%)'
                             }else{
                                 unWantedMessage.style.transform = 'translateX(150%)'
@@ -502,7 +507,7 @@ window.onload = function() {
                                 if(unWantedMessage.nextSibling != null){
                                     if(unWantedMessage.childNodes[0].style.display == 'block'){
                                         if(unWantedMessage.nextSibling.childNodes[0].style.display == 'none'){
-                                            if(data.user == auth.currentUser.uid){
+                                            if(data.user.uid == auth.currentUser.uid){
                                                 unWantedMessage.nextSibling.style.borderTopLeftRadius = '35px'
                                                 if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
                                                     unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
@@ -526,10 +531,10 @@ window.onload = function() {
                     }
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                     let d = new Date()
-                    var name = data.name
+                    var name = data.user.name
                     var message = data.message
-                    var color = data.color
-                    var image = data.image
+                    var color = data.user.color
+                    var image = data.user.image
                     var message_container = document.createElement('div')
                     message_container.setAttribute('class', 'message_container')
                     message_container.setAttribute('data-index',data.index)
@@ -596,7 +601,7 @@ window.onload = function() {
                             }
                             window.onclick = (event)=>{repliedTo.contains(event.target)?false:document.querySelectorAll('.message_container').forEach((e)=>{e.classList.remove('active_real_message')});}
                         })
-                        if(data.user == auth.currentUser.uid){
+                        if(data.user.uid == auth.currentUser.uid){
                             repliedTo.style.borderBottomLeftRadius = '5px'
                             repliedTo.style.left = '0'
                             message_container.style.borderTopLeftRadius = '15px'
@@ -627,12 +632,12 @@ window.onload = function() {
                                 }
                             }
                         })
-                        if(data.user == auth.currentUser.uid){
+                        if(data.user.uid == auth.currentUser.uid){
                             message_container.childNodes[3].style.right = '-32px'
                             message_container.childNodes[3].style.opacity = '1'
                             message_container.childNodes[3].style.zIndex = '0'
                             if(message_container.previousSibling != null){
-                                if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
+                                if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.user.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
                                     message_container.childNodes[4].style.right = '-60px'
                                 }else{
                                     message_container.childNodes[4].style.right = '-32px'
@@ -661,7 +666,7 @@ window.onload = function() {
                         e.childNodes[4].style.opacity = '0'
                         e.childNodes[4].style.zIndex = '-1'
                     }
-                    if(data.user == auth.currentUser.uid){
+                    if(data.user.uid == auth.currentUser.uid){
                         message_container.style.marginLeft = 'initial'
                         message_container.style.borderBottomLeftRadius = '15px'
                         message_container.style.backgroundColor = '#D64045'
@@ -671,13 +676,13 @@ window.onload = function() {
                         message_container.style.borderBottomRightRadius = '15px'
                     }
                     if(message_container.previousSibling != null){
-                        if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
+                        if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.user.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
                             message_container.style.paddingLeft = '20px'
                             message_container.childNodes[3].style.top = '7px'
                             message_container.childNodes[3].style.borderBottomLeftRadius = '50%'
                             message_container.childNodes[4].style.bottom = '10px'
                             message_container.childNodes[4].style.borderTopLeftRadius = '50%'
-                            if(data.user == auth.currentUser.uid){
+                            if(data.user.uid == auth.currentUser.uid){
                                 message_container.style.borderTopLeftRadius = '15px'
                                 message_container.style.borderBottomLeftRadius = '40px'
                             }else{
@@ -687,7 +692,7 @@ window.onload = function() {
                             user_image.style.display = 'none'
                             message_user_container.style.display = 'none'
                             if(message_container.previousSibling.childNodes[1].firstChild.style.display == 'none'){
-                                if(data.user == auth.currentUser.uid){
+                                if(data.user.uid == auth.currentUser.uid){
                                     message_container.previousSibling.style.borderBottomLeftRadius = '15px'
                                 }else{
                                     message_container.previousSibling.style.borderBottomRightRadius = '15px'
@@ -709,8 +714,8 @@ window.onload = function() {
                         button_delete.setAttribute('id','button_delete')
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
-                            if(data.user == auth.currentUser.uid){
-                                db.ref('Messages/' + `message_${data.index}`).update({
+                            if(data.user.uid == auth.currentUser.uid){
+                                db.ref(`Messages/${chatName}/message_${data.index}`).update({
                                     deleted: true   
                                 })
                                 closeDeleteMessage()
