@@ -18,9 +18,9 @@ window.onload = function() {
         this.create_title()
         this.create_join_form()
         }
-        chat(){
+        chat(chatName){
         this.create_title()
-        this.create_chat('Global')
+        this.create_chat(chatName)
         }
         create_title(){
         var title_container = document.createElement('div')
@@ -253,7 +253,7 @@ window.onload = function() {
                                             photoURL:sign_up_image_input.value
                                         })
                                         join_container.remove()
-                                        parent.chat()
+                                        parent.chat('Global')
                                     }else{
                                         window.alert(error)
                                     }
@@ -408,8 +408,106 @@ window.onload = function() {
                     console.log(error.message);
                 })
             }
+            var profile_container = document.createElement('div')
+            profile_container.setAttribute('class','profile_container')
+            var profile_image = document.createElement('img')
+            profile_image.setAttribute('src',auth.currentUser.photoURL)
+            var join_room_btn = document.createElement('p')
+            join_room_btn.setAttribute('class','join_room_btn')
+            join_room_btn.textContent = 'Join private room.'
+            join_room_btn.addEventListener('click',()=>{
+                window.onkeyup = function(e){
+                    if(e.key == "Escape"){
+                        closeJoinRoom()
+                    }
+                }
+                var join_room_container = document.createElement('div')
+                join_room_container.setAttribute('class','join_room_container')
+                setTimeout(()=>{
+                    join_room_container.style.opacity = '1'
+                },0)
+                var join_room = document.createElement('div')
+                join_room.setAttribute('class','join_room')
+                var join_room_title = document.createElement('p')
+                join_room_title.innerHTML = 'Join Private Room'
+                var join_buttons = document.createElement('div')
+                join_buttons.style.height = '130px'
+                join_buttons.style.marginTop = '25px'
+                var join_btn = document.createElement('div')
+                join_btn.setAttribute('class','join_btn')
+                join_btn.textContent = "Join Room"
+                var create_btn = document.createElement('div')
+                create_btn.setAttribute('class','join_btn')
+                create_btn.textContent = "Create New Room"
+                create_btn.addEventListener('click',()=>{
+                    join_buttons.innerHTML = ''
+                    var creat_room_name_field = document.createElement('div')
+                    creat_room_name_field.setAttribute('class','input-field')
+                    creat_room_name_field.style.width = '80%'
+                    creat_room_name_field.style.margin = 'auto'
+                    var creat_room_name = document.createElement('input')
+                    creat_room_name.placeholder = 'Room Name'
+                    creat_room_name.setAttribute('class','creat_room_input')
+                    var confirm_room_name = document.createElement('div')
+                    confirm_room_name.textContent = 'Confirm'
+                    confirm_room_name.setAttribute('class','join_btn')
+                    confirm_room_name.addEventListener('click',confrimRoomName)
+                    function confrimRoomName(){
+                        db.ref(`Rooms/`).once('value',(rooms_object)=>{
+                            if(creat_room_name.value.length >= 5 && rooms_object.val()[`${creat_room_name.value}`] == undefined){
+                                var room_password_field = document.createElement('div')
+                                room_password_field.setAttribute('class','input-field')
+                                room_password_field.style.width = '80%'
+                                room_password_field.style.margin = '25px auto'
+                                var room_password = document.createElement('input')
+                                room_password.type = 'password'
+                                room_password.placeholder = 'Room Password'
+                                room_password.setAttribute('class','creat_room_input')
+                                room_password_field.append(room_password)
+                                creat_room_name.setAttribute('disabled','')
+                                creat_room_name_field.style.backgroundColor = '#ccc'
+                                confirm_room_name.remove()
+                                var confirm_room_create = document.createElement('div')
+                                confirm_room_create.textContent = 'Create Room'
+                                confirm_room_create.setAttribute('class','join_btn')
+                                confirm_room_create.addEventListener('click',confirmRoomPassword)
+                                function confirmRoomPassword(){
+                                    db.ref(`Rooms/`).once('value',(rooms_object)=>{
+                                        if(room_password.value.length >= 5 && rooms_object.val()[`${creat_room_name.value}`] == undefined){
+                                            db.ref(`Rooms/${creat_room_name.value}`).set({
+                                                password:room_password.value
+                                            })
+                                            document.body.innerHTML = ''
+                                            parent.chat(creat_room_name.value)
+                                            closeJoinRoom()
+                                        }
+                                    })
+                                }
+                                join_buttons.append(room_password_field,confirm_room_create)
+                            }
+                        })
+                    }
+                    creat_room_name_field.append(creat_room_name)
+                    join_buttons.append(creat_room_name_field,confirm_room_name)
+                })
+                var join_cancel_btn = document.createElement('div')
+                join_cancel_btn.setAttribute('class','join_cancel_btn')
+                join_cancel_btn.textContent = 'cancel'
+                join_cancel_btn.onclick = closeJoinRoom
+                join_buttons.append(join_btn,create_btn)
+                join_room.append(join_room_title,join_buttons,join_cancel_btn)
+                join_room_container.append(join_room)
+                document.body.append(join_room_container)
+                function closeJoinRoom(){
+                    join_room_container.style.opacity = '0'
+                    setTimeout(()=>{
+                        join_room_container.remove()
+                    },300)
+                }
+            })
+            profile_container.append(profile_image)
             chat_input_container.append(chat_input,chat_input_send)
-            chat_inner_container.append(chat_name_container,chat_content_container, chat_input_container, chat_logout)
+            chat_inner_container.append(chat_name_container,chat_content_container, chat_input_container, chat_logout,profile_container,join_room_btn)
             chat_container.append(chat_inner_container)
             document.body.append(chat_container)
             parent.create_load('chat_content_container')
@@ -430,11 +528,11 @@ window.onload = function() {
             }
             db.ref(`users/${auth.currentUser.uid}`).on('value',(user)=>{
                 user = user.val()
-                db.ref(`Messages/${chatName}`).once('value', function(message_object) {
+                db.ref(`Rooms/${chatName}/messages`).once('value', function(message_object) {
                     var index = parseFloat(message_object.numChildren()) + 1
                     let d = new Date();
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-                    db.ref(`Messages/${chatName}/message_${index}`).set({
+                    db.ref(`Rooms/${chatName}/messages/message_${index}`).set({
                         user: {
                             uid:auth.currentUser.uid,
                             name:user.name,
@@ -463,7 +561,7 @@ window.onload = function() {
         refresh_chat(chatName){
             var parent = this
             var chat_content_container = document.getElementById('chat_content_container')
-            db.ref(`Messages/${chatName}`).on('value', function(messages_object) {
+            db.ref(`Rooms/${chatName}/messages`).on('value', function(messages_object) {
                 if(document.querySelector('.loader_container') != null){
                     document.querySelector('.loader_container').remove()
                 }
@@ -715,7 +813,7 @@ window.onload = function() {
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
                             if(data.user.uid == auth.currentUser.uid){
-                                db.ref(`Messages/${chatName}/message_${data.index}`).update({
+                                db.ref(`Rooms/${chatName}/messages/message_${data.index}`).update({
                                     deleted: true   
                                 })
                                 closeDeleteMessage()
@@ -772,7 +870,7 @@ auth.onAuthStateChanged((user)=>{
         app.home()
     }else{
         document.body.innerHTML = '';
-        app.chat();
+        app.chat('Global');
     }
 })
 }

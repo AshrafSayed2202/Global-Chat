@@ -218,7 +218,6 @@ form.sign-up-form {
     justify-content: center;
 }
 .reset_password_input_field input{
-    /* flex: 5; */
     background: none;
     border: none;
     outline: none;
@@ -448,7 +447,7 @@ form.sign-up-form {
 /* End sign-in sign-up */
 #chat_container{
     width: 100%;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 190px);
     display: flex;
     justify-content: center;
     float: left;
@@ -457,7 +456,7 @@ form.sign-up-form {
 #chat_inner_container{
     width: 40%;
     height: 100%;
-    background-color: #f5d9dccf;
+    background-color: #f5d9dcde;
     border-bottom-right-radius: 20px;
     border-bottom-left-radius: 20px;
 }
@@ -472,18 +471,26 @@ form.sign-up-form {
     float: left;
     overflow-y: auto;
     font-family: Varela Round;
-    padding: 15px;
+    padding: 45px 15px 15px;;
     position: relative;
     overflow-x: hidden;
 }
 .chat_name_container{
-    background-color: #d6404594;
+    background-color: rgba(214, 64, 69, 0.81);
     color: white;
     text-align: center;
     font-weight: 400;
-    border-bottom: 3px solid #eee;
+    border-bottom: 3px solid rgb(238, 238, 238);
     border-top: 1px dashed;
     padding: 5px;
+    position: absolute;
+    z-index: 1;
+    width: 250px;
+    max-width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
 }
 #chat_input_container{
     width: 100%;
@@ -527,9 +534,9 @@ form.sign-up-form {
     align-items: center;
     padding: 20px 0;
     position: absolute;
-    width: 50px;
-    height: 50px;
-    right: 25px;
+    width: 40px;
+    height: 40px;
+    right: 15px;
     top: 100px;
     background-color: #eee;
     border-radius: 50px;
@@ -541,6 +548,133 @@ form.sign-up-form {
 #chat_logout:hover{
     background-color: #aaa;
     color: white;
+}
+.profile_container{
+    width: 45px;
+    height: 45px;
+    position: absolute;
+    top: 100px;
+    left: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.profile_container img{
+    width: 100%;
+    border-radius: 50%;
+}
+.profile_container::before{
+    content: '';
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    border-radius: 50%;
+    border: 2px dashed #eee;
+    transform: translate(-2px, -2px);
+    transition: 0.3s    ;
+}
+.profile_container:hover{
+    transform: scale(1.2)
+}
+.profile_container:hover::before{
+    border-color: #ffeb3b;
+    animation: rotate 10s linear infinite alternate;
+}
+@keyframes rotate {
+    0%{
+        transform:translate(-2px, -2px) rotate(0deg);
+    }
+    100%{
+        transform:translate(-2px, -2px) rotate(360deg);
+    }
+}
+.profile_container p{
+    color: white;
+    font-weight: 400;
+    display: none;
+}
+.join_room_btn{
+    color: white;
+    position: absolute;
+    cursor: pointer;
+    top: 120px;
+    left: 77px;
+}
+.join_room_btn:hover{
+    text-decoration: underline;
+}
+.join_room_container{
+    position: absolute;
+    background-color: #eeeeeec9;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: 0.5s;
+    opacity: 0;
+}
+.join_room{
+    width: 400px;
+    max-width: 100%;
+    height: 600px;
+    background-color: #d64045;
+    border-radius: 50px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.join_room p{
+    background: #ddd;
+    color: #d64045;
+    text-align: center;
+    padding: 20px;
+    font-size: 25px;
+    font-weight: 800;
+    border: 5px dashed #d64045;
+    border-top-color: transparent;
+    display: flex;
+    justify-content: space-evenly;
+}
+.join_btn{
+    background-color: #8bc34a;
+    color: white;
+    text-transform: uppercase;
+    width: 250px;
+    max-width: 80%;
+    margin: 25px auto;
+    text-align: center;
+    font-weight: 400;
+    padding: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 5px;
+}
+.join_btn:hover{
+    background-color:#009688
+}
+.join_cancel_btn{
+    cursor: pointer;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+    margin: auto;
+    width: -moz-fit-content;
+    width: fit-content;
+}
+.join_cancel_btn:hover{
+    text-decoration: underline;
+}
+.creat_room_input{
+    width: 80% !important;
+    flex: none!important;
+    margin: auto!important;
 }
 .message_container{
     width: -moz-fit-content;
@@ -728,6 +862,7 @@ ul li:hover{
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 5;
 }
 #confirm_delete_message{
     background-color: #eee;
