@@ -298,7 +298,7 @@ window.onload = function() {
         var left_panel_h3 = document.createElement('h3')
         left_panel_h3.innerText = 'Member of Global chat?'
         var left_panel_p = document.createElement('p')
-        left_panel_p.innerText = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque accusantium dolor, eos'
+        left_panel_p.innerText = 'Sign in with your account now and chat like a free bird in the sky.'
         var left_panel_btn = document.createElement('button')
         left_panel_btn.setAttribute('class','btn')
         left_panel_btn.id = 'sign-in-btn'
@@ -318,7 +318,7 @@ window.onload = function() {
         var right_panel_h3 = document.createElement('h3')
         right_panel_h3.innerText = 'New to Global chat?'
         var right_panel_p = document.createElement('p')
-        right_panel_p.innerText = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque accusantium dolor, eos'
+        right_panel_p.innerText = 'Creat an Account now and Enjoy chatting with randoms in global or with friends in private.'
         var right_panel_btn = document.createElement('button')
         right_panel_btn.setAttribute('class','btn')
         right_panel_btn.id = 'sign-up-btn'
@@ -408,10 +408,15 @@ window.onload = function() {
                     console.log(error.message);
                 })
             }
-            var profile_container = document.createElement('div')
-            profile_container.setAttribute('class','profile_container')
+            var profile_image_container = document.createElement('div')
+            profile_image_container.setAttribute('class','profile_image_container')
             var profile_image = document.createElement('img')
             profile_image.setAttribute('src',auth.currentUser.photoURL)
+            var profile_contaner = document.createElement('div')
+            profile_contaner.setAttribute('class','profile_contaner')
+            profile_image_container.onclick = ()=>{
+                profile_contaner.classList.toggle('profile-active')
+            }
             var join_room_btn = document.createElement('p')
             join_room_btn.setAttribute('class','join_room_btn')
             join_room_btn.textContent = 'Join private room.'
@@ -481,6 +486,7 @@ window.onload = function() {
                                 function confirmRoomPassword(){
                                     db.ref(`Rooms/${join_room_name.value}`).once('value',(e)=>{
                                         if(room_password.value.length >= 5 && room_password.value == e.val().password){
+                                            localStorage.setItem('room',join_room_name.value)
                                             document.body.innerHTML = ''
                                             parent.chat(join_room_name.value)
                                             closeJoinRoom()
@@ -546,6 +552,7 @@ window.onload = function() {
                                             db.ref(`Rooms/${creat_room_name.value}`).set({
                                                 password:room_password.value
                                             })
+                                            localStorage.setItem('room',creat_room_name.value)
                                             document.body.innerHTML = ''
                                             parent.chat(creat_room_name.value)
                                             closeJoinRoom()
@@ -574,9 +581,9 @@ window.onload = function() {
                     },300)
                 }
             })
-            profile_container.append(profile_image)
+            profile_image_container.append(profile_image)
             chat_input_container.append(chat_input,chat_input_send)
-            chat_inner_container.append(chat_name_container,chat_content_container, chat_input_container, chat_logout,profile_container,join_room_btn)
+            chat_inner_container.append(chat_name_container,chat_content_container, chat_input_container, chat_logout,profile_image_container,profile_contaner,join_room_btn)
             chat_container.append(chat_inner_container)
             document.body.append(chat_container)
             parent.create_load('chat_content_container')
@@ -932,14 +939,16 @@ window.onload = function() {
                 chat_input_container.childNodes[0].remove()
         }
     }
-    // <img style="width:100%;border-radius:20px;border: 5px solid #972e31;" src=""></img>
 var app = new GLOBAL_CHAT()
 auth.onAuthStateChanged((user)=>{
     if(user == null){
         app.home()
     }else{
+        if(localStorage.room == undefined){
+            localStorage.setItem('room',"Global")
+        }
         document.body.innerHTML = '';
-        app.chat('Global');
+        app.chat(localStorage.room);
     }
 })
 }

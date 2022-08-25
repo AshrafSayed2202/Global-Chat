@@ -549,7 +549,7 @@ form.sign-up-form {
     background-color: #aaa;
     color: white;
 }
-.profile_container{
+.profile_image_container{
     width: 45px;
     height: 45px;
     position: absolute;
@@ -558,11 +558,11 @@ form.sign-up-form {
     cursor: pointer;
     transition: 0.3s;
 }
-.profile_container img{
+.profile_image_container img{
     width: 100%;
     border-radius: 50%;
 }
-.profile_container::before{
+.profile_image_container::before{
     content: '';
     background-color: transparent;
     width: 100%;
@@ -574,10 +574,10 @@ form.sign-up-form {
     transform: translate(-2px, -2px);
     transition: 0.3s    ;
 }
-.profile_container:hover{
+.profile_image_container:hover{
     transform: scale(1.2)
 }
-.profile_container:hover::before{
+.profile_image_container:hover::before{
     border-color: #ffeb3b;
     animation: rotate 10s linear infinite alternate;
 }
@@ -589,10 +589,23 @@ form.sign-up-form {
         transform:translate(-2px, -2px) rotate(360deg);
     }
 }
-.profile_container p{
+.profile_image_container p{
     color: white;
     font-weight: 400;
     display: none;
+}
+.profile_contaner{
+    background-color: red;
+    position: absolute;
+    height: 100%;
+    width: 400px;
+    max-width: 100%;
+    left: 0;
+    transition: 0.7s;
+    transform: translateX(-100%);
+}
+.profile_contaner.profile-active{
+    transform: translateX(0);
 }
 .join_room_btn{
     color: white;
