@@ -497,18 +497,6 @@ form.sign-up-form {
     background-color: Transparent;
     cursor: pointer;
 }
-#chat_logout{
-    padding: 20px 0;
-    border-radius: 50px;
-    color: #fff;
-    cursor: pointer;
-    width: -moz-fit-content;
-    width: fit-content;
-    margin: auto;
-}
-#chat_logout:hover{
-    text-decoration: underline;
-}
 .get-in-touch{
     text-align: center;
     color: white;
@@ -572,6 +560,7 @@ form.sign-up-form {
     border: 6px solid #ff9800;
     display: flex;
     flex-direction: column;
+    overflow: auto;
 }
 .profile_container.profile-active{
     transform: translateX(0);
@@ -616,16 +605,31 @@ form.sign-up-form {
     transform: translateX(-50%);
     top: -7px;
 }
-.join_room_btn{
+.profile_bio{
+    color: white;
+    font-size: 13px;
+    margin: auto;
+    padding: 0 30px;
+    position: relative;
+}
+.profile_bio::before{
+    content: 'Biography';
+    font-size: 10px;
+    color: #eee9;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -13px;
+}
+.profile_inner_btn{
     padding: 20px 0;
-    border-radius: 50px;
     color: #fff;
     cursor: pointer;
     width: -moz-fit-content;
     width: fit-content;
     margin: auto;
 }
-.join_room_btn:hover{
+.profile_inner_btn:hover{
     text-decoration: underline;
 }
 .join_room_container{

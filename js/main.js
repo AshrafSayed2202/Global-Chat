@@ -21,6 +21,7 @@ window.onload = function() {
         chat(chatName){
         this.create_title()
         this.create_chat(chatName)
+        this.create_profile()
         }
         create_title(){
         var title_container = document.createElement('div')
@@ -298,7 +299,7 @@ window.onload = function() {
         left_panel_content.append(left_panel_h3,left_panel_p,left_panel_btn)
         var left_panel_img = document.createElement('img')
         left_panel_img.setAttribute('class','image')
-        left_panel_img.src = '/media/signin.svg'
+        left_panel_img.src = 'media/signin.svg'
         left_panel_img.alt = ''
         panel_left.append(left_panel_content,left_panel_img)
         // panel right
@@ -318,7 +319,7 @@ window.onload = function() {
         right_panel_content.append(right_panel_h3,right_panel_p,right_panel_btn)
         var right_panel_img = document.createElement('img')
         right_panel_img.setAttribute('class','image')
-        right_panel_img.src = '/media/signup.svg'
+        right_panel_img.src = 'media/signup.svg'
         right_panel_img.alt = ''
         panel_right.append(right_panel_content,right_panel_img)
         // Append panels
@@ -390,28 +391,42 @@ window.onload = function() {
                     deleteReplyMessage()
                 }
             }
-            var chat_logout = document.createElement('div')
-            chat_logout.setAttribute('id', 'chat_logout')
-            chat_logout.innerHTML = `Sign Out`
-            chat_logout.onclick = function(){
-                auth.signOut().then(()=>{
-                }).catch((error)=>{
-                    console.log(error.message);
-                })
-            }
+            chat_input_container.append(chat_input,chat_input_send)
+            chat_inner_container.append(chat_name_container,chat_content_container, chat_input_container)
+            chat_container.append(chat_inner_container)
+            document.body.append(chat_container)
+            parent.create_load('chat_content_container')
+            parent.refresh_chat(chat_name)
+        }
+        create_profile(){
+            var parent = this;
             var profile_btn_container = document.createElement('div')
             profile_btn_container.setAttribute('class','profile_btn_container')
             var profile_btn = document.createElement('img')
             profile_btn.setAttribute('src',auth.currentUser.photoURL)
-            profile_btn.onerror = (e)=>{e.target.src = '/media/user.webp';user_image.onerror = null}
+            profile_btn.onerror = (e)=>{e.target.src = 'media/user.webp';user_image.onerror = null}
             var profile_container = document.createElement('div')
             profile_container.setAttribute('class','profile_container')
             profile_btn_container.onclick = ()=>{
                 profile_container.classList.toggle('profile-active')
             }
+            var profile_image_container = document.createElement('div')
+            profile_image_container.setAttribute('class','profile_image_container')
+            var profile_image = document.createElement('img')
+            profile_image.setAttribute('class','profile_image')
+            var profile_image_edit_btn = document.createElement('span')
+            profile_image_edit_btn.innerHTML = '<i class="fa-solid fa-pen"></i>'
+            profile_image_edit_btn.addEventListener('click',()=>{
+                console.log('image edit btn clicked');
+            })
+            profile_image_container.append(profile_image_edit_btn,profile_image)
+            var profile_name = document.createElement('p')
+            profile_name.setAttribute('class','profile_name')
+            var profile_bio = document.createElement('p')
+            profile_bio.setAttribute('class','profile_bio')
             var join_room_btn = document.createElement('p')
-            join_room_btn.setAttribute('class','join_room_btn')
-            join_room_btn.textContent = 'Join private room.'
+            join_room_btn.setAttribute('class','profile_inner_btn')
+            join_room_btn.textContent = 'Join private room'
             join_room_btn.addEventListener('click',()=>{
                 window.onkeyup = function(e){
                     if(e.key == "Escape"){
@@ -479,8 +494,8 @@ window.onload = function() {
                                     db.ref(`Rooms/${join_room_name.value}`).once('value',(e)=>{
                                         if(room_password.value.length >= 5 && room_password.value == e.val().password){
                                             localStorage.setItem('room',join_room_name.value)
-                                            document.body.innerHTML = ''
-                                            parent.chat(join_room_name.value)
+                                            document.getElementById('chat_container').remove()
+                                            parent.create_chat(join_room_name.value)
                                             closeJoinRoom()
                                         }
                                     })
@@ -542,11 +557,12 @@ window.onload = function() {
                                     db.ref(`Rooms/`).once('value',(rooms_object)=>{
                                         if(room_password.value.length >= 5 && rooms_object.val()[`${creat_room_name.value}`] == undefined){
                                             db.ref(`Rooms/${creat_room_name.value}`).set({
-                                                password:room_password.value
+                                                password:room_password.value,
+                                                admin: auth.currentUser.uid
                                             })
                                             localStorage.setItem('room',creat_room_name.value)
-                                            document.body.innerHTML = ''
-                                            parent.chat(creat_room_name.value)
+                                            document.getElementById('chat_container').remove()
+                                            parent.create_chat(creat_room_name.value)
                                             closeJoinRoom()
                                         }
                                     })
@@ -573,20 +589,29 @@ window.onload = function() {
                     },300)
                 }
             })
-            var profile_image_container = document.createElement('div')
-            profile_image_container.setAttribute('class','profile_image_container')
-            var profile_image = document.createElement('img')
-            profile_image.src = auth.currentUser.photoURL
-            profile_image.setAttribute('class','profile_image')
-            var profile_image_edit_btn = document.createElement('span')
-            profile_image_edit_btn.innerHTML = '<i class="fa-solid fa-pen"></i>'
-            profile_image_edit_btn.addEventListener('click',()=>{
-                console.log('i won');
+            var back_to_global = document.createElement('div')
+            back_to_global.setAttribute('class','profile_inner_btn')
+            back_to_global.textContent = `Back to Global Chat`
+            back_to_global.addEventListener('click',()=>{
+                document.getElementById('chat_container').remove()
+                localStorage.room = 'Global'
+                parent.create_chat('Global')
             })
-            profile_image_container.append(profile_image_edit_btn,profile_image)
-            var profile_name = document.createElement('p')
-            profile_name.setAttribute('class','profile_name')
-            profile_name.textContent = auth.currentUser.displayName
+            var chat_logout = document.createElement('div')
+            chat_logout.setAttribute('class','profile_inner_btn')
+            chat_logout.innerHTML = `Sign Out`
+            chat_logout.onclick = function(){
+                auth.signOut().then(()=>{
+                }).catch((error)=>{
+                    console.log(error.message);
+                })
+            }
+            db.ref(`users/${auth.currentUser.uid}`).once('value',(user)=>{
+                user = user.val()
+                profile_image.src = user.image
+                profile_name.textContent = user.name,
+                profile_bio.textContent = user.bio
+            })
             var socials = document.createElement('div')
             socials.innerHTML = `<hr style="background:white;height:1px;width:80%;margin:auto;"><p class="get-in-touch">Get in touch with the creator</p><ul>
                 <li><a href="https://www.facebook.com/ashraf.tenshi/" title="facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a></li>
@@ -594,14 +619,9 @@ window.onload = function() {
                 <li><a href="https://www.linkedin.com/in/ashraf-sayed22/" title="linkedin" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a></li>
                 <li><a href="mailto:ashraf.neizk@gmail.com" title="mail" target="_blank"><i class="fa-brands fa-google"></i></a></li>
                 </ul>`
-            profile_container.append(profile_image_container,profile_name,join_room_btn,chat_logout,socials)
+            profile_container.append(profile_image_container,profile_name,profile_bio,join_room_btn,back_to_global,chat_logout,socials)
             profile_btn_container.append(profile_btn)
-            chat_input_container.append(chat_input,chat_input_send)
-            chat_inner_container.append(chat_name_container,chat_content_container, chat_input_container,profile_btn_container,profile_container)
-            chat_container.append(chat_inner_container)
-            document.body.append(chat_container)
-            parent.create_load('chat_content_container')
-            parent.refresh_chat(chat_name)
+            document.body.append(profile_btn_container,profile_container)
         }
         send_message(message,chatName){
             var parent = this
@@ -736,8 +756,8 @@ window.onload = function() {
                     var user_image = document.createElement('img')
                     user_image.setAttribute('class','user_image')
                     user_image.style.display = 'block'
-                    image == ""?user_image.src = '/media/user.webp': user_image.src = image;
-                    user_image.onerror = (e)=>{e.target.src = '/media/user.webp';user_image.onerror = null}
+                    image == ""?user_image.src = 'media/user.webp': user_image.src = image;
+                    user_image.onerror = (e)=>{e.target.src = 'media/user.webp';user_image.onerror = null}
                     user_image.style.borderColor = `${color}`
                     var message_user_container = document.createElement('div')
                     message_user_container.style.display = 'block'
