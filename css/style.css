@@ -4,7 +4,7 @@ body{
     font-weight: 900;
     overflow: hidden;
     animation: blur 0.5s ease-out;
-    background:linear-gradient(#d6404533,#d640451f), url(../background.png);
+    background:linear-gradient(#d6404533,#d640451f), url(../media/background.png);
     background-position: center;
 }
 *{
@@ -277,36 +277,6 @@ form.sign-up-form {
 .btn:hover {
     background: #8b2a2e;
 }
-
-.social-text {
-    margin: 10px 0;
-    font-size: 16px;
-}
-
-.social-media {
-    display: flex;
-    justify-content: center;
-    margin: 10px 0px;
-}
-
-.social-icon {
-    height: 45px;
-    width: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #444;
-    border: 1px solid #444;
-    border-radius: 50px;
-    margin: 0 5px;
-    transition: 0.3s;
-    cursor: pointer;
-}
-.social-icon:hover {
-    color: #d64045;
-    border-color: #d64045;
-}
-
 .panels-container {
     position: absolute;
     top: 0;
@@ -317,7 +287,6 @@ form.sign-up-form {
     align-items: center;
     justify-content: space-around;
 }
-
 .panel {
     display: flex;
     flex-direction: column;
@@ -529,27 +498,23 @@ form.sign-up-form {
     cursor: pointer;
 }
 #chat_logout{
-    display: flex;
-    justify-content: center;
-    align-items: center;
     padding: 20px 0;
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    right: 15px;
-    top: 100px;
-    background-color: #eee;
     border-radius: 50px;
-    margin-top: 2px;
-    color: #000000b3;
+    color: #fff;
     cursor: pointer;
-    transition: 0.3s;
+    width: -moz-fit-content;
+    width: fit-content;
+    margin: auto;
 }
 #chat_logout:hover{
-    background-color: #aaa;
-    color: white;
+    text-decoration: underline;
 }
-.profile_image_container{
+.get-in-touch{
+    text-align: center;
+    color: white;
+    margin-top: 20px;
+}
+.profile_btn_container{
     width: 45px;
     height: 45px;
     position: absolute;
@@ -558,11 +523,11 @@ form.sign-up-form {
     cursor: pointer;
     transition: 0.3s;
 }
-.profile_image_container img{
+.profile_btn_container img{
     width: 100%;
     border-radius: 50%;
 }
-.profile_image_container::before{
+.profile_btn_container::before{
     content: '';
     background-color: transparent;
     width: 100%;
@@ -574,10 +539,10 @@ form.sign-up-form {
     transform: translate(-2px, -2px);
     transition: 0.3s    ;
 }
-.profile_image_container:hover{
+.profile_btn_container:hover{
     transform: scale(1.2)
 }
-.profile_image_container:hover::before{
+.profile_btn_container:hover::before{
     border-color: #ffeb3b;
     animation: rotate 10s linear infinite alternate;
 }
@@ -589,30 +554,76 @@ form.sign-up-form {
         transform:translate(-2px, -2px) rotate(360deg);
     }
 }
-.profile_image_container p{
+.profile_btn_container p{
     color: white;
     font-weight: 400;
     display: none;
 }
-.profile_contaner{
-    background-color: red;
+.profile_container{
+    background-color: #b51e23eb;
     position: absolute;
-    height: 100%;
+    height: calc(100% - 180px);
     width: 400px;
     max-width: 100%;
     left: 0;
     transition: 0.7s;
     transform: translateX(-100%);
+    z-index: 5;
+    border: 6px solid #ff9800;
+    display: flex;
+    flex-direction: column;
 }
-.profile_contaner.profile-active{
+.profile_container.profile-active{
     transform: translateX(0);
 }
-.join_room_btn{
-    color: white;
+.profile_image{
+    width: 150px;
+    display: block;
+    margin: 25px auto;
+    border-radius: 50%;
+    border:3px dashed #ff9800;
+}
+.profile_image_container{
+    position: relative;
+}
+.profile_image_container i{
+    font-size: 13px;
+    color: #6d6d6d;
     position: absolute;
+    left: calc(50% + 41px);
+    bottom: 38px;
+    background-color: #ccc;
+    padding: 5px;
+    border-radius: 50%;
     cursor: pointer;
-    top: 120px;
-    left: 77px;
+    transition: 0.3s;
+}.profile_image_container i:hover{
+    color: #ccc;
+    background-color: #6d6d6d;
+}
+.profile_name{
+    color: white;
+    text-align: center; 
+    font-size: 35px;
+    position: relative;
+}
+.profile_name::before{
+    content: 'User Name';
+    font-size: 10px;
+    color: #eee9;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -7px;
+}
+.join_room_btn{
+    padding: 20px 0;
+    border-radius: 50px;
+    color: #fff;
+    cursor: pointer;
+    width: -moz-fit-content;
+    width: fit-content;
+    margin: auto;
 }
 .join_room_btn:hover{
     text-decoration: underline;

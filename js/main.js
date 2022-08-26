@@ -30,16 +30,7 @@ window.onload = function() {
         var title = document.createElement('h1')
         title.setAttribute('id', 'title')
         title.textContent = 'Global Chat'
-        var socials = document.createElement('div')
-        socials.setAttribute('class','socials')
-        socials.innerHTML = `<ul>
-            <li><a href="https://www.facebook.com/ashraf.tenshi/" title="facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a></li>
-            <li><a href="https://github.com/ashraf9932" title="github" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a></li>
-            <li><a href="https://www.linkedin.com/in/ashraf-sayed22/" title="linkedin" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a></li>
-            <li><a href="mailto:ashraf.neizk@gmail.com" title="mail" target="_blank"><i class="fa-brands fa-google"></i></a></li>
-        </ul>`
         title_inner_container.append(title)
-        title_inner_container.append(socials)
         title_container.append(title_inner_container)
         document.body.append(title_container)
         }
@@ -63,7 +54,7 @@ window.onload = function() {
         var sign_in_user_input = document.createElement('input')
         sign_in_user_input.type = 'text'
         sign_in_user_input.placeholder = 'Email'
-        sign_in_user_input.oninput = ()=>{if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_in_user_input.value)){sign_in_user_input_field.style.border = "3px solid green"}else{sign_in_user_input_field.style.border = '2px solid #d64045'}}
+        sign_in_user_input.oninput = ()=>{if(sign_in_user_input.value.length >= 5){sign_in_user_input_field.style.border = "3px solid green"}else{sign_in_user_input_field.style.border = '2px solid #d64045'}}
         sign_in_user_input_field.append(sign_in_user_input)
         var sign_in_password_input_field = document.createElement('div')
         sign_in_password_input_field.setAttribute('class','input-field')
@@ -146,7 +137,7 @@ window.onload = function() {
         sign_in_submit.setAttribute('class','btn')
         sign_in_submit.addEventListener('click',(e)=>{
             e.preventDefault()
-            if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_in_user_input.value)){
+            if(sign_in_user_input.value.length >= 5){
                 if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_in_password_input.value)){
                     auth.signInWithEmailAndPassword(sign_in_user_input.value, sign_in_password_input.value)
                     .then((userCredential) => {
@@ -187,7 +178,7 @@ window.onload = function() {
         var sign_up_user_input = document.createElement('input')
         sign_up_user_input.type = 'text'
         sign_up_user_input.placeholder = 'Username'
-        sign_up_user_input.oninput = ()=>{if(/^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/.test(sign_up_user_input.value)){sign_up_user_input_field.style.border = "3px solid green"}else{sign_up_user_input_field.style.border = '2px solid #d64045'}}
+        sign_up_user_input.oninput = ()=>{if(sign_up_user_input.value.length >= 5){sign_up_user_input_field.style.border = "3px solid green"}else{sign_up_user_input_field.style.border = '2px solid #d64045'}}
         var sign_up_color_input = document.createElement('input')
         sign_up_color_input.setAttribute('class','color-input')
         sign_up_color_input.type = 'color'
@@ -230,7 +221,7 @@ window.onload = function() {
         sign_up_submit.setAttribute('class','btn')
         sign_up_submit.addEventListener('click',(e)=>{
             e.preventDefault()
-            if(/^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/.test(sign_up_user_input.value)){
+            if(sign_up_user_input.value.length >= 5){
                 if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_up_email_input.value)){
                     if( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){
                         if(sign_up_confirm_password_input.value == sign_up_password_input.value){
@@ -307,7 +298,7 @@ window.onload = function() {
         left_panel_content.append(left_panel_h3,left_panel_p,left_panel_btn)
         var left_panel_img = document.createElement('img')
         left_panel_img.setAttribute('class','image')
-        left_panel_img.src = 'signin.svg'
+        left_panel_img.src = '/media/signin.svg'
         left_panel_img.alt = ''
         panel_left.append(left_panel_content,left_panel_img)
         // panel right
@@ -327,7 +318,7 @@ window.onload = function() {
         right_panel_content.append(right_panel_h3,right_panel_p,right_panel_btn)
         var right_panel_img = document.createElement('img')
         right_panel_img.setAttribute('class','image')
-        right_panel_img.src = 'signup.svg'
+        right_panel_img.src = '/media/signup.svg'
         right_panel_img.alt = ''
         panel_right.append(right_panel_content,right_panel_img)
         // Append panels
@@ -401,21 +392,22 @@ window.onload = function() {
             }
             var chat_logout = document.createElement('div')
             chat_logout.setAttribute('id', 'chat_logout')
-            chat_logout.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i>`
+            chat_logout.innerHTML = `Sign Out`
             chat_logout.onclick = function(){
                 auth.signOut().then(()=>{
                 }).catch((error)=>{
                     console.log(error.message);
                 })
             }
-            var profile_image_container = document.createElement('div')
-            profile_image_container.setAttribute('class','profile_image_container')
-            var profile_image = document.createElement('img')
-            profile_image.setAttribute('src',auth.currentUser.photoURL)
-            var profile_contaner = document.createElement('div')
-            profile_contaner.setAttribute('class','profile_contaner')
-            profile_image_container.onclick = ()=>{
-                profile_contaner.classList.toggle('profile-active')
+            var profile_btn_container = document.createElement('div')
+            profile_btn_container.setAttribute('class','profile_btn_container')
+            var profile_btn = document.createElement('img')
+            profile_btn.setAttribute('src',auth.currentUser.photoURL)
+            profile_btn.onerror = (e)=>{e.target.src = '/media/user.webp';user_image.onerror = null}
+            var profile_container = document.createElement('div')
+            profile_container.setAttribute('class','profile_container')
+            profile_btn_container.onclick = ()=>{
+                profile_container.classList.toggle('profile-active')
             }
             var join_room_btn = document.createElement('p')
             join_room_btn.setAttribute('class','join_room_btn')
@@ -581,9 +573,31 @@ window.onload = function() {
                     },300)
                 }
             })
-            profile_image_container.append(profile_image)
+            var profile_image_container = document.createElement('div')
+            profile_image_container.setAttribute('class','profile_image_container')
+            var profile_image = document.createElement('img')
+            profile_image.src = auth.currentUser.photoURL
+            profile_image.setAttribute('class','profile_image')
+            var profile_image_edit_btn = document.createElement('span')
+            profile_image_edit_btn.innerHTML = '<i class="fa-solid fa-pen"></i>'
+            profile_image_edit_btn.addEventListener('click',()=>{
+                console.log('i won');
+            })
+            profile_image_container.append(profile_image_edit_btn,profile_image)
+            var profile_name = document.createElement('p')
+            profile_name.setAttribute('class','profile_name')
+            profile_name.textContent = auth.currentUser.displayName
+            var socials = document.createElement('div')
+            socials.innerHTML = `<hr style="background:white;height:1px;width:80%;margin:auto;"><p class="get-in-touch">Get in touch with the creator</p><ul>
+                <li><a href="https://www.facebook.com/ashraf.tenshi/" title="facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a></li>
+                <li><a href="https://github.com/ashraf9932" title="github" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a></li>
+                <li><a href="https://www.linkedin.com/in/ashraf-sayed22/" title="linkedin" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a></li>
+                <li><a href="mailto:ashraf.neizk@gmail.com" title="mail" target="_blank"><i class="fa-brands fa-google"></i></a></li>
+                </ul>`
+            profile_container.append(profile_image_container,profile_name,join_room_btn,chat_logout,socials)
+            profile_btn_container.append(profile_btn)
             chat_input_container.append(chat_input,chat_input_send)
-            chat_inner_container.append(chat_name_container,chat_content_container, chat_input_container, chat_logout,profile_image_container,profile_contaner,join_room_btn)
+            chat_inner_container.append(chat_name_container,chat_content_container, chat_input_container,profile_btn_container,profile_container)
             chat_container.append(chat_inner_container)
             document.body.append(chat_container)
             parent.create_load('chat_content_container')
@@ -722,8 +736,8 @@ window.onload = function() {
                     var user_image = document.createElement('img')
                     user_image.setAttribute('class','user_image')
                     user_image.style.display = 'block'
-                    image == ""?user_image.src = 'user.webp': user_image.src = image;
-                    user_image.onerror = (e)=>{e.target.src = 'user.webp';user_image.onerror = null}
+                    image == ""?user_image.src = '/media/user.webp': user_image.src = image;
+                    user_image.onerror = (e)=>{e.target.src = '/media/user.webp';user_image.onerror = null}
                     user_image.style.borderColor = `${color}`
                     var message_user_container = document.createElement('div')
                     message_user_container.style.display = 'block'
