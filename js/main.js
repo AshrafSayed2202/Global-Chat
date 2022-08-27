@@ -681,7 +681,9 @@ window.onload = function() {
             db.ref(`users/${auth.currentUser.uid}`).on('value',(user)=>{
                 user = user.val()
                 profile_btn.src = user.image
+                profile_btn.onerror = (e)=>{e.target.src = 'media/user.webp';profile_btn.onerror = null}
                 profile_image.src = user.image
+                profile_image.onerror = (e)=>{e.target.src = 'media/user.webp';profile_image.onerror = null}
                 profile_image.style.borderColor = user.color
                 new_color_input.value = user.color
                 profile_name.textContent = user.name
@@ -694,7 +696,13 @@ window.onload = function() {
                 <li><a href="https://www.linkedin.com/in/ashraf-sayed22/" title="linkedin" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a></li>
                 <li><a href="mailto:ashraf.neizk@gmail.com" title="mail" target="_blank"><i class="fa-brands fa-google"></i></a></li>
                 </ul>`
-            profile_container.append(profile_image_container,profile_name,profile_bio,join_room_btn,back_to_global,chat_logout,socials)
+            var close_profile = document.createElement('span')
+            close_profile.setAttribute('class','close_profile')
+            close_profile.innerHTML = `<i class="fa-solid fa-arrow-right"></i>`
+            close_profile.addEventListener('click',()=>{
+                profile_container.classList.remove('profile-active')
+            })
+            profile_container.append(profile_image_container,profile_name,profile_bio,join_room_btn,back_to_global,chat_logout,socials,close_profile)
             profile_btn_container.append(profile_btn)
             document.body.append(profile_btn_container,profile_container)
         }

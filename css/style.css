@@ -30,11 +30,6 @@ body{
 #title_inner_container{
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 200px;
 }
 #title{
     display: inline-block;
@@ -45,6 +40,7 @@ body{
     user-select: none;
     text-align: center;
     line-height: 1;
+    padding: 20px;
 }
 /* Create sign-in sign-up */
 .container {
@@ -507,7 +503,7 @@ form.sign-up-form {
     height: 45px;
     position: absolute;
     top: 100px;
-    left: 15px;
+    right: 15px;
     cursor: pointer;
     transition: 0.3s;
 }
@@ -553,9 +549,9 @@ form.sign-up-form {
     height: calc(100% - 180px);
     width: 400px;
     max-width: 100%;
-    left: 0;
-    transition: 0.7s;
-    transform: translateX(-100%);
+    right: 0;
+    transition: 0.5s;
+    transform: translateX(100%);
     z-index: 5;
     border: 6px solid #ff9800;
     display: flex;
@@ -649,6 +645,19 @@ form.sign-up-form {
 }
 .profile_inner_btn:hover{
     text-decoration: underline;
+}
+.close_profile{
+    color: white;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    font-size: 22px;
+    transition: 0.3s;
+    padding: 5px;
+    cursor: pointer;
+}
+.close_profile:hover{
+    transform: translateX(5px);
 }
 .join_room_container{
     position: absolute;
