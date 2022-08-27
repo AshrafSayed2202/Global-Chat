@@ -555,12 +555,13 @@ form.sign-up-form {
     max-width: 100%;
     left: 0;
     transition: 0.7s;
-    transform: translateX(-100%);
+    transform: translateX(0%);
     z-index: 5;
     border: 6px solid #ff9800;
     display: flex;
     flex-direction: column;
     overflow: auto;
+    padding: 0 25px;
 }
 .profile_container.profile-active{
     transform: translateX(0);
@@ -580,7 +581,7 @@ form.sign-up-form {
     color: #6d6d6d;
     position: absolute;
     left: calc(50% + 41px);
-    bottom: 38px;
+    top: 140px;
     background-color: #ccc;
     padding: 5px;
     border-radius: 50%;
@@ -589,6 +590,14 @@ form.sign-up-form {
 }.profile_image_container i:hover{
     color: #ccc;
     background-color: #6d6d6d;
+}
+.new_imageURL_active{
+    display: none;
+}
+.update_image_color_submit i{
+    position: relative;
+    top: 0;
+    left: -10px;
 }
 .profile_name{
     color: white;
@@ -608,9 +617,18 @@ form.sign-up-form {
 .profile_bio{
     color: white;
     font-size: 13px;
-    margin: auto;
-    padding: 0 30px;
+    margin: 25px auto;
     position: relative;
+}
+.profile_bio span i{
+    position: absolute;
+    left: 100%;
+    cursor: pointer;
+    padding: 5px;
+    transition: 0.2s;
+}
+.profile_bio i:hover{
+    color: #707070;
 }
 .profile_bio::before{
     content: 'Biography';

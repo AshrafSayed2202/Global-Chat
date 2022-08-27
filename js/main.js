@@ -55,7 +55,7 @@ window.onload = function() {
         var sign_in_user_input = document.createElement('input')
         sign_in_user_input.type = 'text'
         sign_in_user_input.placeholder = 'Email'
-        sign_in_user_input.oninput = ()=>{if(sign_in_user_input.value.length >= 5){sign_in_user_input_field.style.border = "3px solid green"}else{sign_in_user_input_field.style.border = '2px solid #d64045'}}
+        sign_in_user_input.oninput = ()=>{if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_in_user_input.value)){sign_in_user_input_field.style.border = "3px solid green"}else{sign_in_user_input_field.style.border = '2px solid #d64045'}}
         sign_in_user_input_field.append(sign_in_user_input)
         var sign_in_password_input_field = document.createElement('div')
         sign_in_password_input_field.setAttribute('class','input-field')
@@ -138,7 +138,7 @@ window.onload = function() {
         sign_in_submit.setAttribute('class','btn')
         sign_in_submit.addEventListener('click',(e)=>{
             e.preventDefault()
-            if(sign_in_user_input.value.length >= 5){
+            if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_in_user_input.value)){
                 if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_in_password_input.value)){
                     auth.signInWithEmailAndPassword(sign_in_user_input.value, sign_in_password_input.value)
                     .then((userCredential) => {
@@ -403,8 +403,7 @@ window.onload = function() {
             var profile_btn_container = document.createElement('div')
             profile_btn_container.setAttribute('class','profile_btn_container')
             var profile_btn = document.createElement('img')
-            profile_btn.setAttribute('src',auth.currentUser.photoURL)
-            profile_btn.onerror = (e)=>{e.target.src = 'media/user.webp';user_image.onerror = null}
+            profile_btn.onerror = (e)=>{e.target.src = 'media/user.webp';profile_btn.onerror = null}
             var profile_container = document.createElement('div')
             profile_container.setAttribute('class','profile_container')
             profile_btn_container.onclick = ()=>{
@@ -413,18 +412,91 @@ window.onload = function() {
             var profile_image_container = document.createElement('div')
             profile_image_container.setAttribute('class','profile_image_container')
             var profile_image = document.createElement('img')
+            profile_image.onerror = (e)=>{e.target.src = 'media/user.webp';profile_image.onerror = null}
             profile_image.setAttribute('class','profile_image')
             var profile_image_edit_btn = document.createElement('span')
             profile_image_edit_btn.innerHTML = '<i class="fa-solid fa-pen"></i>'
-            profile_image_edit_btn.addEventListener('click',()=>{
-                console.log('image edit btn clicked');
+            var new_imageURL_input_field = document.createElement('div')
+                new_imageURL_input_field.setAttribute('class','input-field new_imageURL_active')
+                var new_imageURL_input = document.createElement('input')
+                new_imageURL_input.placeholder = 'New image Url'
+                new_imageURL_input.type = 'url'
+                new_imageURL_input.style.flex = 'none'
+                new_imageURL_input.style.width = '80%'
+                new_imageURL_input.style.margin = 'auto'
+                new_imageURL_input.style.textAlign = 'center'
+                new_imageURL_input.onkeyup = (e)=>{
+                    if(e.key == "Enter"){
+                        confirmUpdateImage()
+                    }
+                }
+                var new_color_input = document.createElement('input')
+                new_color_input.type = 'color'
+                new_color_input.setAttribute('class','color-input')
+                var update_image_color_submit = document.createElement('span')
+                update_image_color_submit.setAttribute('class','update_image_color_submit')
+                update_image_color_submit.innerHTML = `<i class="fa-solid fa-circle-check"></i>`
+                update_image_color_submit.addEventListener('click',confirmUpdateImage)
+                function confirmUpdateImage(){
+                    if(new_imageURL_input.value.length <= 5){
+                        db.ref(`users/${auth.currentUser.uid}`).update({
+                            color:new_color_input.value
+                        })
+                    }else{
+                        db.ref(`users/${auth.currentUser.uid}`).update({
+                            image:new_imageURL_input.value,
+                            color:new_color_input.value
+                        })
+                    }
+                    new_imageURL_input_field.classList.add('new_imageURL_active')
+                }
+                new_imageURL_input_field.append(new_imageURL_input,new_color_input,update_image_color_submit)
+                profile_image_edit_btn.addEventListener('click',()=>{
+                    new_imageURL_input_field.classList.toggle('new_imageURL_active')
             })
-            profile_image_container.append(profile_image_edit_btn,profile_image)
+            profile_image_container.append(profile_image_edit_btn,profile_image,new_imageURL_input_field)
             var profile_name = document.createElement('p')
             profile_name.setAttribute('class','profile_name')
             var profile_bio = document.createElement('p')
             profile_bio.setAttribute('class','profile_bio')
-            var join_room_btn = document.createElement('p')
+            var profile_bio_edit_btn = document.createElement('span')
+            profile_bio_edit_btn.innerHTML = `<i class="fa-solid fa-pen"></i>`
+            var profile_bio_edit_confirm = document.createElement('span')
+            profile_bio_edit_confirm.innerHTML = `<i class="fa-solid fa-circle-check"></i>`
+            profile_bio_edit_confirm.style.display = 'none'
+            var profile_bio_text = document.createElement('p')
+            profile_bio_edit_btn.addEventListener('click',()=>{
+                profile_bio_text.setAttribute('contenteditable','true')
+                profile_bio_text.style.backgroundColor = 'white'
+                profile_bio_text.style.color = 'black'
+                profile_bio_text.style.padding = '2px'
+                profile_bio_text.onkeydown = (e)=>{
+                    if(e.key == 'Enter'){
+                        confirmEditBio()
+                    }
+                    if(profile_bio_text.textContent.length > 150){
+                        if(e.key != 'Backspace'&&e.key != 'ArrowRight'&&e.key != 'ArrowLeft'&&e.key != 'ArrowUp'&&e.key != 'ArrowDown'){
+                            e.preventDefault()
+                        }
+                    }
+                }
+                profile_bio_edit_btn.style.display = 'none'
+                profile_bio_edit_confirm.style.display = 'block'
+                profile_bio_edit_confirm.addEventListener('click',confirmEditBio)
+                function confirmEditBio(){
+                    profile_bio_text.setAttribute('contenteditable','false')
+                    profile_bio_text.style.backgroundColor = 'transparent'
+                    profile_bio_text.style.color = 'white'
+                    profile_bio_text.style.padding = '0px'
+                    profile_bio_edit_btn.style.display = 'block'
+                    profile_bio_edit_confirm.style.display = 'none'
+                    db.ref(`users/${auth.currentUser.uid}`).update({
+                        bio:profile_bio_text.textContent
+                    })
+                }
+            })
+            profile_bio.append(profile_bio_edit_btn,profile_bio_edit_confirm,profile_bio_text)
+            var join_room_btn = document.createElement('div')
             join_room_btn.setAttribute('class','profile_inner_btn')
             join_room_btn.textContent = 'Join private room'
             join_room_btn.addEventListener('click',()=>{
@@ -606,11 +678,14 @@ window.onload = function() {
                     console.log(error.message);
                 })
             }
-            db.ref(`users/${auth.currentUser.uid}`).once('value',(user)=>{
+            db.ref(`users/${auth.currentUser.uid}`).on('value',(user)=>{
                 user = user.val()
+                profile_btn.src = user.image
                 profile_image.src = user.image
-                profile_name.textContent = user.name,
-                profile_bio.textContent = user.bio
+                profile_image.style.borderColor = user.color
+                new_color_input.value = user.color
+                profile_name.textContent = user.name
+                user.bio == ''?profile_bio_text.textContent = 'Nothing':profile_bio_text.textContent = user.bio;
             })
             var socials = document.createElement('div')
             socials.innerHTML = `<hr style="background:white;height:1px;width:80%;margin:auto;"><p class="get-in-touch">Get in touch with the creator</p><ul>
@@ -636,19 +711,14 @@ window.onload = function() {
                     index:chat_input_container.childNodes[0].dataset.index
                 }
             }
-            db.ref(`users/${auth.currentUser.uid}`).on('value',(user)=>{
+            db.ref(`users/${auth.currentUser.uid}`).once('value',(user)=>{
                 user = user.val()
                 db.ref(`Rooms/${chatName}/messages`).once('value', function(message_object) {
                     var index = parseFloat(message_object.numChildren()) + 1
                     let d = new Date();
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                     db.ref(`Rooms/${chatName}/messages/message_${index}`).set({
-                        user: {
-                            uid:auth.currentUser.uid,
-                            name:user.name,
-                            color:user.color,
-                            image:user.image
-                        },
+                        user: auth.currentUser.uid,
                         message: message,
                         index: index,
                         messageTime: {
@@ -702,11 +772,13 @@ window.onload = function() {
                 var newOrdered = ordered.slice(-50)
                 newOrdered.forEach(createMessage);
                 function createMessage(data){
+                    db.ref(`users/${data.user}`).once('value',(sender)=>{
+                        var messageSender = sender.val()
                     if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
                         if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
                             unWantedMessage.style.transition = '0.3s'
-                            if(data.user.uid == auth.currentUser.uid){
+                            if(data.user == auth.currentUser.uid){
                                 unWantedMessage.style.transform = 'translateX(-150%)'
                             }else{
                                 unWantedMessage.style.transform = 'translateX(150%)'
@@ -715,7 +787,7 @@ window.onload = function() {
                                 if(unWantedMessage.nextSibling != null){
                                     if(unWantedMessage.childNodes[0].style.display == 'block'){
                                         if(unWantedMessage.nextSibling.childNodes[0].style.display == 'none'){
-                                            if(data.user.uid == auth.currentUser.uid){
+                                            if(data.user == auth.currentUser.uid){
                                                 unWantedMessage.nextSibling.style.borderTopLeftRadius = '35px'
                                                 if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
                                                     unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
@@ -739,10 +811,10 @@ window.onload = function() {
                     }
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                     let d = new Date()
-                    var name = data.user.name
+                    var name = messageSender.name
                     var message = data.message
-                    var color = data.user.color
-                    var image = data.user.image
+                    var color = messageSender.color
+                    var image = messageSender.image
                     var message_container = document.createElement('div')
                     message_container.setAttribute('class', 'message_container')
                     message_container.setAttribute('data-index',data.index)
@@ -809,7 +881,7 @@ window.onload = function() {
                             }
                             window.onclick = (event)=>{repliedTo.contains(event.target)?false:document.querySelectorAll('.message_container').forEach((e)=>{e.classList.remove('active_real_message')});}
                         })
-                        if(data.user.uid == auth.currentUser.uid){
+                        if(data.user == auth.currentUser.uid){
                             repliedTo.style.borderBottomLeftRadius = '5px'
                             repliedTo.style.left = '0'
                             message_container.style.borderTopLeftRadius = '15px'
@@ -840,12 +912,12 @@ window.onload = function() {
                                 }
                             }
                         })
-                        if(data.user.uid == auth.currentUser.uid){
+                        if(data.user == auth.currentUser.uid){
                             message_container.childNodes[3].style.right = '-32px'
                             message_container.childNodes[3].style.opacity = '1'
                             message_container.childNodes[3].style.zIndex = '0'
                             if(message_container.previousSibling != null){
-                                if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.user.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
+                                if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == messageSender.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
                                     message_container.childNodes[4].style.right = '-60px'
                                 }else{
                                     message_container.childNodes[4].style.right = '-32px'
@@ -874,7 +946,7 @@ window.onload = function() {
                         e.childNodes[4].style.opacity = '0'
                         e.childNodes[4].style.zIndex = '-1'
                     }
-                    if(data.user.uid == auth.currentUser.uid){
+                    if(data.user == auth.currentUser.uid){
                         message_container.style.marginLeft = 'initial'
                         message_container.style.borderBottomLeftRadius = '15px'
                         message_container.style.backgroundColor = '#D64045'
@@ -884,13 +956,13 @@ window.onload = function() {
                         message_container.style.borderBottomRightRadius = '15px'
                     }
                     if(message_container.previousSibling != null){
-                        if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.user.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
+                        if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == messageSender.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
                             message_container.style.paddingLeft = '20px'
                             message_container.childNodes[3].style.top = '7px'
                             message_container.childNodes[3].style.borderBottomLeftRadius = '50%'
                             message_container.childNodes[4].style.bottom = '10px'
                             message_container.childNodes[4].style.borderTopLeftRadius = '50%'
-                            if(data.user.uid == auth.currentUser.uid){
+                            if(data.user == auth.currentUser.uid){
                                 message_container.style.borderTopLeftRadius = '15px'
                                 message_container.style.borderBottomLeftRadius = '40px'
                             }else{
@@ -900,7 +972,7 @@ window.onload = function() {
                             user_image.style.display = 'none'
                             message_user_container.style.display = 'none'
                             if(message_container.previousSibling.childNodes[1].firstChild.style.display == 'none'){
-                                if(data.user.uid == auth.currentUser.uid){
+                                if(data.user == auth.currentUser.uid){
                                     message_container.previousSibling.style.borderBottomLeftRadius = '15px'
                                 }else{
                                     message_container.previousSibling.style.borderBottomRightRadius = '15px'
@@ -922,7 +994,7 @@ window.onload = function() {
                         button_delete.setAttribute('id','button_delete')
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
-                            if(data.user.uid == auth.currentUser.uid){
+                            if(data.user == auth.currentUser.uid){
                                 db.ref(`Rooms/${chatName}/messages/message_${data.index}`).update({
                                     deleted: true   
                                 })
@@ -962,6 +1034,7 @@ window.onload = function() {
                         cloned_message.append(close_cloned_message)
                         chat_input_container.insertBefore(cloned_message,chat_input_container.firstChild)
                     })
+                })
                 }
                 chat_content_container.scrollTop = chat_content_container.scrollHeight;
             })
