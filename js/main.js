@@ -777,7 +777,12 @@ window.onload = function() {
                     let d = new Date();
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                     db.ref(`Rooms/${chatName}/messages/message_${index}`).set({
-                        user: auth.currentUser.uid,
+                        user: {
+                            uid:auth.currentUser.uid,
+                            name:user.name,
+                            color:user.color,
+                            image:user.image
+                        },
                         message: message,
                         index: index,
                         messageTime: {
@@ -831,13 +836,13 @@ window.onload = function() {
                 var newOrdered = ordered.slice(-50)
                 newOrdered.forEach(createMessage);
                 function createMessage(data){
-                    db.ref(`users/${data.user}`).once('value',(sender)=>{
-                        var messageSender = sender.val()
+                    // db.ref(`users/${data.user}`).once('value',(sender)=>{
+                        // var messageSender = sender.val()
                     if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
                         if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
                             unWantedMessage.style.transition = '0.3s'
-                            if(data.user == auth.currentUser.uid){
+                            if(data.user.uid == auth.currentUser.uid){
                                 unWantedMessage.style.transform = 'translateX(-150%)'
                             }else{
                                 unWantedMessage.style.transform = 'translateX(150%)'
@@ -846,7 +851,7 @@ window.onload = function() {
                                 if(unWantedMessage.nextSibling != null){
                                     if(unWantedMessage.childNodes[0].style.display == 'block'){
                                         if(unWantedMessage.nextSibling.childNodes[0].style.display == 'none'){
-                                            if(data.user == auth.currentUser.uid){
+                                            if(data.user.uid == auth.currentUser.uid){
                                                 unWantedMessage.nextSibling.style.borderTopLeftRadius = '35px'
                                                 if(unWantedMessage.nextSibling.nextSibling == null || unWantedMessage.nextSibling.nextSibling.childNodes[0].style.display == 'block'){
                                                     unWantedMessage.nextSibling.style.borderBottomLeftRadius = '15px'
@@ -870,10 +875,10 @@ window.onload = function() {
                     }
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                     let d = new Date()
-                    var name = messageSender.name
+                    var name = data.user.name
                     var message = data.message
-                    var color = messageSender.color
-                    var image = messageSender.image
+                    var color = data.user.color
+                    var image = data.user.image
                     var message_container = document.createElement('div')
                     message_container.setAttribute('class', 'message_container')
                     message_container.setAttribute('data-index',data.index)
@@ -940,7 +945,7 @@ window.onload = function() {
                             }
                             window.onclick = (event)=>{repliedTo.contains(event.target)?false:document.querySelectorAll('.message_container').forEach((e)=>{e.classList.remove('active_real_message')});}
                         })
-                        if(data.user == auth.currentUser.uid){
+                        if(data.user.uid == auth.currentUser.uid){
                             repliedTo.style.borderBottomLeftRadius = '5px'
                             repliedTo.style.left = '0'
                             message_container.style.borderTopLeftRadius = '15px'
@@ -971,12 +976,12 @@ window.onload = function() {
                                 }
                             }
                         })
-                        if(data.user == auth.currentUser.uid){
+                        if(data.user.uid == auth.currentUser.uid){
                             message_container.childNodes[3].style.right = '-32px'
                             message_container.childNodes[3].style.opacity = '1'
                             message_container.childNodes[3].style.zIndex = '0'
                             if(message_container.previousSibling != null){
-                                if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == messageSender.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
+                                if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.user.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
                                     message_container.childNodes[4].style.right = '-60px'
                                 }else{
                                     message_container.childNodes[4].style.right = '-32px'
@@ -1005,7 +1010,7 @@ window.onload = function() {
                         e.childNodes[4].style.opacity = '0'
                         e.childNodes[4].style.zIndex = '-1'
                     }
-                    if(data.user == auth.currentUser.uid){
+                    if(data.user.uid == auth.currentUser.uid){
                         message_container.style.marginLeft = 'initial'
                         message_container.style.borderBottomLeftRadius = '15px'
                         message_container.style.backgroundColor = '#D64045'
@@ -1015,13 +1020,13 @@ window.onload = function() {
                         message_container.style.borderBottomRightRadius = '15px'
                     }
                     if(message_container.previousSibling != null){
-                        if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == messageSender.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
+                        if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.user.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
                             message_container.style.paddingLeft = '20px'
                             message_container.childNodes[3].style.top = '7px'
                             message_container.childNodes[3].style.borderBottomLeftRadius = '50%'
                             message_container.childNodes[4].style.bottom = '10px'
                             message_container.childNodes[4].style.borderTopLeftRadius = '50%'
-                            if(data.user == auth.currentUser.uid){
+                            if(data.user.uid == auth.currentUser.uid){
                                 message_container.style.borderTopLeftRadius = '15px'
                                 message_container.style.borderBottomLeftRadius = '40px'
                             }else{
@@ -1031,7 +1036,7 @@ window.onload = function() {
                             user_image.style.display = 'none'
                             message_user_container.style.display = 'none'
                             if(message_container.previousSibling.childNodes[1].firstChild.style.display == 'none'){
-                                if(data.user == auth.currentUser.uid){
+                                if(data.user.uid == auth.currentUser.uid){
                                     message_container.previousSibling.style.borderBottomLeftRadius = '15px'
                                 }else{
                                     message_container.previousSibling.style.borderBottomRightRadius = '15px'
@@ -1053,7 +1058,7 @@ window.onload = function() {
                         button_delete.setAttribute('id','button_delete')
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
-                            if(data.user == auth.currentUser.uid){
+                            if(data.user.uid == auth.currentUser.uid){
                                 db.ref(`Rooms/${chatName}/messages/message_${data.index}`).update({
                                     deleted: true   
                                 })
@@ -1093,7 +1098,7 @@ window.onload = function() {
                         cloned_message.append(close_cloned_message)
                         chat_input_container.insertBefore(cloned_message,chat_input_container.firstChild)
                     })
-                })
+                // })
                 }
                 chat_content_container.scrollTop = chat_content_container.scrollHeight;
             })
