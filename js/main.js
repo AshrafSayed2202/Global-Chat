@@ -405,9 +405,10 @@ window.onload = function() {
             var profile_btn = document.createElement('img')
             profile_btn.onerror = (e)=>{e.target.src = 'media/user.webp';profile_btn.onerror = null}
             var profile_container = document.createElement('div')
-            profile_container.setAttribute('class','profile_container')
+            profile_container.setAttribute('class','aside_container')
             profile_btn_container.onclick = ()=>{
-                profile_container.classList.toggle('profile-active')
+                rooms_container.classList.remove('aside-active')
+                profile_container.classList.toggle('aside-active')
             }
             var profile_image_container = document.createElement('div')
             profile_image_container.setAttribute('class','profile_image_container')
@@ -417,27 +418,27 @@ window.onload = function() {
             var profile_image_edit_btn = document.createElement('span')
             profile_image_edit_btn.innerHTML = '<i class="fa-solid fa-pen"></i>'
             var new_imageURL_input_field = document.createElement('div')
-                new_imageURL_input_field.setAttribute('class','input-field new_imageURL_active')
-                var new_imageURL_input = document.createElement('input')
-                new_imageURL_input.placeholder = 'New image Url'
-                new_imageURL_input.type = 'url'
-                new_imageURL_input.style.flex = 'none'
-                new_imageURL_input.style.width = '80%'
-                new_imageURL_input.style.margin = 'auto'
-                new_imageURL_input.style.textAlign = 'center'
-                new_imageURL_input.onkeyup = (e)=>{
-                    if(e.key == "Enter"){
-                        confirmUpdateImage()
-                    }
+            new_imageURL_input_field.setAttribute('class','input-field new_imageURL_active')
+            var new_imageURL_input = document.createElement('input')
+            new_imageURL_input.placeholder = 'New image Url'
+            new_imageURL_input.type = 'url'
+            new_imageURL_input.style.flex = 'none'
+            new_imageURL_input.style.width = '80%'
+            new_imageURL_input.style.margin = 'auto'
+            new_imageURL_input.style.textAlign = 'center'
+            new_imageURL_input.onkeyup = (e)=>{
+                if(e.key == "Enter"){
+                    confirmUpdateImage()
                 }
-                var new_color_input = document.createElement('input')
-                new_color_input.type = 'color'
-                new_color_input.setAttribute('class','color-input')
-                var update_image_color_submit = document.createElement('span')
-                update_image_color_submit.setAttribute('class','update_image_color_submit')
-                update_image_color_submit.innerHTML = `<i class="fa-solid fa-circle-check"></i>`
-                update_image_color_submit.addEventListener('click',confirmUpdateImage)
-                function confirmUpdateImage(){
+            }
+            var new_color_input = document.createElement('input')
+            new_color_input.type = 'color'
+            new_color_input.setAttribute('class','color-input')
+            var update_image_color_submit = document.createElement('span')
+            update_image_color_submit.setAttribute('class','update_image_color_submit')
+            update_image_color_submit.innerHTML = `<i class="fa-solid fa-circle-check"></i>`
+            update_image_color_submit.addEventListener('click',confirmUpdateImage)
+            function confirmUpdateImage(){
                     if(new_imageURL_input.value.length <= 5){
                         db.ref(`users/${auth.currentUser.uid}`).update({
                             color:new_color_input.value
@@ -449,10 +450,10 @@ window.onload = function() {
                         })
                     }
                     new_imageURL_input_field.classList.add('new_imageURL_active')
-                }
-                new_imageURL_input_field.append(new_imageURL_input,new_color_input,update_image_color_submit)
-                profile_image_edit_btn.addEventListener('click',()=>{
-                    new_imageURL_input_field.classList.toggle('new_imageURL_active')
+            }
+            new_imageURL_input_field.append(new_imageURL_input,new_color_input,update_image_color_submit)
+            profile_image_edit_btn.addEventListener('click',()=>{
+                new_imageURL_input_field.classList.toggle('new_imageURL_active')
             })
             profile_image_container.append(profile_image_edit_btn,profile_image,new_imageURL_input_field)
             var profile_name = document.createElement('p')
@@ -700,11 +701,20 @@ window.onload = function() {
             close_profile.setAttribute('class','close_profile')
             close_profile.innerHTML = `<i class="fa-solid fa-arrow-right"></i>`
             close_profile.addEventListener('click',()=>{
-                profile_container.classList.remove('profile-active')
+                profile_container.classList.remove('aside-active')
             })
             profile_container.append(profile_image_container,profile_name,profile_bio,join_room_btn,back_to_global,chat_logout,socials,close_profile)
             profile_btn_container.append(profile_btn)
-            document.body.append(profile_btn_container,profile_container)
+            var rooms_btn = document.createElement('div')
+            rooms_btn.setAttribute('class','rooms_btn')
+            rooms_btn.textContent = 'ROOMS'
+            rooms_btn.addEventListener('click',()=>{
+                profile_container.classList.remove('aside-active')
+                rooms_container.classList.toggle('aside-active')
+            })
+            var rooms_container = document.createElement('div')
+            rooms_container.setAttribute('class','aside_container')
+            document.body.append(profile_btn_container,profile_container,rooms_btn,rooms_container)
         }
         send_message(message,chatName){
             var parent = this

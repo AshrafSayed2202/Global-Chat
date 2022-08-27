@@ -506,6 +506,7 @@ form.sign-up-form {
     right: 15px;
     cursor: pointer;
     transition: 0.3s;
+    z-index: 5;
 }
 .profile_btn_container img{
     width: 100%;
@@ -520,6 +521,7 @@ form.sign-up-form {
     position: absolute;
     border-radius: 50%;
     border: 2px dashed #eee;
+    outline: 3px solid #d64045;
     transform: translate(-2px, -2px);
     transition: 0.3s    ;
 }
@@ -528,7 +530,7 @@ form.sign-up-form {
 }
 .profile_btn_container:hover::before{
     border-color: #ffeb3b;
-    animation: rotate 10s linear infinite alternate;
+    animation: rotate 10s linear infinite;
 }
 @keyframes rotate {
     0%{
@@ -543,7 +545,26 @@ form.sign-up-form {
     font-weight: 400;
     display: none;
 }
-.profile_container{
+.rooms_btn{
+    position: absolute;
+    top: 108px;
+    right: 40px;
+    cursor: pointer;
+    transition: 0.3s;
+    color: #d64045;
+    background-color: #ddd;
+    padding: 1px 40px 1px 20px;
+    border-radius: 50px;
+    border: 2px dashed white;
+    font-weight: 400;
+}
+.rooms_btn:hover{
+    transform: scale(1.1);
+    color: #ddd;
+    background-color: #d64045;
+    border-color: #ffeb3b;
+}
+.aside_container{
     background-color: #b51e23eb;
     position: absolute;
     height: calc(100% - 180px);
@@ -559,7 +580,7 @@ form.sign-up-form {
     overflow: auto;
     padding: 0 25px;
 }
-.profile_container.profile-active{
+.aside_container.aside-active{
     transform: translateX(0);
 }
 .profile_image{
