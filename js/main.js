@@ -499,7 +499,7 @@ window.onload = function() {
             profile_bio.append(profile_bio_edit_btn,profile_bio_edit_confirm,profile_bio_text)
             var join_room_btn = document.createElement('div')
             join_room_btn.setAttribute('class','profile_inner_btn')
-            join_room_btn.textContent = 'Join private room'
+            join_room_btn.textContent = 'Private rooms'
             join_room_btn.addEventListener('click',()=>{
                 window.onkeyup = function(e){
                     if(e.key == "Escape"){
@@ -564,12 +564,31 @@ window.onload = function() {
                                 confirm_room_create.setAttribute('class','join_btn')
                                 confirm_room_create.addEventListener('click',confirmRoomPassword)
                                 function confirmRoomPassword(){
-                                    db.ref(`Rooms/${join_room_name.value}`).once('value',(e)=>{
-                                        if(room_password.value.length >= 5 && room_password.value == e.val().password){
+                                    db.ref(`Rooms/${join_room_name.value}`).once('value',(room)=>{
+                                        if(room_password.value.length >= 5 && room_password.value == room.val().password){
+                                            db.ref(`users/${auth.currentUser.uid}`).once('value',(user)=>{
+                                                if(user.val().rooms.includes(join_room_name.value)){
+                                                    return
+                                                }
+                                                var addedRoom = [join_room_name.value]
+                                                var newRooms = user.val().rooms.concat(addedRoom)
+                                                db.ref(`users/${auth.currentUser.uid}`).update({
+                                                    rooms: newRooms
+                                                })
+                                            })
                                             localStorage.setItem('room',join_room_name.value)
                                             document.getElementById('chat_container').remove()
                                             parent.create_chat(join_room_name.value)
                                             closeJoinRoom()
+                                            if(room.val().Members.includes(auth.currentUser.uid)){
+                                                return
+                                            }else{
+                                                var addedMember = [auth.currentUser.uid]
+                                            var newMembers = room.val().Members.concat(addedMember)
+                                            db.ref(`Rooms/${join_room_name.value}`).update({
+                                                Members: newMembers
+                                            })
+                                            }
                                         }
                                     })
                                 }
@@ -633,6 +652,15 @@ window.onload = function() {
                                                 password:room_password.value,
                                                 admin: auth.currentUser.uid
                                             })
+                                            db.ref(`users/${auth.currentUser.uid}`).once('value',(user)=>{
+                                                    var addedRoom = [creat_room_name.value]
+                                                    var newRooms = user.val().rooms.concat(addedRoom)
+                                                    db.ref(`users/${auth.currentUser.uid}`).update({
+                                                        rooms: newRooms
+                                                    })
+                                                user = user.val()
+                                                db.ref(`Rooms/${creat_room_name.value}/Members`).set([auth.currentUser.uid])
+                                            })
                                             localStorage.setItem('room',creat_room_name.value)
                                             document.getElementById('chat_container').remove()
                                             parent.create_chat(creat_room_name.value)
@@ -679,17 +707,6 @@ window.onload = function() {
                     console.log(error.message);
                 })
             }
-            db.ref(`users/${auth.currentUser.uid}`).on('value',(user)=>{
-                user = user.val()
-                profile_btn.src = user.image
-                profile_btn.onerror = (e)=>{e.target.src = 'media/user.webp';profile_btn.onerror = null}
-                profile_image.src = user.image
-                profile_image.onerror = (e)=>{e.target.src = 'media/user.webp';profile_image.onerror = null}
-                profile_image.style.borderColor = user.color
-                new_color_input.value = user.color
-                profile_name.textContent = user.name
-                user.bio == ''?profile_bio_text.textContent = 'Nothing':profile_bio_text.textContent = user.bio;
-            })
             var socials = document.createElement('div')
             socials.innerHTML = `<hr style="background:white;height:1px;width:80%;margin:auto;"><p class="get-in-touch">Get in touch with the creator</p><ul>
                 <li><a href="https://www.facebook.com/ashraf.tenshi/" title="facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a></li>
@@ -698,8 +715,8 @@ window.onload = function() {
                 <li><a href="mailto:ashraf.neizk@gmail.com" title="mail" target="_blank"><i class="fa-brands fa-google"></i></a></li>
                 </ul>`
             var close_profile = document.createElement('span')
-            close_profile.setAttribute('class','close_profile')
-            close_profile.innerHTML = `<i class="fa-solid fa-arrow-right"></i>`
+            close_profile.setAttribute('class','close_aside')
+            close_profile.innerHTML = `<i class="fa-solid fa-angle-right"></i>`
             close_profile.addEventListener('click',()=>{
                 profile_container.classList.remove('aside-active')
             })
@@ -714,7 +731,31 @@ window.onload = function() {
             })
             var rooms_container = document.createElement('div')
             rooms_container.setAttribute('class','aside_container')
-            document.body.append(profile_btn_container,profile_container,rooms_btn,rooms_container)
+            var my_rooms = document.createElement('div')
+            my_rooms.textContent = 'My Rooms'
+            my_rooms.setAttribute('class','rooms_list')
+            var joined_rooms = document.createElement('div')
+            joined_rooms.textContent = 'Joined Rooms'
+            joined_rooms.setAttribute('class','rooms_list')
+            var close_rooms = document.createElement('span')
+            close_rooms.setAttribute('class','close_aside')
+            close_rooms.innerHTML = `<i class="fa-solid fa-angle-right"></i>`
+            close_rooms.addEventListener('click',()=>{
+                rooms_container.classList.remove('aside-active')
+            })
+            db.ref(`users/${auth.currentUser.uid}`).on('value',(user)=>{
+                user = user.val()
+                profile_btn.src = user.image
+                profile_btn.onerror = (e)=>{e.target.src = 'media/user.webp';profile_btn.onerror = null}
+                profile_image.src = user.image
+                profile_image.onerror = (e)=>{e.target.src = 'media/user.webp';profile_image.onerror = null}
+                profile_image.style.borderColor = user.color
+                new_color_input.value = user.color
+                profile_name.textContent = user.name
+                user.bio == ''?profile_bio_text.textContent = 'Nothing':profile_bio_text.textContent = user.bio;
+            })
+            rooms_container.append(my_rooms,joined_rooms,close_rooms)
+            document.body.append(profile_btn_container,rooms_container,profile_container,rooms_btn)
         }
         send_message(message,chatName){
             var parent = this

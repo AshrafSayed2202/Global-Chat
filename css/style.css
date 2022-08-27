@@ -583,6 +583,14 @@ form.sign-up-form {
 .aside_container.aside-active{
     transform: translateX(0);
 }
+.rooms_list{
+    color: white;
+    flex: 1;
+    padding: 10px;
+    margin: 15px 0px 15px 40px;
+    background-color: #eeeeee30;
+    border-bottom: 5px solid #ff9800;
+}
 .profile_image{
     width: 150px;
     display: block;
@@ -667,7 +675,7 @@ form.sign-up-form {
 .profile_inner_btn:hover{
     text-decoration: underline;
 }
-.close_profile{
+.close_aside{
     color: white;
     position: absolute;
     left: 10px;
@@ -677,7 +685,7 @@ form.sign-up-form {
     padding: 5px;
     cursor: pointer;
 }
-.close_profile:hover{
+.close_aside:hover{
     transform: translateX(5px);
 }
 .join_room_container{
