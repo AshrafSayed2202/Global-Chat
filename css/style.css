@@ -555,7 +555,7 @@ form.sign-up-form {
     max-width: 100%;
     left: 0;
     transition: 0.7s;
-    transform: translateX(0%);
+    transform: translateX(-100%);
     z-index: 5;
     border: 6px solid #ff9800;
     display: flex;
