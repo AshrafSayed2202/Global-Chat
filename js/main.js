@@ -232,7 +232,8 @@ window.onload = function() {
                                     email:sign_up_email_input.value,
                                     image:sign_up_image_input.value,
                                     color:sign_up_color_input.value,
-                                    bio:''
+                                    bio:'',
+                                    rooms:["Global"]
                                 })
                             }).catch(async function(error){
                                 const validate = await error.message
@@ -461,9 +462,9 @@ window.onload = function() {
             var profile_bio = document.createElement('p')
             profile_bio.setAttribute('class','profile_bio')
             var profile_bio_edit_btn = document.createElement('span')
-            profile_bio_edit_btn.innerHTML = `<i class="fa-solid fa-pen"></i>`
+            profile_bio_edit_btn.innerHTML = `<i style="margin-left:5px;" class="fa-solid fa-pen"></i>`
             var profile_bio_edit_confirm = document.createElement('span')
-            profile_bio_edit_confirm.innerHTML = `<i class="fa-solid fa-circle-check"></i>`
+            profile_bio_edit_confirm.innerHTML = `<i style="margin-left:5px;"class="fa-solid fa-circle-check"></i>`
             profile_bio_edit_confirm.style.display = 'none'
             var profile_bio_text = document.createElement('p')
             profile_bio_edit_btn.addEventListener('click',()=>{
@@ -499,7 +500,7 @@ window.onload = function() {
             profile_bio.append(profile_bio_edit_btn,profile_bio_edit_confirm,profile_bio_text)
             var join_room_btn = document.createElement('div')
             join_room_btn.setAttribute('class','profile_inner_btn')
-            join_room_btn.textContent = 'Private rooms'
+            join_room_btn.innerHTML = `Private rooms\n<i style="margin-left:5px;" class="fa-solid fa-lock"></i>`
             join_room_btn.addEventListener('click',()=>{
                 window.onkeyup = function(e){
                     if(e.key == "Escape"){
@@ -580,6 +581,7 @@ window.onload = function() {
                                             document.getElementById('chat_container').remove()
                                             parent.create_chat(join_room_name.value)
                                             closeJoinRoom()
+                                            closeProfile()
                                             if(room.val().Members.includes(auth.currentUser.uid)){
                                                 return
                                             }else{
@@ -665,6 +667,7 @@ window.onload = function() {
                                             document.getElementById('chat_container').remove()
                                             parent.create_chat(creat_room_name.value)
                                             closeJoinRoom()
+                                            closeProfile()
                                         }
                                     })
                                 }
@@ -692,15 +695,16 @@ window.onload = function() {
             })
             var back_to_global = document.createElement('div')
             back_to_global.setAttribute('class','profile_inner_btn')
-            back_to_global.textContent = `Back to Global Chat`
+            back_to_global.innerHTML = `Back to Global Chat\n<i style="animation: rotate 3s linear infinite reverse;margin-left:5px;" class="fa-solid fa-rotate-left"></i>`
             back_to_global.addEventListener('click',()=>{
                 document.getElementById('chat_container').remove()
                 localStorage.room = 'Global'
                 parent.create_chat('Global')
+                closeProfile()
             })
             var chat_logout = document.createElement('div')
             chat_logout.setAttribute('class','profile_inner_btn')
-            chat_logout.innerHTML = `Sign Out`
+            chat_logout.innerHTML = `Sign Out\n<i style="margin-left:5px;" class="fa-solid fa-right-from-bracket"></i>`
             chat_logout.onclick = function(){
                 auth.signOut().then(()=>{
                 }).catch((error)=>{
@@ -717,10 +721,13 @@ window.onload = function() {
             var close_profile = document.createElement('span')
             close_profile.setAttribute('class','close_aside')
             close_profile.innerHTML = `<i class="fa-solid fa-angle-right"></i>`
-            close_profile.addEventListener('click',()=>{
+            close_profile.addEventListener('click',closeProfile)
+            function closeProfile(){
                 profile_container.classList.remove('aside-active')
-            })
-            profile_container.append(profile_image_container,profile_name,profile_bio,join_room_btn,back_to_global,chat_logout,socials,close_profile)
+            }
+            var profile_buttons = document.createElement('div')
+            profile_buttons.append(join_room_btn,back_to_global,chat_logout)
+            profile_container.append(profile_image_container,profile_name,profile_bio,profile_buttons,socials,close_profile)
             profile_btn_container.append(profile_btn)
             var rooms_btn = document.createElement('div')
             rooms_btn.setAttribute('class','rooms_btn')
@@ -732,16 +739,42 @@ window.onload = function() {
             var rooms_container = document.createElement('div')
             rooms_container.setAttribute('class','aside_container')
             var my_rooms = document.createElement('div')
-            my_rooms.textContent = 'My Rooms'
             my_rooms.setAttribute('class','rooms_list')
+            my_rooms.id = 'my_rooms'
             var joined_rooms = document.createElement('div')
-            joined_rooms.textContent = 'Joined Rooms'
             joined_rooms.setAttribute('class','rooms_list')
+            joined_rooms.id = 'joined_rooms'
             var close_rooms = document.createElement('span')
             close_rooms.setAttribute('class','close_aside')
             close_rooms.innerHTML = `<i class="fa-solid fa-angle-right"></i>`
-            close_rooms.addEventListener('click',()=>{
+            close_rooms.addEventListener('click',closeRooms)
+            function closeRooms(){
                 rooms_container.classList.remove('aside-active')
+            }
+            db.ref(`users/${auth.currentUser.uid}/rooms`).on('value',(e)=>{
+                my_rooms.innerHTML = ''
+                joined_rooms.innerHTML = ''
+                var rooms = Object.values(e.val());
+                for(let i=1;i<rooms.length;i++){
+                    db.ref(`Rooms/${rooms[i]}`).once('value',(room)=>{
+                    var room_container = document.createElement('div')
+                    room_container.textContent = rooms[i]
+                    room_container.setAttribute('class','room_container')
+                    room_container.addEventListener('click',()=>{
+                        localStorage.setItem('room',rooms[i])
+                        document.getElementById('chat_container').remove()
+                        parent.create_chat(rooms[i])
+                        closeRooms()
+                    })
+                        if(room.val().admin == auth.currentUser.uid){
+                            room_container.classList.add('my_room_container')
+                            my_rooms.append(room_container)
+                        }else{
+                            room_container.classList.add('joined_room_container')
+                            joined_rooms.append(room_container)
+                        }
+                    })
+                }
             })
             db.ref(`users/${auth.currentUser.uid}`).on('value',(user)=>{
                 user = user.val()

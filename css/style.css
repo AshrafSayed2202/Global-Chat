@@ -577,6 +577,7 @@ form.sign-up-form {
     border: 6px solid #ff9800;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     overflow: auto;
     padding: 0 25px;
 }
@@ -586,10 +587,23 @@ form.sign-up-form {
 .rooms_list{
     color: white;
     flex: 1;
-    padding: 10px;
+    padding: 50px 10px 10px;
     margin: 15px 0px 15px 40px;
     background-color: #eeeeee30;
     border-bottom: 5px solid #ff9800;
+    position: relative;
+}
+#my_rooms::before{
+    content: 'My Rooms';
+    position: absolute;
+    top: 15px;
+    left: 20px;
+}
+#joined_rooms::before{
+    content: 'Joined Rooms';
+    position: absolute;
+    top: 15px;
+    left: 20px;
 }
 .profile_image{
     width: 150px;
@@ -671,9 +685,11 @@ form.sign-up-form {
     width: -moz-fit-content;
     width: fit-content;
     margin: auto;
+    transition: 0.2s;
 }
 .profile_inner_btn:hover{
     text-decoration: underline;
+    transform: scale(1.1);
 }
 .close_aside{
     color: white;
@@ -687,6 +703,30 @@ form.sign-up-form {
 }
 .close_aside:hover{
     transform: translateX(5px);
+}
+.room_container{
+    display: inline-block;
+    padding: 11px;
+    cursor: pointer;
+    background-color: #ddd;
+    border-radius: 5px;
+    margin: 10px;
+    font-weight: 400;
+    transition: 0.3s;
+}
+.my_room_container{
+    color:#4caf50;
+}
+.my_room_container:hover{
+    color:#fff;
+    background-color: #4caf50;
+}
+.joined_room_container{
+    color: #681d20;
+}
+.joined_room_container:hover{
+    color: #fff;
+    background-color: #681d20;
 }
 .join_room_container{
     position: absolute;
