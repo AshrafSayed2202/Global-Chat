@@ -417,6 +417,7 @@ form.sign-up-form {
     justify-content: center;
     float: left;
     animation: fadeIn 1s linear;
+    position: relative;
 }
 #chat_inner_container{
     width: 40%;
@@ -493,6 +494,106 @@ form.sign-up-form {
     background-color: Transparent;
     cursor: pointer;
 }
+.header_btn{
+    position: absolute;
+    color: #d64045;
+    background-color: #ddd;
+    padding: 3px 15px;
+    font-weight: 400;
+    border-radius: 50px;
+    border: 2px dashed #fff;
+    cursor: pointer;
+    transition: 0.3s;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.members_container_btn{
+    left: 19px;
+    top: -69px;
+    z-index: 5;
+}
+.header_btn:hover{
+    transform: scale(1.1);
+    color: #ddd;
+    background-color: #d64045;
+    border-color: #ffeb3b;
+}
+.members_container{
+    background-color: #b51e23eb;
+    border: 6px solid #ff9800;
+    width: 400px;
+    max-width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    transform: translateX(-100%);
+    z-index: 5;
+    transition: 0.5s;
+    padding:10px 50px 10px 20px;
+    overflow: auto;
+}
+.members_container.active{
+    transform: translateX(0%);
+}
+.close_members_btn{
+    color: white;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 22px;
+    transition: 0.3s;
+    padding: 5px;
+    cursor: pointer;
+}
+.close_members_btn:hover{
+    transform: translateX(-5px);
+}
+.members_list{
+    background-color: #eeeeee30;
+    width: 100%; 
+    position: relative;
+    color: white;
+    margin-bottom: 20px;
+    border-bottom: 5px solid #ff9800;
+    padding: 50px 10px 10px;
+}
+#admin_list::before{
+    content: 'Admin';
+    position: absolute;
+    top: 15px;
+    left: 20px;
+}
+#members_list::before{
+    content: 'Members';
+    position: absolute;
+    top: 15px;
+    left: 20px;
+}
+.user_container{
+    border-radius: 50px;
+    background-color: #eee;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: -moz-fit-content;
+    width: fit-content;
+    cursor: pointer;
+    transition: 0.3s;
+    margin: 10px;
+}
+.user_container:hover{
+    transform: scale(1.1);
+    background-color: #ccc;
+}
+.member_image{
+    width: 50px;
+    border-radius: 50%;
+}
+.member_name{
+    color: #d64045;
+    margin: 0px 10px;
+}
 .get-in-touch{
     text-align: center;
     color: white;
@@ -546,28 +647,15 @@ form.sign-up-form {
     display: none;
 }
 .rooms_btn{
-    position: absolute;
     top: 108px;
     right: 40px;
-    cursor: pointer;
     transition: 0.3s;
-    color: #d64045;
-    background-color: #ddd;
     padding: 1px 40px 1px 20px;
-    border-radius: 50px;
-    border: 2px dashed white;
-    font-weight: 400;
-}
-.rooms_btn:hover{
-    transform: scale(1.1);
-    color: #ddd;
-    background-color: #d64045;
-    border-color: #ffeb3b;
 }
 .aside_container{
     background-color: #b51e23eb;
     position: absolute;
-    height: calc(100% - 180px);
+    height: calc(100% - 190px);
     width: 400px;
     max-width: 100%;
     right: 0;
@@ -706,13 +794,16 @@ form.sign-up-form {
 }
 .room_container{
     display: inline-block;
-    padding: 11px;
+    padding: 5px 10px;
     cursor: pointer;
     background-color: #ddd;
     border-radius: 5px;
-    margin: 10px;
+    margin: 5px;
     font-weight: 400;
     transition: 0.3s;
+}
+.room_container:hover{
+    transform: scale(1.05);
 }
 .my_room_container{
     color:#4caf50;
