@@ -1,5 +1,3 @@
-import {  } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"
-import {  } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"
 const firebaseConfig = {
     apiKey: "AIzaSyCjxJ4TxSjngUdYHuZqEjvlomQVN2OOLqU",
     authDomain: "global-chat-cb729.firebaseapp.com",
@@ -11,6 +9,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database()
 var auth = firebase.auth()
+var storage = firebase.storage()
 window.onload = function() {
     class GLOBAL_CHAT{
         home(){
@@ -189,9 +188,25 @@ window.onload = function() {
         sign_up_image_input_field.setAttribute('class','input-field optional')
         sign_up_image_input_field.innerHTML = `<i class="fa-solid fa-camera"></i>`
         var sign_up_image_input = document.createElement('input')
-        sign_up_image_input.type = 'url'
-        sign_up_image_input.placeholder = 'Image link'
-        sign_up_image_input_field.append(sign_up_image_input)
+        sign_up_image_input.type = 'file'
+        sign_up_image_input.accept = 'image/*'
+        sign_up_image_input.style.display = 'none'
+        
+        var sign_up_image_label = document.createElement('label')
+        sign_up_image_label.textContent = 'Upload Image'
+        sign_up_image_label.setAttribute('class','sign_up_image_label')
+        sign_up_image_input.onchange = (e)=>{
+            sign_up_image_label.textContent = e.target.files[0].name
+            //     var files = e.target.files
+            //     var storageRef = storage.ref()
+            //     var userRef = storageRef.child(files[0].name)
+            //     var userImageRef = storageRef.child(`user/${files[0].name}`)
+            //     userImageRef.put(files[0]).then((e)=>{
+            //         console.log(e);
+            //     })
+            }
+        sign_up_image_label.append(sign_up_image_input)
+        sign_up_image_input_field.append(sign_up_image_label)
         var sign_up_email_input_field = document.createElement('div')
         sign_up_email_input_field.setAttribute('class','input-field')
         sign_up_email_input_field.innerHTML = `<i class="fas fa-envelope"></i>`
@@ -227,13 +242,19 @@ window.onload = function() {
                     if( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){
                         if(sign_up_confirm_password_input.value == sign_up_password_input.value){
                             auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value).then((cred)=>{
-                                db.ref(`users/${cred.user.uid}`).set({
-                                    name:sign_up_user_input.value,
-                                    email:sign_up_email_input.value,
-                                    image:sign_up_image_input.value,
-                                    color:sign_up_color_input.value,
-                                    bio:'',
-                                    rooms:["Global"]
+                                var storageRef = storage.ref()
+                                var userImageRef = storageRef.child(`users/${cred.user.uid}/profileImage.jpg`)
+                                userImageRef.put(sign_up_image_input.files[0]).then((e)=>{
+                                    storageRef.child(`users/${cred.user.uid}/profileImage.jpg`).getDownloadURL().then((url)=>{
+                                        db.ref(`users/${cred.user.uid}`).set({
+                                            image:url,
+                                            name:sign_up_user_input.value,
+                                            email:sign_up_email_input.value,
+                                            color:sign_up_color_input.value,
+                                            bio:'',
+                                            rooms:["Global"]
+                                        })
+                                    })
                                 })
                             }).catch(async function(error){
                                 const validate = await error.message
@@ -422,6 +443,7 @@ window.onload = function() {
                         var admin_image = document.createElement('img')
                         admin_image.setAttribute('class','member_image')
                         admin_image.src = admin_user.val().image
+                        admin_image.onerror = (e)=>{e.target.src = 'media/user.webp';admin_image.onerror = null}
                         admin_image.style.border = `2px dashed ${admin_user.val().color}`
                         var admin_name = document.createElement('p')
                         admin_name.textContent = `👑${admin_user.val().name}👑`

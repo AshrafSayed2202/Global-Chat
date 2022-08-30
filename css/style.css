@@ -226,6 +226,15 @@ form.sign-up-form {
 .reset_password_input_field input::placeholder{
     text-align: center;
 }
+.sign_up_image_label{
+    flex: 5;
+    cursor: pointer;
+    color: #7575758f;
+    transition: 0.2s;
+}
+.sign_up_image_label:hover{
+    color: #757575;
+}
 .reset_btn{
     text-align: center;
     cursor: pointer;
