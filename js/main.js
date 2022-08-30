@@ -399,6 +399,7 @@ window.onload = function() {
                 members_container_btn.setAttribute('class', 'members_container_btn header_btn')
                 members_container_btn.innerHTML = `Members <i style="margin-left:5px;" class="fa-solid fa-user-group"></i>`
                 members_container_btn.addEventListener('click',()=>{
+                    closeOtherProfile()
                     members_container.classList.toggle('active')
                 })
                 var members_container = document.createElement('div')
@@ -406,9 +407,7 @@ window.onload = function() {
                 var close_members_btn = document.createElement('span')
                 close_members_btn.setAttribute('class','close_members_btn')
                 close_members_btn.innerHTML = `<i class="fa-solid fa-angle-left"></i>`
-                close_members_btn.addEventListener('click',()=>{
-                    members_container.classList.remove('active')
-                })
+                close_members_btn.addEventListener('click',closeMembers)
                 var admins_list = document.createElement('div')
                 admins_list.setAttribute('class','members_list')
                 admins_list.id = 'admin_list'
@@ -418,16 +417,19 @@ window.onload = function() {
                 db.ref(`Rooms/${chat_name}`).once('value',(room)=>{
                     var admin =  room.val().admin
                     db.ref(`users/${admin}`).once('value',(admin_user)=>{
-                        admin_user = admin_user.val()
                         var admin_container = document.createElement('div')
                         admin_container.setAttribute('class','user_container')
                         var admin_image = document.createElement('img')
                         admin_image.setAttribute('class','member_image')
-                        admin_image.src = admin_user.image
-                        admin_image.style.border = `2px dashed ${admin_user.color}`
+                        admin_image.src = admin_user.val().image
+                        admin_image.style.border = `2px dashed ${admin_user.val().color}`
                         var admin_name = document.createElement('p')
-                        admin_name.textContent = `👑${admin_user.name}👑`
+                        admin_name.textContent = `👑${admin_user.val().name}👑`
                         admin_name.setAttribute('class','member_name')
+                        admin_container.addEventListener('click',()=>{
+                            closeMembers()
+                            showOthersProfile(admin)
+                        })
                         admin_container.append(admin_image,admin_name)
                         admins_list.append(admin_container)
                     })
@@ -448,13 +450,49 @@ window.onload = function() {
                             var member_name = document.createElement('p')
                             member_name.textContent = `${member.name}`
                             member_name.setAttribute('class','member_name')
+                            member_container.addEventListener('click',()=>{
+                                closeMembers()
+                                showOthersProfile(members[i])
+                            })
                             member_container.append(member_image,member_name)
                             members_list.append(member_container)
                         })
                     }
                 })
+                var other_profile = document.createElement('div')
+                other_profile.setAttribute('class', 'members_container')
+                var close_other_profile = document.createElement('span')
+                close_other_profile.setAttribute('class','close_members_btn')
+                close_other_profile.innerHTML = `<i class="fa-solid fa-angle-left"></i>`
+                close_other_profile.addEventListener('click',closeOtherProfile)
+                var other_profile_image = document.createElement('img')
+                other_profile_image.setAttribute('class','profile_image')
+                var other_profile_name = document.createElement('p')
+                other_profile_name.setAttribute('class','profile_name')
+                var other_profile_bio = document.createElement('p')
+                other_profile_bio.setAttribute('class','profile_bio')
+                other_profile.append(other_profile_image,other_profile_name,other_profile_bio,close_other_profile)
+                function closeMembers(){
+                    members_container.classList.remove('active')
+                }
+                function closeOtherProfile(){
+                    other_profile.classList.remove('active')
+                }
+                function showOthersProfile(uid){
+                    db.ref(`users/${uid}`).once('value',(user)=>{
+                        user = user.val()
+                        other_profile_image.src = user.image
+                        other_profile_image.style.borderColor = user.color
+                        other_profile_image.onerror = (e)=>{e.target.src = 'media/user.webp';other_profile_image.onerror = null}
+                        other_profile_name.textContent = user.name
+                        other_profile_bio.textContent = user.bio
+                        console.log(user);
+                    }).then(()=>{
+                        other_profile.classList.add('active')
+                    })
+                }
                 members_container.append(close_members_btn,admins_list,members_list)
-                chat_inner_container.append(members_container,members_container_btn)
+                chat_inner_container.append(members_container,members_container_btn,other_profile)
             }
             chat_container.append(chat_inner_container)
             document.body.append(chat_container)

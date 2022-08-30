@@ -572,7 +572,7 @@ form.sign-up-form {
 .user_container{
     border-radius: 50px;
     background-color: #eee;
-    padding: 10px;
+    padding: 2px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -746,6 +746,7 @@ form.sign-up-form {
     font-size: 13px;
     margin: 25px auto;
     position: relative;
+    text-align: center;
 }
 .profile_bio span i{
     position: absolute;
