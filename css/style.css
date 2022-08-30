@@ -231,6 +231,7 @@ form.sign-up-form {
     cursor: pointer;
     color: #7575758f;
     transition: 0.2s;
+    overflow: hidden;
 }
 .sign_up_image_label:hover{
     color: #757575;

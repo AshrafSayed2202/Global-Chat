@@ -933,10 +933,10 @@ window.onload = function() {
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                     db.ref(`Rooms/${chatName}/messages/message_${index}`).set({
                         user: {
-                            uid:auth.currentUser.uid,
-                            name:user.name,
-                            color:user.color,
-                            image:user.image
+                            uid: auth.currentUser.uid,
+                            name: user.name,
+                            color: user.color,
+                            image: user.image
                         },
                         message: message,
                         index: index,
@@ -991,8 +991,6 @@ window.onload = function() {
                 var newOrdered = ordered.slice(-50)
                 newOrdered.forEach(createMessage);
                 function createMessage(data){
-                    // db.ref(`users/${data.user}`).once('value',(sender)=>{
-                        // var messageSender = sender.val()
                     if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
                         let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
                         if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
@@ -1253,7 +1251,6 @@ window.onload = function() {
                         cloned_message.append(close_cloned_message)
                         chat_input_container.insertBefore(cloned_message,chat_input_container.firstChild)
                     })
-                // })
                 }
                 chat_content_container.scrollTop = chat_content_container.scrollHeight;
             })
