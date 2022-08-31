@@ -483,7 +483,7 @@ form.sign-up-form {
     position: relative;
 }
 #chat_input{
-    width: 95%;
+    width: 88%;
     height: 100%;
     float: left;
     background-color: Transparent;
@@ -503,6 +503,22 @@ form.sign-up-form {
     color: #D64045;
     background-color: Transparent;
     cursor: pointer;
+}
+#chat_image_upload_label{
+    width: calc(5% - 10px);
+    color: #ccc;
+    font-size: 20px;
+    float: left;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 15px;
+    transition: 0.2s;
+}
+#chat_image_upload_label:hover{
+    color: #d64045;
 }
 .header_btn{
     position: absolute;

@@ -197,13 +197,6 @@ window.onload = function() {
         sign_up_image_label.setAttribute('class','sign_up_image_label')
         sign_up_image_input.onchange = (e)=>{
             sign_up_image_label.textContent = e.target.files[0].name
-            //     var files = e.target.files
-            //     var storageRef = storage.ref()
-            //     var userRef = storageRef.child(files[0].name)
-            //     var userImageRef = storageRef.child(`user/${files[0].name}`)
-            //     userImageRef.put(files[0]).then((e)=>{
-            //         console.log(e);
-            //     })
             }
         sign_up_image_label.append(sign_up_image_input)
         sign_up_image_input_field.append(sign_up_image_label)
@@ -382,6 +375,25 @@ window.onload = function() {
             chat_input_send.setAttribute('id', 'chat_input_send')
             chat_input_send.setAttribute('disabled', true)
             chat_input_send.innerHTML = `<i class="far fa-paper-plane"></i>`
+            var chat_image_upload = document.createElement('input')
+            chat_image_upload.type = 'file'
+            chat_image_upload.style.display = 'none'
+            chat_image_upload.onchange = (e)=>{
+                var storageRef = storage.ref()
+                var messageRef = storageRef.child(`Rooms/${chat_name}/${e.target.files[0].size}${e.target.files[0].name}`)
+                messageRef.put(e.target.files[0]).then((cred)=>{
+                    storageRef.child(`Rooms/${chat_name}/${e.target.files[0].size}${e.target.files[0].name}`).getDownloadURL().then((url)=>{
+                        var messageImageHTML = `<img style="width: 100%;border-radius: 15px;border: 2px dashed #ff9800;" src="${url}">`
+                        parent.create_load('chat_content_container')
+                        parent.send_message(messageImageHTML,chat_name)
+                        deleteReplyMessage()
+                    })
+                })
+            }
+            var chat_image_upload_label = document.createElement('label')
+            chat_image_upload_label.innerHTML = '<i class="fa-solid fa-image"></i>'
+            chat_image_upload_label.id = 'chat_image_upload_label'
+            chat_image_upload_label.append(chat_image_upload)
             var chat_input = document.createElement('input')
             chat_input.setAttribute('id', 'chat_input')
             chat_input.setAttribute('maxlength', 1000)
@@ -413,7 +425,7 @@ window.onload = function() {
                     deleteReplyMessage()
                 }
             }
-            chat_input_container.append(chat_input,chat_input_send)
+            chat_input_container.append(chat_input,chat_image_upload_label,chat_input_send)
             chat_inner_container.append(chat_name_container, chat_content_container, chat_input_container)
             if (chat_name != 'Global') {
                 var members_container_btn = document.createElement('span')
