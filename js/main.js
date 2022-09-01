@@ -142,6 +142,10 @@ window.onload = function() {
                     auth.signInWithEmailAndPassword(sign_in_user_input.value, sign_in_password_input.value)
                     .then((userCredential) => {
                         var user = userCredential.user;
+                        if(!user.emailVerified){
+                            window.alert('Verify your Account ✅ (Don\'t forget to check your spam folder)')
+                            firebase.auth().signOut()
+                        }
                     })
                     .catch((error) => {
                         window.alert(error.message)
@@ -235,6 +239,7 @@ window.onload = function() {
                     if( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){
                         if(sign_up_confirm_password_input.value == sign_up_password_input.value){
                             auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value).then((cred)=>{
+                                firebase.auth().cred.sendEmailVerification()
                                 var storageRef = storage.ref()
                                 var userImageRef = storageRef.child(`users/${cred.user.uid}/profileImage.jpg`)
                                 userImageRef.put(sign_up_image_input.files[0]).then((e)=>{
@@ -249,6 +254,7 @@ window.onload = function() {
                                         })
                                     })
                                 })
+                                window.alert('Verify your Account ✅ (Don\'t forget to check your spam folder)')
                             }).catch(async function(error){
                                 const validate = await error.message
                                 return validate
@@ -259,8 +265,6 @@ window.onload = function() {
                                             providerId:sign_up_user_input.value,
                                             photoURL:sign_up_image_input.value
                                         })
-                                        join_container.remove()
-                                        parent.chat('Global')
                                     }else{
                                         window.alert(error)
                                     }
@@ -1316,7 +1320,7 @@ var app = new GLOBAL_CHAT()
 auth.onAuthStateChanged((user)=>{
     if(user == null){
         app.home()
-    }else{
+    }else if(user.emailVerified){
         if(localStorage.room == undefined){
             localStorage.setItem('room',"Global")
         }
