@@ -378,6 +378,7 @@ window.onload = function() {
             var chat_image_upload = document.createElement('input')
             chat_image_upload.type = 'file'
             chat_image_upload.style.display = 'none'
+            chat_image_upload.accept = 'image/*'
             chat_image_upload.onchange = (e)=>{
                 var storageRef = storage.ref()
                 var messageRef = storageRef.child(`Rooms/${chat_name}/${e.target.files[0].size}${e.target.files[0].name}`)
@@ -552,20 +553,19 @@ window.onload = function() {
             profile_image.setAttribute('class','profile_image')
             var profile_image_edit_btn = document.createElement('span')
             profile_image_edit_btn.innerHTML = '<i class="fa-solid fa-pen"></i>'
-            var new_imageURL_input_field = document.createElement('div')
-            new_imageURL_input_field.setAttribute('class','input-field new_imageURL_active')
-            var new_imageURL_input = document.createElement('input')
-            new_imageURL_input.placeholder = 'New image Url'
-            new_imageURL_input.type = 'url'
-            new_imageURL_input.style.flex = 'none'
-            new_imageURL_input.style.width = '80%'
-            new_imageURL_input.style.margin = 'auto'
-            new_imageURL_input.style.textAlign = 'center'
-            new_imageURL_input.onkeyup = (e)=>{
-                if(e.key == "Enter"){
-                    confirmUpdateImage()
-                }
+            var upload_new_image_input_field = document.createElement('div')
+            upload_new_image_input_field.setAttribute('class','input-field upload_new_image_active')
+            var upload_new_image_input = document.createElement('input')
+            upload_new_image_input.type = 'file'
+            upload_new_image_input.style.display = 'none'
+            var upload_new_image_label = document.createElement('label')
+            upload_new_image_label.setAttribute('class','sign_up_image_label')
+            upload_new_image_label.style.paddingLeft = '20px'
+            upload_new_image_label.textContent = 'Upload new Image'
+            upload_new_image_input.onchange = (e)=>{
+                upload_new_image_label.textContent = e.target.files[0].name
             }
+            upload_new_image_label.append(upload_new_image_input)
             var new_color_input = document.createElement('input')
             new_color_input.type = 'color'
             new_color_input.setAttribute('class','color-input')
@@ -574,23 +574,31 @@ window.onload = function() {
             update_image_color_submit.innerHTML = `<i class="fa-solid fa-circle-check"></i>`
             update_image_color_submit.addEventListener('click',confirmUpdateImage)
             function confirmUpdateImage(){
-                    if(new_imageURL_input.value.length <= 5){
+                console.log(upload_new_image_input.files.length);
+                    if(upload_new_image_input.files.length == 0){
                         db.ref(`users/${auth.currentUser.uid}`).update({
                             color:new_color_input.value
                         })
                     }else{
-                        db.ref(`users/${auth.currentUser.uid}`).update({
-                            image:new_imageURL_input.value,
-                            color:new_color_input.value
-                        })
+                        var storageRef = storage.ref()
+                                var userImageRef = storageRef.child(`users/${auth.currentUser.uid}/profileImage.jpg`)
+                                userImageRef.put(upload_new_image_input.files[0]).then((e)=>{
+                                    storageRef.child(`users/${auth.currentUser.uid}/profileImage.jpg`).getDownloadURL().then((url)=>{
+                                        db.ref(`users/${auth.currentUser.uid}`).update({
+                                            image:url,
+                                            color:new_color_input.value
+                                        })
+                                        upload_new_image_input.value = null
+                                    })
+                                })
                     }
-                    new_imageURL_input_field.classList.add('new_imageURL_active')
+                    upload_new_image_input_field.classList.add('upload_new_image_active')
             }
-            new_imageURL_input_field.append(new_imageURL_input,new_color_input,update_image_color_submit)
+            upload_new_image_input_field.append(upload_new_image_label,new_color_input,update_image_color_submit)
             profile_image_edit_btn.addEventListener('click',()=>{
-                new_imageURL_input_field.classList.toggle('new_imageURL_active')
+                upload_new_image_input_field.classList.toggle('upload_new_image_active')
             })
-            profile_image_container.append(profile_image_edit_btn,profile_image,new_imageURL_input_field)
+            profile_image_container.append(profile_image_edit_btn,profile_image,upload_new_image_input_field)
             var profile_name = document.createElement('p')
             profile_name.setAttribute('class','profile_name')
             var profile_bio = document.createElement('p')
@@ -1080,7 +1088,15 @@ window.onload = function() {
                     message_container.append(user_image)
                     message_content_container.setAttribute('class', 'message_content_container')
                     message_content.setAttribute('class', 'message_content')
-                    message_content.innerHTML = message
+                    if(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(message) && message.startsWith('<img') == false){
+                        if(message.startsWith('http')){
+                            message_content.innerHTML = `<a style="color: #45f6ff;" target="_blank" href="${message}">${message}</a>`
+                        }else{
+                            message_content.innerHTML = `<a style="color: #45f6ff;" target="_blank" href="http://${message}">${message}</a>`
+                        }
+                    }else{
+                        message_content.innerHTML = message
+                    }
                     message_content_container.append(message_content)
                     message_inner_container.append(message_content_container)
                     message_container.append(message_inner_container)
