@@ -651,7 +651,7 @@ form.sign-up-form {
 }
 .aside_container{
     background-color: #b51e23eb;
-    position: absolute;
+    position: fixed;
     height: calc(100% - 190px);
     width: 400px;
     max-width: 100%;
