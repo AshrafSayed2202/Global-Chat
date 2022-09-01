@@ -462,8 +462,10 @@ window.onload = function() {
                         admin_name.textContent = `👑${admin_user.val().name}👑`
                         admin_name.setAttribute('class','member_name')
                         admin_container.addEventListener('click',()=>{
-                            closeMembers()
-                            showOthersProfile(admin)
+                            if(auth.currentUser.uid != admin){
+                                showOthersProfile(admin)
+                                closeMembers()
+                            }
                         })
                         admin_container.append(admin_image,admin_name)
                         admins_list.append(admin_container)
@@ -486,8 +488,10 @@ window.onload = function() {
                             member_name.textContent = `${member.name}`
                             member_name.setAttribute('class','member_name')
                             member_container.addEventListener('click',()=>{
-                                closeMembers()
-                                showOthersProfile(members[i])
+                                if(auth.currentUser.uid != members[i]){
+                                    showOthersProfile(members[i])
+                                    closeMembers()
+                                }
                             })
                             member_container.append(member_image,member_name)
                             members_list.append(member_container)
@@ -908,8 +912,16 @@ window.onload = function() {
                         parent.create_chat(rooms[i])
                         closeRooms()
                     })
+                    var delete_room = document.createElement('span')
+                    delete_room.innerHTML = `<i class="fa-solid fa-trash-can"></i>`
+                    delete_room.setAttribute('class','room_red_btn')
+                    delete_room.addEventListener('click',()=>{
+                        console.log('deleted');
+                        return
+                    })
                         if(room.val().admin == auth.currentUser.uid){
                             room_container.classList.add('my_room_container')
+                            room_container.append(delete_room)
                             my_rooms.append(room_container)
                         }else{
                             room_container.classList.add('joined_room_container')
@@ -1109,6 +1121,7 @@ window.onload = function() {
                         repliedToMessage.setAttribute('class','repliedTo-message')
                         repliedTo.setAttribute('class','repliedTo')
                         if(data.reply.message.startsWith('<img')){
+                            repliedToMessage.style.width = '50px'
                             message_container.style.marginTop = '70px'
                             repliedToMessage.innerHTML = data.reply.message
                         }else{

@@ -800,9 +800,16 @@ form.sign-up-form {
     margin: 5px;
     font-weight: 400;
     transition: 0.3s;
+    overflow: hidden;
+    position: relative;
 }
 .room_container:hover{
     transform: scale(1.05);
+    padding-right: 45px;
+}
+.room_red_btn{
+    position: absolute;
+    transform: translateX(15px);
 }
 .my_room_container{
     color:#4caf50;
