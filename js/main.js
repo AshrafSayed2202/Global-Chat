@@ -1104,12 +1104,17 @@ window.onload = function() {
                     message_container.append(message_deletebtn)
                     message_container.append(message_replybtn)
                     if(data.reply != undefined){
-                        message_container.style.marginTop = '30px'
                         var repliedTo = document.createElement('div')
                         var repliedToMessage = document.createElement('p')
                         repliedToMessage.setAttribute('class','repliedTo-message')
                         repliedTo.setAttribute('class','repliedTo')
-                        repliedToMessage.innerHTML = "reply: "+data.reply.message
+                        if(data.reply.message.startsWith('<img')){
+                            message_container.style.marginTop = '70px'
+                            repliedToMessage.innerHTML = data.reply.message
+                        }else{
+                            message_container.style.marginTop = '30px'
+                            repliedToMessage.innerHTML = "reply: "+data.reply.message
+                        }
                         repliedTo.append(repliedToMessage)
                         message_container.append(repliedTo)
                         repliedTo.addEventListener('click',()=>{
@@ -1142,7 +1147,11 @@ window.onload = function() {
                         message_container.classList.add('shown_time')
                         if(message_container.nextSibling != null && message_container.nextSibling.childNodes[5] != null){
                             if(message_container.nextSibling.childNodes[5].classList.contains('repliedTo')){
-                                message_container.style.marginBottom = '45px'
+                                if(message_container.nextSibling.childNodes[5].childNodes[0].innerHTML.startsWith('<img')){
+                                    message_container.style.marginBottom = '88px'
+                                }else{
+                                    message_container.style.marginBottom = '45px'
+                                }
                             }
                         }
                         window.addEventListener('click',(event)=>{
@@ -1165,10 +1174,10 @@ window.onload = function() {
                                 if(message_container.previousSibling.childNodes[1].firstChild.firstChild.innerText == data.user.name && message_container.previousSibling.childNodes[1].firstChild.firstChild.style.color == message_user.style.color){
                                     message_container.childNodes[4].style.right = '-60px'
                                 }else{
-                                    message_container.childNodes[4].style.right = '-32px'
+                                    message_container.childNodes[4].style.right = '-60px'
                                 }
                             }else{
-                                message_container.childNodes[4].style.right = '-32px'
+                                message_container.childNodes[4].style.right = '-60px'
                             }
                             message_container.childNodes[4].style.opacity = '1'
                             message_container.childNodes[4].style.zIndex = '0'
@@ -1205,7 +1214,7 @@ window.onload = function() {
                             message_container.style.paddingLeft = '20px'
                             message_container.childNodes[3].style.top = '7px'
                             message_container.childNodes[3].style.borderBottomLeftRadius = '50%'
-                            message_container.childNodes[4].style.bottom = '10px'
+                            message_container.childNodes[4].style.top = '7px'
                             message_container.childNodes[4].style.borderTopLeftRadius = '50%'
                             if(data.user.uid == auth.currentUser.uid){
                                 message_container.style.borderTopLeftRadius = '15px'

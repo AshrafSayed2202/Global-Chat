@@ -956,6 +956,7 @@ span.message_time{
     z-index: 0;
 }
 .message_deletebtn,.message_replybtn{
+    top: 18px;
     padding: 5px;
     color: #000000b3;
     background-color: #eee;
@@ -973,14 +974,6 @@ span.message_time{
     align-items: center;
     z-index: -1;
     opacity: 0;
-}
-.message_deletebtn{
-    top: 3px;
-    border-bottom-left-radius: 5px;
-}
-.message_replybtn{
-    bottom: 3px;
-    border-top-left-radius: 5px;
 }
 .message_deletebtn:hover,.message_replybtn:hover{
     background-color: #b4352b;
