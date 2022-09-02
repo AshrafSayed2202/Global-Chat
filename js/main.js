@@ -855,12 +855,40 @@ window.onload = function() {
             var chat_logout = document.createElement('div')
             chat_logout.setAttribute('class','profile_inner_btn')
             chat_logout.innerHTML = `Sign Out\n<i style="margin-left:5px;" class="fa-solid fa-right-from-bracket"></i>`
-            chat_logout.onclick = function(){
-                auth.signOut().then(()=>{
-                }).catch((error)=>{
-                    console.log(error.message);
-                })
-            }
+            chat_logout.addEventListener('click',()=>{
+                var confirm_logout_container = document.createElement('div')
+                confirm_logout_container.setAttribute('class','popup_container')
+                var confirm_logout = document.createElement('div')
+                confirm_logout.setAttribute('class','popup_window')
+                var logout_text = document.createElement('p')
+                logout_text.setAttribute('class','popup_text')
+                logout_text.innerText = 'Are you sure you want to logout?'
+                var buttons_container = document.createElement('div')
+                buttons_container.setAttribute('class','popup_buttons')
+                var button_logout = document.createElement('button')
+                button_logout.setAttribute('class','popup_button_confirm')
+                button_logout.innerText = 'Logout'
+                button_logout.onclick = function(){
+                    auth.signOut().then(()=>{
+                    }).catch((error)=>{
+                        console.log(error.message);
+                    })
+                }
+                var button_keep = document.createElement('button')
+                button_keep.setAttribute('class','popup_button_cancel')
+                button_keep.innerText = 'Stay'
+                button_keep.onclick = function(){
+                    closeDeleteMessage()
+                }
+                buttons_container.append(button_logout,button_keep)
+                confirm_logout.append(logout_text)
+                confirm_logout.append(buttons_container)
+                confirm_logout_container.append(confirm_logout)
+                document.body.append(confirm_logout_container)
+                function closeDeleteMessage(){
+                    confirm_logout_container.remove()
+                }
+            })
             var socials = document.createElement('div')
             socials.innerHTML = `<hr style="background:white;height:1px;width:80%;margin:auto;"><p class="get-in-touch">Get in touch with the creator</p><ul>
                 <li><a href="https://www.facebook.com/ashraf.tenshi/" title="facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a></li>
@@ -1253,16 +1281,16 @@ window.onload = function() {
                     }
                     message_deletebtn.addEventListener('click',function(){
                         var confirm_delete_message_container = document.createElement('div')
-                        confirm_delete_message_container.setAttribute('id','confirm_delete_message_container')
+                        confirm_delete_message_container.setAttribute('class','popup_container')
                         var confirm_delete_message = document.createElement('div')
-                        confirm_delete_message.setAttribute('id','confirm_delete_message')
+                        confirm_delete_message.setAttribute('class','popup_window')
                         var delete_message_text = document.createElement('p')
-                        delete_message_text.setAttribute('id','delete_message_text')
+                        delete_message_text.setAttribute('class','popup_text')
                         delete_message_text.innerText = 'Delete Message ?'
                         var buttons_container = document.createElement('div')
-                        buttons_container.setAttribute('id','buttons_container')
+                        buttons_container.setAttribute('class','popup_buttons')
                         var button_delete = document.createElement('button')
-                        button_delete.setAttribute('id','button_delete')
+                        button_delete.setAttribute('class','popup_button_confirm')
                         button_delete.innerText = 'Delete'
                         button_delete.onclick = function(){
                             if(data.user.uid == auth.currentUser.uid){
@@ -1275,7 +1303,7 @@ window.onload = function() {
                             }
                         }
                         var button_keep = document.createElement('button')
-                        button_keep.setAttribute('id','button_keep')
+                        button_keep.setAttribute('class','popup_button_cancel')
                         button_keep.innerText = 'No,Keep'
                         button_keep.onclick = function(){
                             closeDeleteMessage()

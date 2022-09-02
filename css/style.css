@@ -1066,7 +1066,7 @@ ul li{
 ul li:hover{
     transform: scale(1.5);
 }
-#confirm_delete_message_container{
+.popup_container{
     position: absolute;
     background-color: rgb(0,0,0,0.5);
     width: 100%;
@@ -1078,7 +1078,7 @@ ul li:hover{
     align-items: center;
     z-index: 5;
 }
-#confirm_delete_message{
+.popup_window{
     background-color: #eee;
     width: 450px;
     height: 125px;
@@ -1086,11 +1086,11 @@ ul li:hover{
     overflow: hidden;
 }
 @media (max-width:600px) {
-    #confirm_delete_message{
+    .popup_window{
         width: 80%;
     }
 }
-#delete_message_text{
+.popup_text{
     background-color: #d64045;
     padding: 15px 0;
     text-align: center;
@@ -1099,13 +1099,13 @@ ul li:hover{
     font-weight: 400;
     letter-spacing: 1px;
 }
-#buttons_container{
+.popup_buttons{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     margin-top: 10px;
 }
-#button_delete,#button_keep{
+.popup_button_confirm,.popup_button_cancel{
     padding: 5px 15px;
     border-radius: 20px;
     color: white;
@@ -1113,17 +1113,17 @@ ul li:hover{
     transition: 0.3s;
     cursor: pointer;
 }
-#button_delete{
+.popup_button_confirm{
     background-color: #f44336;
 }
-#button_keep{
+.popup_button_cancel{
     background-color: #4caf50;
 }
-#button_delete:hover{
+.popup_button_confirm:hover{
     border-radius: 5px;
     background-color: #b4352b
 }
-#button_keep:hover{
+.popup_button_cancel:hover{
     border-radius: 5px;
     background-color: #3e8f40;
 }
