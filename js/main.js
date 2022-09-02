@@ -938,25 +938,49 @@ window.onload = function() {
                     var room_container = document.createElement('div')
                     room_container.textContent = rooms[i]
                     room_container.setAttribute('class','room_container')
-                    room_container.addEventListener('click',()=>{
+                    var delete_room = document.createElement('span')
+                    delete_room.innerHTML = `<i class="fa-solid fa-trash-can"></i>`
+                    delete_room.setAttribute('class','room_red_btn')
+                    delete_room.addEventListener('click',()=>{
+                        db.ref(`users/${auth.currentUser.uid}/rooms`).once('value',(e)=>{
+                            console.log(e.val()[e.val().indexOf(rooms[i])]);
+                        })
+                    })
+                    var enter_room = document.createElement('span')
+                    enter_room.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i>`
+                    enter_room.setAttribute('class','enter_room_btn')
+                    enter_room.addEventListener('click',()=>{
                         localStorage.setItem('room',rooms[i])
                         document.getElementById('chat_container').remove()
                         parent.create_chat(rooms[i])
                         closeRooms()
                     })
-                    var delete_room = document.createElement('span')
-                    delete_room.innerHTML = `<i class="fa-solid fa-trash-can"></i>`
-                    delete_room.setAttribute('class','room_red_btn')
-                    delete_room.addEventListener('click',()=>{
-                        console.log('deleted');
-                        return
+                    var leave_room = document.createElement('span')
+                    leave_room.innerHTML = `<i class="fa-solid fa-door-closed"></i>`
+                    leave_room.setAttribute('class','room_red_btn')
+                    leave_room.onmouseenter = ()=>{leave_room.innerHTML = `<i class="fa-solid fa-door-open"></i>`}
+                    leave_room.onmouseleave  = ()=>{leave_room.innerHTML = `<i class="fa-solid fa-door-closed"></i>`}
+                    leave_room.addEventListener('click',()=>{
+                        db.ref(`users/${auth.currentUser.uid}/rooms`).once('value',(rooms)=>{
+                            rooms = rooms.val()
+                            db.ref(`users/${auth.currentUser.uid}/rooms/${rooms.indexOf(rooms[i])}`).remove()
+                        })
+                        db.ref(`Rooms/${rooms[i]}/Members`).once('value',(members)=>{
+                            members = members.val()
+                            db.ref(`Rooms/${rooms[i]}/Members/${members.indexOf(auth.currentUser.uid)}`).remove()
+                        })
+                        document.getElementById('chat_container').remove()
+                        parent.create_chat('Global')
+                        closeRooms()
                     })
+                    room_container.append(enter_room)
                         if(room.val().admin == auth.currentUser.uid){
                             room_container.classList.add('my_room_container')
                             room_container.append(delete_room)
                             my_rooms.append(room_container)
                         }else{
                             room_container.classList.add('joined_room_container')
+                            room_container.append(leave_room)
                             joined_rooms.append(room_container)
                         }
                     })

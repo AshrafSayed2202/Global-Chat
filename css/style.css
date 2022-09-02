@@ -794,7 +794,6 @@ form.sign-up-form {
 .room_container{
     display: inline-block;
     padding: 5px 10px;
-    cursor: pointer;
     background-color: #ddd;
     border-radius: 5px;
     margin: 5px;
@@ -802,14 +801,25 @@ form.sign-up-form {
     transition: 0.3s;
     overflow: hidden;
     position: relative;
+    cursor: default;
 }
 .room_container:hover{
     transform: scale(1.05);
-    padding-right: 45px;
+    padding-right: 65px;
 }
 .room_red_btn{
     position: absolute;
-    transform: translateX(15px);
+    transform: translateX(35px);
+    cursor: pointer;
+    padding: 0px 3px;
+    color: #f00;
+}
+.enter_room_btn{
+    position: absolute;
+    transform: translateX(10px);
+    cursor: pointer;
+    padding: 0px 3px;
+    color: #00bfff;
 }
 .my_room_container{
     color:#4caf50;
