@@ -239,7 +239,7 @@ window.onload = function() {
                     if( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){
                         if(sign_up_confirm_password_input.value == sign_up_password_input.value){
                             auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value).then((cred)=>{
-                                firebase.auth().cred.sendEmailVerification()
+                                // firebase.auth().cred.sendEmailVerification()
                                 var storageRef = storage.ref()
                                 var userImageRef = storageRef.child(`users/${cred.user.uid}/profileImage.jpg`)
                                 userImageRef.put(sign_up_image_input.files[0]).then((e)=>{
@@ -457,6 +457,20 @@ window.onload = function() {
                     db.ref(`users/${admin}`).once('value',(admin_user)=>{
                         var admin_container = document.createElement('div')
                         admin_container.setAttribute('class','user_container')
+                        if(auth.currentUser.uid != admin){
+                            admin_container.onmouseenter = ()=>{admin_container.style.paddingRight = '40px'}
+                            admin_container.onmouseleave = ()=>{admin_container.style.paddingRight = '0px'}
+                            var view_profile = document.createElement('span')
+                            view_profile.setAttribute('class','view_profile')
+                            view_profile.innerHTML = `<i class="fa-solid fa-circle-user"></i>`
+                            view_profile.addEventListener('click',()=>{
+                                if(auth.currentUser.uid != admin){
+                                    showOthersProfile(admin)
+                                    closeMembers()
+                                }
+                            })
+                            admin_container.append(view_profile)
+                        }
                         var admin_image = document.createElement('img')
                         admin_image.setAttribute('class','member_image')
                         admin_image.src = admin_user.val().image
@@ -465,42 +479,58 @@ window.onload = function() {
                         var admin_name = document.createElement('p')
                         admin_name.textContent = `👑${admin_user.val().name}👑`
                         admin_name.setAttribute('class','member_name')
-                        admin_container.addEventListener('click',()=>{
-                            if(auth.currentUser.uid != admin){
-                                showOthersProfile(admin)
-                                closeMembers()
-                            }
-                        })
                         admin_container.append(admin_image,admin_name)
                         admins_list.append(admin_container)
                     })
-                })
-                db.ref(`Rooms/${chat_name}/Members`).on('value',(members)=>{
-                    members_list.innerHTML = ''
-                    members = members.val()
-                    for(let i=1;i<members.length;i++){
-                        db.ref(`users/${members[i]}`).once('value',(member)=>{
-                            member = member.val()
-                            var member_container = document.createElement('div')
-                            member_container.setAttribute('class','user_container')
-                            var member_image = document.createElement('img')
-                            member_image.setAttribute('class','member_image')
-                            member_image.src = member.image
-                            member_image.onerror = (e)=>{e.target.src = 'media/user.webp';member_image.onerror = null}
-                            member_image.style.border = `2px dashed ${member.color}`
-                            var member_name = document.createElement('p')
-                            member_name.textContent = `${member.name}`
-                            member_name.setAttribute('class','member_name')
-                            member_container.addEventListener('click',()=>{
+                    db.ref(`Rooms/${chat_name}/Members`).on('value',(members)=>{
+                        members_list.innerHTML = ''
+                        members = members.val()
+                        for(let i=1;i<members.length;i++){
+                            db.ref(`users/${members[i]}`).once('value',(member)=>{
+                                member = member.val()
+                                var member_container = document.createElement('div')
+                                member_container.setAttribute('class','user_container')
                                 if(auth.currentUser.uid != members[i]){
-                                    showOthersProfile(members[i])
-                                    closeMembers()
+                                    member_container.onmouseenter = ()=>{member_container.style.paddingRight = '50px'}
+                                    member_container.onmouseleave = ()=>{member_container.style.paddingRight = '0px'}
+                                    var view_profile = document.createElement('span')
+                                    view_profile.setAttribute('class','view_profile')
+                                    view_profile.innerHTML = `<i class="fa-solid fa-circle-user"></i>`
+                                    view_profile.addEventListener('click',()=>{
+                                        if(auth.currentUser.uid != members[i]){
+                                            showOthersProfile(members[i])
+                                            closeMembers()
+                                        }
+                                    })
+                                    member_container.append(view_profile)
+                                    if(auth.currentUser.uid == admin){
+                                        member_container.onmouseenter = ()=>{member_container.style.paddingRight = '70px'}
+                                    member_container.onmouseleave = ()=>{member_container.style.paddingRight = '0px'}
+                                        var kick_member = document.createElement('span')
+                                        kick_member.setAttribute('class','kick_member')
+                                        kick_member.innerHTML = `<i class="fa-solid fa-user-large-slash"></i>`
+                                        kick_member.addEventListener('click',()=>{
+                                            db.ref(`Rooms/${chat_name}/Members`).once('value',(membersObj)=>{
+                                                membersObj = membersObj.val()
+                                                db.ref(`Rooms/${chat_name}/Members/${membersObj.indexOf(members[i])}`).remove()
+                                            })
+                                        })
+                                        member_container.append(kick_member)
+                                    }
                                 }
+                                var member_image = document.createElement('img')
+                                member_image.setAttribute('class','member_image')
+                                member_image.src = member.image
+                                member_image.onerror = (e)=>{e.target.src = 'media/user.webp';member_image.onerror = null}
+                                member_image.style.border = `2px dashed ${member.color}`
+                                var member_name = document.createElement('p')
+                                member_name.textContent = `${member.name}`
+                                member_name.setAttribute('class','member_name')
+                                member_container.append(member_image,member_name)
+                                members_list.append(member_container)
                             })
-                            member_container.append(member_image,member_name)
-                            members_list.append(member_container)
-                        })
-                    }
+                        }
+                    })
                 })
                 var other_profile = document.createElement('div')
                 other_profile.setAttribute('class', 'members_container')
@@ -529,7 +559,6 @@ window.onload = function() {
                         other_profile_image.onerror = (e)=>{e.target.src = 'media/user.webp';other_profile_image.onerror = null}
                         other_profile_name.textContent = user.name
                         other_profile_bio.textContent = user.bio
-                        console.log(user);
                     }).then(()=>{
                         other_profile.classList.add('active')
                     })
@@ -934,6 +963,23 @@ window.onload = function() {
                 joined_rooms.innerHTML = ''
                 var rooms = Object.values(e.val());
                 for(let i=1;i<rooms.length;i++){
+                    db.ref(`Rooms/${rooms[i]}/Members`).on('child_removed',(removedMember)=>{
+                        removedMember = removedMember.val()
+                        if(removedMember == auth.currentUser.uid){
+                            localStorage.setItem('room','Global')
+                            document.getElementById('chat_container').remove()
+                            parent.create_chat('Global')
+                            db.ref(`users/${auth.currentUser.uid}/rooms`).once('value',(roomsObj)=>{
+                                roomsObj = roomsObj.val()
+                                console.log(roomsObj);
+                                for(var k in rooms){
+                                    if(rooms[i]==rooms[k]){
+                                        db.ref(`users/${auth.currentUser.uid}/rooms/${k}`).remove()
+                                    }
+                                }
+                            })
+                        }
+                    })
                     db.ref(`Rooms/${rooms[i]}`).once('value',(room)=>{
                     var room_container = document.createElement('div')
                     room_container.textContent = rooms[i]

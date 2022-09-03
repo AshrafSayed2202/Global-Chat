@@ -572,16 +572,41 @@ form.sign-up-form {
     padding: 2px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     width: -moz-fit-content;
     width: fit-content;
     cursor: pointer;
     transition: 0.3s;
     margin: 10px;
+    overflow: hidden;
+    position: relative;
 }
 .user_container:hover{
-    transform: scale(1.1);
-    background-color: #ccc;
+    background-color: #ddd;
+}
+.view_profile{
+    color: green;
+    font-size: 25px;
+    position: absolute;
+    transform: translateX(30px);
+    transition: 0.2s;
+}
+.view_profile:hover{
+    color: #00dc00;
+}
+.kick_member{
+    color: white;
+    position: absolute;
+    border-radius: 50%;
+    background-color: #be0101;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    transform: translateX(60px);
+    transition: 0.2s;
+}
+.kick_member:hover{
+    background-color: red;
 }
 .member_image{
     width: 50px;
@@ -590,6 +615,7 @@ form.sign-up-form {
 .member_name{
     color: #d64045;
     margin: 0px 10px;
+    font-size: 12px;
 }
 .get-in-touch{
     text-align: center;
