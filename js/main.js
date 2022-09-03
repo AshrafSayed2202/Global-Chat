@@ -988,9 +988,7 @@ window.onload = function() {
                     delete_room.innerHTML = `<i class="fa-solid fa-trash-can"></i>`
                     delete_room.setAttribute('class','room_red_btn')
                     delete_room.addEventListener('click',()=>{
-                        db.ref(`users/${auth.currentUser.uid}/rooms`).once('value',(e)=>{
-                            console.log(e.val()[e.val().indexOf(rooms[i])]);
-                        })
+                        db.ref(`Rooms/${rooms[i]}`).remove()
                     })
                     var enter_room = document.createElement('span')
                     enter_room.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i>`
