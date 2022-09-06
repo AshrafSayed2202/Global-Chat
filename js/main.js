@@ -1077,7 +1077,39 @@ window.onload = function() {
                     delete_room.innerHTML = `<i class="fa-solid fa-trash-can"></i>`
                     delete_room.setAttribute('class','room_red_btn')
                     delete_room.addEventListener('click',()=>{
-                        db.ref(`Rooms/${rooms[i]}`).remove()
+                        window.onkeyup = (e)=>{if(e.key == 'Escape'){closeDeleteRoom()}}
+                        var delete_room_container = document.createElement('div')
+                        delete_room_container.setAttribute('class','popup_container')
+                        var delete_room_window = document.createElement('div')
+                        delete_room_window.setAttribute('class','popup_window')
+                        var delete_room_text = document.createElement('p')
+                        delete_room_text.setAttribute('class','popup_text')
+                        delete_room_text.innerHTML = `Are you sure you want to Delete <b style="color:#ffeb3b">${rooms[i]}</b> room?`
+                        var delete_room_buttons = document.createElement('div')
+                        delete_room_buttons.setAttribute('class','popup_buttons')
+                        var confirm_delete_room = document.createElement('button')
+                        confirm_delete_room.setAttribute('class','popup_button_confirm')
+                        confirm_delete_room.textContent = 'Delete'
+                        confirm_delete_room.onclick = ()=>{
+                            db.ref(`Rooms/${rooms[i]}`).remove()
+                            closeDeleteRoom()
+                            closeRooms()
+                        }
+                        var cancel_delete_room = document.createElement('button')
+                        cancel_delete_room.setAttribute('class','popup_button_cancel')
+                        cancel_delete_room.textContent = 'Cancel'
+                        cancel_delete_room.onclick = closeDeleteRoom
+                        delete_room_buttons.append(confirm_delete_room,cancel_delete_room)
+                        delete_room_window.append(delete_room_text,delete_room_buttons)
+                        delete_room_container.append(delete_room_window)
+                        document.body.append(delete_room_container)
+                        setTimeout(() => {
+                            delete_room_container.style.opacity = '1'
+                        }, 0);
+                        function closeDeleteRoom(){
+                            delete_room_container.style.opacity = '0'
+                            setTimeout(()=>{delete_room_container.remove()},300)
+                        }
                     })
                     var enter_room = document.createElement('span')
                     enter_room.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i>`
@@ -1094,17 +1126,44 @@ window.onload = function() {
                     leave_room.onmouseenter = ()=>{leave_room.innerHTML = `<i class="fa-solid fa-door-open"></i>`}
                     leave_room.onmouseleave  = ()=>{leave_room.innerHTML = `<i class="fa-solid fa-door-closed"></i>`}
                     leave_room.addEventListener('click',()=>{
-                        db.ref(`users/${auth.currentUser.uid}/rooms`).once('value',(rooms)=>{
-                            rooms = rooms.val()
-                            db.ref(`users/${auth.currentUser.uid}/rooms/${rooms.indexOf(rooms[i])}`).remove()
-                        })
-                        db.ref(`Rooms/${rooms[i]}/Members`).once('value',(members)=>{
-                            members = members.val()
-                            db.ref(`Rooms/${rooms[i]}/Members/${members.indexOf(auth.currentUser.uid)}`).remove()
-                        })
-                        document.getElementById('chat_container').remove()
-                        parent.create_chat('Global')
-                        closeRooms()
+                        window.onkeyup = (e)=>{if(e.key == 'Escape'){closeLeaveRoom()}}
+                        var leave_room_container = document.createElement('div')
+                        leave_room_container.setAttribute('class','popup_container')
+                        var leave_room_window = document.createElement('div')
+                        leave_room_window.setAttribute('class','popup_window')
+                        var leave_room_text = document.createElement('p')
+                        leave_room_text.setAttribute('class','popup_text')
+                        leave_room_text.innerHTML = `Are you sure you want to Leave <b style="color:#ffeb3b">${rooms[i]}</b> room?`
+                        var leave_room_buttons = document.createElement('div')
+                        leave_room_buttons.setAttribute('class','popup_buttons')
+                        var confirm_leave_room = document.createElement('button')
+                        confirm_leave_room.setAttribute('class','popup_button_confirm')
+                        confirm_leave_room.textContent = 'Leave'
+                        confirm_leave_room.onclick = ()=>{
+                            db.ref(`Rooms/${rooms[i]}/Members`).once('value',(members)=>{
+                                members = members.val()
+                                db.ref(`Rooms/${rooms[i]}/Members/${members.indexOf(auth.currentUser.uid)}`).remove()
+                            })
+                            document.getElementById('chat_container').remove()
+                            parent.create_chat('Global')
+                            closeLeaveRoom()
+                            closeRooms()
+                        }
+                        var cancel_leave_room = document.createElement('button')
+                        cancel_leave_room.setAttribute('class','popup_button_cancel')
+                        cancel_leave_room.textContent = 'Cancel'
+                        cancel_leave_room.onclick = closeLeaveRoom
+                        leave_room_buttons.append(confirm_leave_room,cancel_leave_room)
+                        leave_room_window.append(leave_room_text,leave_room_buttons)
+                        leave_room_container.append(leave_room_window)
+                        document.body.append(leave_room_container)
+                        setTimeout(() => {
+                            leave_room_container.style.opacity = '1'
+                        }, 0);
+                        function closeLeaveRoom(){
+                            leave_room_container.style.opacity = '0'
+                            setTimeout(()=>{leave_room_container.remove()},300)
+                        }
                     })
                     room_container.append(enter_room)
                         if(room.val().admin == auth.currentUser.uid){

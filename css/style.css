@@ -1145,7 +1145,7 @@ ul li:hover{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    margin: 10px 0;
+    margin: 20px 0;
 }
 .popup_button_confirm,.popup_button_cancel{
     padding: 5px 15px;
