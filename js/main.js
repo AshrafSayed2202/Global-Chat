@@ -966,9 +966,11 @@ window.onload = function() {
                     db.ref(`Rooms/${rooms[i]}/Members`).on('child_removed',(removedMember)=>{
                         removedMember = removedMember.val()
                         if(removedMember == auth.currentUser.uid){
-                            localStorage.setItem('room','Global')
-                            document.getElementById('chat_container').remove()
-                            parent.create_chat('Global')
+                            if(localStorage.room == rooms[i]){
+                                localStorage.setItem('room','Global')
+                                document.getElementById('chat_container').remove()
+                                parent.create_chat('Global')
+                            }
                             db.ref(`users/${auth.currentUser.uid}/rooms`).once('value',(roomsObj)=>{
                                 roomsObj = roomsObj.val()
                                 console.log(roomsObj);
