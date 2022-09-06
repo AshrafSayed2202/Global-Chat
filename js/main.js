@@ -1071,6 +1071,8 @@ window.onload = function() {
                     var room_container = document.createElement('div')
                     room_container.textContent = rooms[i]
                     room_container.setAttribute('class','room_container')
+                    room_container.onclick = ()=>{room_container.classList.toggle('active')}
+                    window.addEventListener('click',(event)=>{if(room_container.contains(event.target)){false}else{room_container.classList.remove('active')}})
                     var delete_room = document.createElement('span')
                     delete_room.innerHTML = `<i class="fa-solid fa-trash-can"></i>`
                     delete_room.setAttribute('class','room_red_btn')
@@ -1343,7 +1345,6 @@ window.onload = function() {
                     }
                     chat_content_container.append(message_container)
                     message_container.addEventListener('click',function(){
-                        document.querySelectorAll('.message_container').forEach(hideMessageTime)
                         message_container.classList.add('shown_time')
                         if(message_container.nextSibling != null && message_container.nextSibling.childNodes[5] != null){
                             if(message_container.nextSibling.childNodes[5].classList.contains('repliedTo')){

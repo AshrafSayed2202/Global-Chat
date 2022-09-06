@@ -832,11 +832,11 @@ form.sign-up-form {
     transition: 0.3s;
     overflow: hidden;
     position: relative;
-    cursor: default;
+    cursor: pointer;
 }
-.room_container:hover{
-    transform: scale(1.05);
+.room_container.active{
     padding-right: 65px;
+    cursor: default;
 }
 .room_red_btn{
     position: absolute;
