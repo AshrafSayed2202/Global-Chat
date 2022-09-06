@@ -454,6 +454,86 @@ window.onload = function() {
                 members_list.id = 'members_list'
                 db.ref(`Rooms/${chat_name}`).once('value',(room)=>{
                     var admin =  room.val().admin
+                    if(auth.currentUser.uid == admin){
+                        var change_room_password = document.createElement('span')
+                        change_room_password.setAttribute('class','change_password_btn header_btn')
+                        change_room_password.innerHTML = `<i class="fa-solid fa-lock"></i>`
+                        change_room_password.addEventListener('click',()=>{
+                            window.onkeyup = (e)=>{if(e.key == 'Escape'){closeChangePassword()}}
+                            var change_password_container = document.createElement('div')
+                            change_password_container.setAttribute('class','popup_container')
+                            var change_password = document.createElement('div')
+                            change_password.setAttribute('class','popup_window')
+                            var change_password_text = document.createElement('p')
+                            change_password_text.setAttribute('class','popup_text')
+                            change_password_text.innerText = 'Enter New Password'
+                            var change_password_buttons = document.createElement('div')
+                            change_password_buttons.setAttribute('class','popup_buttons')
+                            var change_password_inputs = document.createElement('div')
+                            var change_password_input_field = document.createElement('div')
+                            change_password_input_field.style.width = '80%'
+                            change_password_input_field.style.margin = '20px auto'
+                            change_password_input_field.setAttribute('class','input-field')
+                            var change_password_input = document.createElement('input')
+                            change_password_input.type = 'password'
+                            change_password_input.placeholder = 'New Password'
+                            change_password_input.style.width = '80%'
+                            change_password_input.style.flex = 'none'
+                            change_password_input.style.margin = 'auto'
+                            change_password_input.oninput = ()=>{if(change_password_input.value.length >= 6){change_password_input_field.style.border = '3px solid green'}else{change_password_input_field.style.border = '2px solid #d64045'}}
+                            change_password_input_field.append(change_password_input)
+                            var change_password_confirm_input_field = document.createElement('div')
+                            change_password_confirm_input_field.style.width = '80%'
+                            change_password_confirm_input_field.style.margin = '20px auto'
+                            change_password_confirm_input_field.setAttribute('class','input-field')
+                            var change_password_confirm_input = document.createElement('input')
+                            change_password_confirm_input.type = 'password'
+                            change_password_confirm_input.placeholder = 'Confirm New Password'
+                            change_password_confirm_input.style.width = '80%'
+                            change_password_confirm_input.style.flex = 'none'
+                            change_password_confirm_input.style.margin = 'auto'
+                            change_password_confirm_input.oninput = ()=>{if(change_password_confirm_input.value == change_password_input.value){change_password_confirm_input_field.style.border = '3px solid green'}else{change_password_confirm_input_field.style.border = '2px solid #d64045'}}
+                            var confirm_change_password = document.createElement('button')
+                            confirm_change_password.setAttribute('class','popup_button_cancel')
+                            confirm_change_password.onclick = ()=>{
+                                if(change_password_input.value.length >= 6){
+                                    if(change_password_confirm_input.value == change_password_input.value){
+                                        db.ref(`Rooms/${chat_name}`).update({
+                                            password:change_password_input.value
+                                        })
+                                        closeChangePassword()
+                                    }else{
+                                        change_password_confirm_input.focus()
+                                        change_password_confirm_input_field.style.border = '3px solid red'
+                                    }
+                                }else{
+                                    change_password_input.focus()
+                                    change_password_input_field.style.border = '3px solid red'
+                                }
+                            }
+                            confirm_change_password.textContent = 'Confirm'
+                            var cancel_change_password = document.createElement('button')
+                            cancel_change_password.setAttribute('class','popup_button_confirm')
+                            cancel_change_password.textContent = 'Cancel'
+                            cancel_change_password.onclick = ()=>{
+                                closeChangePassword()
+                            }
+                            change_password_buttons.append(confirm_change_password,cancel_change_password)
+                            change_password_confirm_input_field.append(change_password_confirm_input)
+                            change_password_inputs.append(change_password_input_field,change_password_confirm_input_field)
+                            change_password.append(change_password_text,change_password_inputs,change_password_buttons)
+                            change_password_container.append(change_password)
+                            document.body.append(change_password_container)
+                            function closeChangePassword(){
+                                change_password_container.style.opacity = '0'
+                                setTimeout(()=>{change_password_container.remove()},300)
+                            }
+                            setTimeout(() => {
+                                change_password_container.style.opacity = '1'
+                            },0);
+                        })
+                        chat_inner_container.append(change_room_password)
+                    }
                     db.ref(`users/${admin}`).once('value',(admin_user)=>{
                         var admin_container = document.createElement('div')
                         admin_container.setAttribute('class','user_container')
@@ -887,6 +967,7 @@ window.onload = function() {
             chat_logout.addEventListener('click',()=>{
                 var confirm_logout_container = document.createElement('div')
                 confirm_logout_container.setAttribute('class','popup_container')
+                window.onkeyup = (e)=>{if(e.key == 'Escape'){closeLogout()}}
                 var confirm_logout = document.createElement('div')
                 confirm_logout.setAttribute('class','popup_window')
                 var logout_text = document.createElement('p')
@@ -907,16 +988,20 @@ window.onload = function() {
                 button_keep.setAttribute('class','popup_button_cancel')
                 button_keep.innerText = 'Stay'
                 button_keep.onclick = function(){
-                    closeDeleteMessage()
+                    closeLogout()
                 }
                 buttons_container.append(button_logout,button_keep)
                 confirm_logout.append(logout_text)
                 confirm_logout.append(buttons_container)
                 confirm_logout_container.append(confirm_logout)
                 document.body.append(confirm_logout_container)
-                function closeDeleteMessage(){
-                    confirm_logout_container.remove()
+                function closeLogout(){
+                    confirm_logout_container.style.opacity = '0'
+                    setTimeout(()=>{confirm_logout_container.remove()},300)
                 }
+                setTimeout(() => {
+                    confirm_logout_container.style.opacity = '1'
+                },0);
             })
             var socials = document.createElement('div')
             socials.innerHTML = `<hr style="background:white;height:1px;width:80%;margin:auto;"><p class="get-in-touch">Get in touch with the creator</p><ul>
@@ -1352,6 +1437,7 @@ window.onload = function() {
                     message_deletebtn.addEventListener('click',function(){
                         var confirm_delete_message_container = document.createElement('div')
                         confirm_delete_message_container.setAttribute('class','popup_container')
+                        window.onkeyup = (e)=>{if(e.key == 'Escape'){closeDeleteMessage()}}
                         var confirm_delete_message = document.createElement('div')
                         confirm_delete_message.setAttribute('class','popup_window')
                         var delete_message_text = document.createElement('p')
@@ -1384,8 +1470,12 @@ window.onload = function() {
                         confirm_delete_message_container.append(confirm_delete_message)
                         document.body.append(confirm_delete_message_container)
                         function closeDeleteMessage(){
-                            confirm_delete_message_container.remove()
+                            confirm_delete_message_container.style.opacity = '0'
+                            setTimeout(()=>{confirm_delete_message_container.remove()},300)
                         }
+                        setTimeout(() => {
+                            confirm_delete_message_container.style.opacity = '1'
+                        },0);
                     })
                     message_replybtn.addEventListener('click',function(){
                         deleteReplyMessage()

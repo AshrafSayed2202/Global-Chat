@@ -515,6 +515,11 @@ form.sign-up-form {
     background-color: #d64045;
     border-color: #ffeb3b;
 }
+.change_password_btn{
+    z-index: 5;
+    left: 167px;
+    top: -69px;
+}
 .members_container{
     background-color: #b51e23eb;
     border: 6px solid #ff9800;
@@ -1113,11 +1118,12 @@ ul li:hover{
     justify-content: center;
     align-items: center;
     z-index: 5;
+    opacity: 0;
+    transition: 0.3s;
 }
 .popup_window{
     background-color: #eee;
     width: 450px;
-    height: 125px;
     border-radius: 25px;
     overflow: hidden;
 }
@@ -1139,7 +1145,7 @@ ul li:hover{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    margin-top: 10px;
+    margin: 10px 0;
 }
 .popup_button_confirm,.popup_button_cancel{
     padding: 5px 15px;
@@ -1156,11 +1162,11 @@ ul li:hover{
     background-color: #4caf50;
 }
 .popup_button_confirm:hover{
-    border-radius: 5px;
+    border-top-right-radius: 5px;
     background-color: #b4352b
 }
 .popup_button_cancel:hover{
-    border-radius: 5px;
+    border-top-left-radius: 5px;
     background-color: #3e8f40;
 }
 .cloned_message{
