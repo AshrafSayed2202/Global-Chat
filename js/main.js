@@ -116,7 +116,6 @@ window.onload = function() {
             function sendTheReset(){
                 auth.sendPasswordResetEmail(reset_password_input.value)
                 .then(()=>{
-                    //Password reset email sent
                     closeForgetPassword()
                     window.alert('✅Reset mail sent')
                 })
@@ -239,7 +238,6 @@ window.onload = function() {
                     if( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){
                         if(sign_up_confirm_password_input.value == sign_up_password_input.value){
                             auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value).then((cred)=>{
-                                // firebase.auth().cred.sendEmailVerification()
                                 var storageRef = storage.ref()
                                 var userImageRef = storageRef.child(`users/${cred.user.uid}/profileImage.jpg`)
                                 userImageRef.put(sign_up_image_input.files[0]).then((e)=>{
@@ -252,22 +250,15 @@ window.onload = function() {
                                             bio:'',
                                             rooms:["Global"]
                                         })
+                                    }).then(()=>{
+                                        auth.currentUser.sendEmailVerification().then(()=>{
+                                            auth.signOut().then(()=>{}).catch((error)=>{console.log(error.message);})
+                                        })
                                     })
                                 })
                                 window.alert('Verify your Account ✅ (Don\'t forget to check your spam folder)')
                             }).catch(async function(error){
-                                const validate = await error.message
-                                return validate
-                            }).then((error)=>{
-                                    if(error != 'The email address is already in use by another account.'){
-                                        auth.currentUser.updateProfile({
-                                            displayName:sign_up_user_input.value,
-                                            providerId:sign_up_user_input.value,
-                                            photoURL:sign_up_image_input.value
-                                        })
-                                    }else{
-                                        window.alert(error)
-                                    }
+                                window.alert(error)
                             })
                         }else{
                             sign_up_confirm_password_input_field.style.border = '3px solid red'
@@ -473,7 +464,7 @@ window.onload = function() {
                             change_password.setAttribute('class','popup_window')
                             var change_password_text = document.createElement('p')
                             change_password_text.setAttribute('class','popup_text')
-                            change_password_text.innerText = 'Enter New Password'
+                            change_password_text.innerHTML = `Enter <b style="color:#ffeb3b;">${chat_name}</b> Room new Password`
                             var change_password_buttons = document.createElement('div')
                             change_password_buttons.setAttribute('class','popup_buttons')
                             var change_password_inputs = document.createElement('div')
@@ -597,10 +588,43 @@ window.onload = function() {
                                         kick_member.setAttribute('class','kick_member')
                                         kick_member.innerHTML = `<i class="fa-solid fa-user-large-slash"></i>`
                                         kick_member.addEventListener('click',()=>{
-                                            db.ref(`Rooms/${chat_name}/Members`).once('value',(membersObj)=>{
-                                                membersObj = membersObj.val()
-                                                db.ref(`Rooms/${chat_name}/Members/${membersObj.indexOf(members[i])}`).remove()
-                                            })
+                                            var kick_member_container = document.createElement('div')
+                                            kick_member_container.setAttribute('class','popup_container')
+                                            window.onkeyup = (e)=>{if(e.key == 'Escape'){closeKick()}}
+                                            var kick_member = document.createElement('div')
+                                            kick_member.setAttribute('class','popup_window')
+                                            var kick_text = document.createElement('p')
+                                            kick_text.setAttribute('class','popup_text')
+                                            kick_text.innerHTML = `Want to kick <b style="color:#ffeb3b;">${member.name}</b>?`
+                                            var buttons_container = document.createElement('div')
+                                            buttons_container.setAttribute('class','popup_buttons')
+                                            var button_kick = document.createElement('button')
+                                            button_kick.setAttribute('class','popup_button_confirm')
+                                            button_kick.innerText = 'Kick'
+                                            button_kick.onclick = function(){
+                                                db.ref(`Rooms/${chat_name}/Members`).once('value',(membersObj)=>{
+                                                    membersObj = membersObj.val()
+                                                    db.ref(`Rooms/${chat_name}/Members/${membersObj.indexOf(members[i])}`).remove()
+                                                })
+                                            }
+                                            var button_keep = document.createElement('button')
+                                            button_keep.setAttribute('class','popup_button_cancel')
+                                            button_keep.innerText = 'Keep'
+                                            button_keep.onclick = function(){
+                                                closeKick()
+                                            }
+                                            buttons_container.append(button_kick,button_keep)
+                                            kick_member.append(kick_text)
+                                            kick_member.append(buttons_container)
+                                            kick_member_container.append(kick_member)
+                                            document.body.append(kick_member_container)
+                                            function closeKick(){
+                                                kick_member_container.style.opacity = '0'
+                                                setTimeout(()=>{kick_member_container.remove()},300)
+                                            }
+                                            setTimeout(() => {
+                                                kick_member_container.style.opacity = '1'
+                                            },0);
                                         })
                                         member_container.append(kick_member)
                                     }
@@ -1573,7 +1597,7 @@ window.onload = function() {
     }
 var app = new GLOBAL_CHAT()
 auth.onAuthStateChanged((user)=>{
-    if(user == null){
+    if(user == null || !user.emailVerified){
         app.home()
     }else if(user.emailVerified){
         if(localStorage.room == undefined){
