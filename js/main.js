@@ -359,6 +359,13 @@ window.onload = function() {
         container.append(loader_container)
         }
         create_chat(chat_name){
+            db.ref(`users/${auth.currentUser.uid}/rooms`).once('value',(e)=>{
+                if(!e.val().includes(chat_name)){
+                    localStorage.setItem('room','Global')
+                    document.getElementById('chat_container').remove()
+                    parent.create_chat('Global')
+                }
+            })
             var parent = this;
             var title_container = document.getElementById('title_container')
             var title = document.getElementById('title')
