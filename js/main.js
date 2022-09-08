@@ -1286,6 +1286,10 @@ window.onload = function() {
                     })
                 })
             })
+            chat_content_container.scrollTo({
+                top:chat_content_container.scrollHeight,
+                behavior:'smooth'
+            })
         }
         refresh_chat(chatName){
             var chat_content_container = document.getElementById('chat_content_container')
