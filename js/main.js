@@ -627,6 +627,7 @@ window.onload = function() {
                                                     membersObj = membersObj.val()
                                                     db.ref(`Rooms/${chatName}/Members/${membersObj.indexOf(members[i])}`).remove()
                                                 })
+                                                closeKick()
                                             }
                                             var button_keep = document.createElement('button')
                                             button_keep.setAttribute('class','popup_button_cancel')
@@ -1317,8 +1318,8 @@ window.onload = function() {
                     })
                 })
                 var newOrdered = ordered.slice(-50)
-                newOrdered.forEach((e)=>{createMessage(e,false)})
-                if(chat_content_container.scrollTop + chat_content_container.offsetHeight >= chat_content_container.scrollHeight - 300){
+                newOrdered.forEach((e)=>{createMessage(e,false,chatName)})
+                if(chat_content_container.scrollTop  >= chat_content_container.scrollHeight - chat_content_container.offsetHeight - 500){
                     chat_content_container.scrollTo({
                         top:chat_content_container.scrollHeight,
                         behavior:'smooth'
@@ -1357,14 +1358,14 @@ window.onload = function() {
                     start = end - 50
                 }
                 var newOrdered = ordered.slice(start,end).reverse()
-                newOrdered.forEach((e)=>{createMessage(e,true)})
+                newOrdered.forEach((e)=>{createMessage(e,true,chatName)})
                 if(end != 1){
                     document.querySelector(`.message_container[data-index="${end}"]`).scrollIntoView()
                 }
             })
         }
     }
-    function createMessage(data,scroll){
+    function createMessage(data,scroll,chatName){
         if(data.deleted == true || chat_content_container.contains(document.querySelector(`div.message_container[data-index="${data.index}"]`))){
             let unWantedMessage = document.querySelector(`div.message_container[data-index="${data.index}"]`)
             if(data.deleted == true && chat_content_container.contains(unWantedMessage)){
