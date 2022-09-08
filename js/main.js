@@ -1318,12 +1318,12 @@ window.onload = function() {
                 })
                 var newOrdered = ordered.slice(-50)
                 newOrdered.forEach((e)=>{createMessage(e,false)})
-                // if(chat_content_container.scrollTop+chat_content_container.offsetHeight == chat_content_container.scrollHeight){
+                if(chat_content_container.scrollTop + chat_content_container.offsetHeight >= chat_content_container.scrollHeight - 300){
                     chat_content_container.scrollTo({
                         top:chat_content_container.scrollHeight,
                         behavior:'smooth'
                     })
-                // }
+                }
             })
         }
         load_more(chatName){
