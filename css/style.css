@@ -406,6 +406,7 @@ form.sign-up-form {
     background-color: #f5d9dcde;
     border-bottom-right-radius: 20px;
     border-bottom-left-radius: 20px;
+    overflow: hidden;
 }
 @media (max-width:767px) {
     #chat_inner_container{
@@ -421,6 +422,39 @@ form.sign-up-form {
     padding: 45px 15px 15px;;
     position: relative;
     overflow-x: hidden;
+}
+.scroll-to-bot{
+    background-color: #d640458c;
+    color: #eee;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    z-index: 5;
+    top: -85%;
+    right: -10%;
+    text-align: center;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    border-radius: 50px;
+    transition: 0.5s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    animation: scrollbot 0.4s linear alternate infinite paused;
+}
+.scroll-to-bot:hover{
+    background-color: #d64045;
+    animation-play-state: running;
+}
+@keyframes scrollbot {
+    from{
+        transform: translateY(0px);
+    }to{
+        transform: translateY(5px);
+    }
 }
 .chat_name_container{
     background-color: rgba(214, 64, 69, 0.81);

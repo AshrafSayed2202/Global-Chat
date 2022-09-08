@@ -372,6 +372,22 @@ window.onload = function() {
                 if(chat_content_container.scrollTop == 0){
                     parent.load_more(chatName)
                 }
+                if(chat_content_container.scrollTop <= chat_content_container.scrollHeight - chat_content_container.offsetHeight - 500){
+                    scroll_bot.style.right = '4%'
+                    scroll_bot.style.opacity = '1'
+                }else{
+                    scroll_bot.style.right = '-10%'
+                    scroll_bot.style.opacity = '0'
+                }
+            }
+            var scroll_bot = document.createElement('span')
+            scroll_bot.setAttribute('class','scroll-to-bot')
+            scroll_bot.innerHTML = `<i class="fa-solid fa-angle-down"></i>`
+            scroll_bot.onclick = ()=>{
+                chat_content_container.scrollTo({
+                    top:chat_content_container.scrollHeight,
+                    behavior:'smooth'
+                })
             }
             var chat_name_container = document.createElement('div')
             chat_name_container.setAttribute('class','chat_name_container')
@@ -433,7 +449,7 @@ window.onload = function() {
                     deleteReplyMessage()
                 }
             }
-            chat_input_container.append(chat_input,chat_image_upload_label,chat_input_send)
+            chat_input_container.append(scroll_bot,chat_input,chat_image_upload_label,chat_input_send)
             chat_inner_container.append(chat_name_container, chat_content_container, chat_input_container)
             if (chatName != 'Global') {
                 var members_container_btn = document.createElement('span')
@@ -1302,7 +1318,12 @@ window.onload = function() {
                 })
                 var newOrdered = ordered.slice(-50)
                 newOrdered.forEach((e)=>{createMessage(e,false)})
-                chat_content_container.scrollTop = chat_content_container.scrollHeight;
+                // if(chat_content_container.scrollTop+chat_content_container.offsetHeight == chat_content_container.scrollHeight){
+                    chat_content_container.scrollTo({
+                        top:chat_content_container.scrollHeight,
+                        behavior:'smooth'
+                    })
+                // }
             })
         }
         load_more(chatName){
@@ -1509,7 +1530,7 @@ window.onload = function() {
                 message_container.childNodes[3].style.opacity = '1'
                 message_container.childNodes[3].style.zIndex = '0'
                 if(message_container.previousSibling != null){
-                    if(message_container.previousSibling.childNodes[1].firstChild.firstChild.data.user == data.user.uid){
+                    if(message_container.previousSibling.childNodes[1].firstChild.firstChild.dataset.user == data.user.uid){
                         message_container.childNodes[4].style.right = '-60px'
                     }else{
                         message_container.childNodes[4].style.right = '-60px'
