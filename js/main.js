@@ -1145,6 +1145,20 @@ window.onload = function() {
                         confirm_delete_room.setAttribute('class','popup_button_confirm')
                         confirm_delete_room.textContent = 'Delete'
                         confirm_delete_room.onclick = ()=>{
+                            var storageRef = firebase.storage().ref();
+                            var desertRef = storageRef.child(`Rooms/${rooms[i]}`);
+                            desertRef.listAll()
+                            .then((res)=>{
+                                res.items.forEach((itemRef)=>{
+                                    var deleteRef = storageRef.child(`Rooms/${rooms[i]}/${itemRef.name}`)
+                                    deleteRef.delete().then(()=>{
+                                    }).catch((error)=>{
+                                        console.log(error.message);
+                                    })
+                                })
+                            }).catch((error) => {
+                                console.log(error.message);
+                            });
                             db.ref(`Rooms/${rooms[i]}`).remove()
                             closeDeleteRoom()
                             closeRooms()
