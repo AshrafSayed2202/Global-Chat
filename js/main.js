@@ -1,3 +1,8 @@
+// import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-app.js'
+// import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-storage.js'
+// import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-auth.js'
+// import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-app-check.js'
+// import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-database.js'
 const firebaseConfig = {
     apiKey: "AIzaSyCjxJ4TxSjngUdYHuZqEjvlomQVN2OOLqU",
     authDomain: "global-chat-cb729.firebaseapp.com",
@@ -10,6 +15,7 @@ firebase.initializeApp(firebaseConfig);
 var db = firebase.database()
 var auth = firebase.auth()
 var storage = firebase.storage()
+var appCheck = firebase.appCheck();
 window.onload = function() {
     class GLOBAL_CHAT{
         home(){
