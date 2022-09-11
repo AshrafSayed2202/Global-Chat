@@ -14,29 +14,14 @@ window.onload = function() {
     class GLOBAL_CHAT{
         home(){
         document.body.innerHTML = ''
-        this.create_title()
         this.create_join_form()
         }
         chat(chatName){
-        this.create_title()
         this.create_chat(chatName)
         this.create_profile()
         }
-        create_title(){
-        var title_container = document.createElement('div')
-        title_container.setAttribute('id', 'title_container')
-        var title_inner_container = document.createElement('div')
-        title_inner_container.setAttribute('id', 'title_inner_container')
-        var title = document.createElement('h1')
-        title.setAttribute('id', 'title')
-        title.textContent = 'Global Chat'
-        title_inner_container.append(title)
-        title_container.append(title_inner_container)
-        document.body.append(title_container)
-        }
         create_join_form(){
         var parent = this;
-        document.getElementById('title_container').remove()
         var join_container = document.createElement('div')
         join_container.setAttribute('class','container')
         var signInSignUp = document.createElement('div')
@@ -358,10 +343,6 @@ window.onload = function() {
                 }
             })
             var parent = this;
-            var title_container = document.getElementById('title_container')
-            var title = document.getElementById('title')
-            title_container.classList.add('chat_title_container')
-            title.classList.add('chat_title')
             var chat_container = document.createElement('div')
             chat_container.setAttribute('id', 'chat_container')
             var chat_inner_container = document.createElement('div')
@@ -452,6 +433,10 @@ window.onload = function() {
             chat_input_container.append(scroll_bot,chat_input,chat_image_upload_label,chat_input_send)
             chat_inner_container.append(chat_name_container, chat_content_container, chat_input_container)
             if (chatName != 'Global') {
+                chat_name_container.classList.add('active')
+                chat_name_container.addEventListener('click',()=>{
+                    chat_name_container.classList.toggle('clicked')
+                })
                 var members_container_btn = document.createElement('span')
                 members_container_btn.setAttribute('class', 'members_container_btn header_btn')
                 members_container_btn.innerHTML = `Members <i style="margin-left:5px;" class="fa-solid fa-user-group"></i>`
@@ -551,7 +536,7 @@ window.onload = function() {
                                 change_password_container.style.opacity = '1'
                             },0);
                         })
-                        chat_inner_container.append(change_room_password)
+                        chat_name_container.append(change_room_password)
                     }
                     db.ref(`users/${admin}`).once('value',(admin_user)=>{
                         var admin_container = document.createElement('div')
@@ -575,10 +560,14 @@ window.onload = function() {
                         admin_image.src = admin_user.val().image
                         admin_image.onerror = (e)=>{e.target.src = 'media/user.webp';admin_image.onerror = null}
                         admin_image.style.border = `2px dashed ${admin_user.val().color}`
+                        var member_image_holder = document.createElement('div')
+                        member_image_holder.style.border = `2px dashed ${admin_user.val().color}`
+                        member_image_holder.setAttribute('class','member_image_holder')
+                        member_image_holder.append(admin_image)
                         var admin_name = document.createElement('p')
                         admin_name.textContent = `👑${admin_user.val().name}👑`
                         admin_name.setAttribute('class','member_name')
-                        admin_container.append(admin_image,admin_name)
+                        admin_container.append(member_image_holder,admin_name)
                         admins_list.append(admin_container)
                     })
                     db.ref(`Rooms/${chatName}/Members`).on('value',(members)=>{
@@ -604,7 +593,7 @@ window.onload = function() {
                                     member_container.append(view_profile)
                                     if(auth.currentUser.uid == admin){
                                         member_container.onmouseenter = ()=>{member_container.style.paddingRight = '70px'}
-                                    member_container.onmouseleave = ()=>{member_container.style.paddingRight = '0px'}
+                                        member_container.onmouseleave = ()=>{member_container.style.paddingRight = '0px'}
                                         var kick_member = document.createElement('span')
                                         kick_member.setAttribute('class','kick_member')
                                         kick_member.innerHTML = `<i class="fa-solid fa-user-large-slash"></i>`
@@ -655,11 +644,14 @@ window.onload = function() {
                                 member_image.setAttribute('class','member_image')
                                 member_image.src = member.image
                                 member_image.onerror = (e)=>{e.target.src = 'media/user.webp';member_image.onerror = null}
-                                member_image.style.border = `2px dashed ${member.color}`
+                                var member_image_holder = document.createElement('div')
+                                member_image_holder.style.border = `2px dashed ${member.color}`
+                                member_image_holder.setAttribute('class','member_image_holder')
+                                member_image_holder.append(member_image)
                                 var member_name = document.createElement('p')
                                 member_name.textContent = `${member.name}`
                                 member_name.setAttribute('class','member_name')
-                                member_container.append(member_image,member_name)
+                                member_container.append(member_image_holder,member_name)
                                 members_list.append(member_container)
                             })
                         }
@@ -673,11 +665,14 @@ window.onload = function() {
                 close_other_profile.addEventListener('click',closeOtherProfile)
                 var other_profile_image = document.createElement('img')
                 other_profile_image.setAttribute('class','profile_image')
+                var other_profile_image_holder = document.createElement('div')
+                other_profile_image_holder.setAttribute('class','profile_image_holder')
+                other_profile_image_holder.append(other_profile_image)
                 var other_profile_name = document.createElement('p')
                 other_profile_name.setAttribute('class','profile_name')
                 var other_profile_bio = document.createElement('p')
                 other_profile_bio.setAttribute('class','profile_bio')
-                other_profile.append(other_profile_image,other_profile_name,other_profile_bio,close_other_profile)
+                other_profile.append(other_profile_image_holder,other_profile_name,other_profile_bio,close_other_profile)
                 function closeMembers(){
                     members_container.classList.remove('active')
                 }
@@ -688,7 +683,7 @@ window.onload = function() {
                     db.ref(`users/${uid}`).once('value',(user)=>{
                         user = user.val()
                         other_profile_image.src = user.image
-                        other_profile_image.style.borderColor = user.color
+                        other_profile_image_holder.style.borderColor = user.color
                         other_profile_image.onerror = (e)=>{e.target.src = 'media/user.webp';other_profile_image.onerror = null}
                         other_profile_name.textContent = user.name
                         other_profile_bio.textContent = user.bio
@@ -697,7 +692,8 @@ window.onload = function() {
                     })
                 }
                 members_container.append(close_members_btn,admins_list,members_list)
-                chat_inner_container.append(members_container,members_container_btn,other_profile)
+                chat_name_container.append(members_container_btn)
+                chat_inner_container.append(members_container,other_profile)
             }
             chat_container.append(chat_inner_container)
             document.body.append(chat_container)
@@ -710,6 +706,9 @@ window.onload = function() {
             profile_btn_container.setAttribute('class','profile_btn_container')
             var profile_btn = document.createElement('img')
             profile_btn.onerror = (e)=>{e.target.src = 'media/user.webp';profile_btn.onerror = null}
+            var profile_btn_holder = document.createElement('div')
+            profile_btn_holder.setAttribute('class','profile_btn_holder')
+            profile_btn_holder.append(profile_btn)
             var profile_container = document.createElement('div')
             profile_container.setAttribute('class','aside_container')
             profile_btn_container.onclick = ()=>{
@@ -721,12 +720,16 @@ window.onload = function() {
             var profile_image = document.createElement('img')
             profile_image.onerror = (e)=>{e.target.src = 'media/user.webp';profile_image.onerror = null}
             profile_image.setAttribute('class','profile_image')
+            var profile_image_holder = document.createElement('div')
+            profile_image_holder.setAttribute('class','profile_image_holder')
+            profile_image_holder.append(profile_image)
             var profile_image_edit_btn = document.createElement('span')
             profile_image_edit_btn.innerHTML = '<i class="fa-solid fa-pen"></i>'
             var upload_new_image_input_field = document.createElement('div')
             upload_new_image_input_field.setAttribute('class','input-field upload_new_image_active')
             var upload_new_image_input = document.createElement('input')
             upload_new_image_input.type = 'file'
+            upload_new_image_input.accept = 'image/*'
             upload_new_image_input.style.display = 'none'
             var upload_new_image_label = document.createElement('label')
             upload_new_image_label.setAttribute('class','sign_up_image_label')
@@ -767,7 +770,7 @@ window.onload = function() {
             profile_image_edit_btn.addEventListener('click',()=>{
                 upload_new_image_input_field.classList.toggle('upload_new_image_active')
             })
-            profile_image_container.append(profile_image_edit_btn,profile_image,upload_new_image_input_field)
+            profile_image_container.append(profile_image_edit_btn,profile_image_holder,upload_new_image_input_field)
             var profile_name = document.createElement('p')
             profile_name.setAttribute('class','profile_name')
             var profile_bio = document.createElement('p')
@@ -1070,16 +1073,16 @@ window.onload = function() {
                 profile_container.classList.remove('aside-active')
             }
             var profile_buttons = document.createElement('div')
-            profile_buttons.append(join_room_btn,back_to_global,chat_logout)
-            profile_container.append(profile_image_container,profile_name,profile_bio,profile_buttons,socials,close_profile)
-            profile_btn_container.append(profile_btn)
+            profile_btn_container.append(profile_btn_holder)
             var rooms_btn = document.createElement('div')
-            rooms_btn.setAttribute('class','rooms_btn header_btn')
-            rooms_btn.textContent = 'ROOMS'
+            rooms_btn.setAttribute('class','profile_inner_btn')
+            rooms_btn.innerHTML = 'ROOMS<i style="margin-left:5px;" class="fa-solid fa-layer-group"></i>'
             rooms_btn.addEventListener('click',()=>{
                 profile_container.classList.remove('aside-active')
                 rooms_container.classList.toggle('aside-active')
             })
+            profile_buttons.append(join_room_btn,rooms_btn,back_to_global,chat_logout)
+            profile_container.append(profile_image_container,profile_name,profile_bio,profile_buttons,socials,close_profile)
             var rooms_container = document.createElement('div')
             rooms_container.setAttribute('class','aside_container')
             var my_rooms = document.createElement('div')
@@ -1235,13 +1238,13 @@ window.onload = function() {
                 profile_btn.onerror = (e)=>{e.target.src = 'media/user.webp';profile_btn.onerror = null}
                 profile_image.src = user.image
                 profile_image.onerror = (e)=>{e.target.src = 'media/user.webp';profile_image.onerror = null}
-                profile_image.style.borderColor = user.color
+                profile_image_holder.style.borderColor = user.color
                 new_color_input.value = user.color
                 profile_name.textContent = user.name
                 user.bio == ''?profile_bio_text.textContent = 'Nothing':profile_bio_text.textContent = user.bio;
             })
             rooms_container.append(my_rooms,joined_rooms,close_rooms)
-            document.body.append(profile_btn_container,rooms_container,profile_container,rooms_btn)
+            document.body.append(profile_btn_container,rooms_container,profile_container)
         }
         send_message(message,chatName){
             var parent = this
@@ -1427,6 +1430,9 @@ window.onload = function() {
         image == ""?user_image.src = 'media/user.webp': user_image.src = image;
         user_image.onerror = (e)=>{e.target.src = 'media/user.webp';user_image.onerror = null}
         user_image.style.borderColor = `${color}`
+        var user_image_holder = document.createElement('div')
+        user_image_holder.setAttribute('class','user_image_holder')
+        user_image_holder.append(user_image)
         var message_user_container = document.createElement('div')
         message_user_container.style.display = 'block'
         message_user_container.setAttribute('class', 'message_user_container')
@@ -1445,7 +1451,7 @@ window.onload = function() {
         message_replybtn.innerHTML = '<i class="fa-solid fa-reply"></i>'
         message_user_container.append(message_user)
         message_inner_container.append(message_user_container)
-        message_container.append(user_image)
+        message_container.append(user_image_holder)
         message_content_container.setAttribute('class', 'message_content_container')
         message_content.setAttribute('class', 'message_content')
         if(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(message) && message.startsWith('<img') == false){
@@ -1587,7 +1593,7 @@ window.onload = function() {
                     message_container.style.borderTopRightRadius = '15px'
                     message_container.style.borderBottomRightRadius = '40px'
                 }
-                user_image.style.display = 'none'
+                user_image_holder.style.display = 'none'
                 message_user_container.style.display = 'none'
                 if(message_container.previousSibling.childNodes[1].firstChild.style.display == 'none'){
                     if(data.user.uid == auth.currentUser.uid){

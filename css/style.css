@@ -18,30 +18,6 @@ body{
     -webkit-focus-ring-color: rgba(255, 255, 255, 0) !important; 
     outline: none !important
 }
-#title_container{
-    width: 100%;
-    height: 225px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #D64045;
-    box-shadow: 0 0 30px -18px #D64045;
-}
-#title_inner_container{
-    width: 100%;
-    height: 100%;
-}
-#title{
-    display: inline-block;
-    color: #fff;
-    font-size: 55px;
-    letter-spacing: 2px;
-    -webkit-user-select: none;
-    user-select: none;
-    text-align: center;
-    line-height: 1;
-    padding: 20px;
-}
 /* Create sign-in sign-up */
 .container {
     position: relative;
@@ -97,11 +73,6 @@ form.sign-up-form {
     opacity: 0;
     transition: 0.5s ease-in-out;
     transition-delay: 1s;
-}
-.title {
-    font-size: 35px;
-    color: #d64045;
-    margin-bottom: 10px;
 }
 .input-field {
     width: 100%;
@@ -393,7 +364,7 @@ form.sign-up-form {
 /* End sign-in sign-up */
 #chat_container{
     width: 100%;
-    height: calc(100vh - 190px);
+    height: 100vh;
     display: flex;
     justify-content: center;
     float: left;
@@ -402,7 +373,7 @@ form.sign-up-form {
 }
 #chat_inner_container{
     width: 40%;
-    height: 100%;
+    height: 100vh;
     background-color: #f5d9dcde;
     border-bottom-right-radius: 20px;
     border-bottom-left-radius: 20px;
@@ -432,6 +403,7 @@ form.sign-up-form {
     z-index: 5;
     top: -85%;
     right: -10%;
+    opacity: 0;
     text-align: center;
     cursor: pointer;
     -webkit-user-select: none;
@@ -465,13 +437,25 @@ form.sign-up-form {
     border-top: 1px dashed;
     padding: 5px;
     position: absolute;
-    z-index: 1;
+    z-index: 3;
     width: 250px;
     max-width: 100%;
     left: 50%;
     transform: translateX(-50%);
+    transition: 0.3s;
     border-bottom-left-radius: 50px;
     border-bottom-right-radius: 50px;
+    overflow: hidden;
+}
+.chat_name_container.active{
+    cursor: pointer;
+}
+.chat_name_container.clicked{
+    padding-bottom: 70px;
+    cursor: default;
+}
+.chat_name_container:hover{
+    background-color: rgb(214, 64, 69);
 }
 #chat_input_container{
     width: 100%;
@@ -483,7 +467,6 @@ form.sign-up-form {
     padding-right: 15px;
     font-family: Varela Round;
     margin-top: 10px;
-    border-radius: 50px;
     background-color: #eee;
     position: relative;
 }
@@ -537,11 +520,12 @@ form.sign-up-form {
     transition: 0.3s;
     -webkit-user-select: none;
     user-select: none;
+    z-index: 3;
+    top: 0;
 }
 .members_container_btn{
     left: 19px;
-    top: -69px;
-    z-index: 5;
+    top: 45px;
 }
 .header_btn:hover{
     transform: scale(1.1);
@@ -550,9 +534,8 @@ form.sign-up-form {
     border-color: #ffeb3b;
 }
 .change_password_btn{
-    z-index: 5;
     left: 167px;
-    top: -69px;
+    top: 45px;
 }
 .members_container{
     background-color: #b51e23eb;
@@ -649,7 +632,17 @@ form.sign-up-form {
 }
 .member_image{
     width: 50px;
+}
+.member_image_holder{
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
     border-radius: 50%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
 }
 .member_name{
     color: #d64045;
@@ -665,14 +658,25 @@ form.sign-up-form {
     width: 45px;
     height: 45px;
     position: absolute;
-    top: 100px;
+    top: 0px;
     right: 15px;
     cursor: pointer;
     transition: 0.3s;
-    z-index: 5;
+    z-index: 4;
+    top: 15px;
 }
 .profile_btn_container img{
     width: 100%;
+}
+.profile_btn_holder{
+    height: 45px;
+    width: 45px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    overflow: hidden;
     border-radius: 50%;
 }
 .profile_btn_container::before{
@@ -709,15 +713,14 @@ form.sign-up-form {
     display: none;
 }
 .rooms_btn{
-    top: 108px;
     right: 40px;
-    transition: 0.3s;
-    padding: 1px 40px 1px 20px;
+    top: 58px;
+    padding-right: 35px;
 }
 .aside_container{
     background-color: #b51e23eb;
     position: fixed;
-    height: calc(100% - 190px);
+    height: 100%;
     width: 400px;
     max-width: 100%;
     right: 0;
@@ -758,9 +761,19 @@ form.sign-up-form {
 .profile_image{
     width: 150px;
     display: block;
+}
+.profile_image_holder{
+    width: 150px;
+    border: 3px dashed;
+    height: 150px;
     margin: 25px auto;
     border-radius: 50%;
-    border:3px dashed #ff9800;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
 }
 .profile_image_container{
     position: relative;
@@ -995,10 +1008,19 @@ form.sign-up-form {
 }
 .user_image{
     width: 40px;
+}
+.user_image_holder{
+    width: 50px;
+    height: 40px;
+    align-self: flex-start;
+    overflow: hidden;
     border-radius: 50px;
-    border: 2px solid;
-    outline: 2px dashed #ccc;
-    align-self:flex-start;
+    border: 2px solid #00ffd9;
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 .message_inner_container{
     width: 100%;
@@ -1071,15 +1093,6 @@ span.message_time{
     font-weight: normal;
     font-size: 14px;
     margin-top: 5px;
-}
-#title_container.chat_title_container{
-    transition: 0.8s;
-    transition-timing-function: ease-in-out;
-    height: 175px;
-}
-#title.chat_title{
-    transition: 0.8s;
-    font-size: 47px;
 }
 .loader_container{
     width: 100%;
