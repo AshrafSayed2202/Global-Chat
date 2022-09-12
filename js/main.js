@@ -1,7 +1,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-app.js'
 import { getStorage, ref as ref2, uploadBytes, getDownloadURL, listAll, deleteObject} from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-storage.js'
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-auth.js'
-import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-app-check.js'
+import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-app-check.js'
 import { getDatabase ,ref ,set ,onValue, onChildRemoved, update, remove} from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-database.js'
 const firebaseConfig = {
     apiKey: "AIzaSyCjxJ4TxSjngUdYHuZqEjvlomQVN2OOLqU",
@@ -15,7 +15,10 @@ const firebaseApp = initializeApp(firebaseConfig)
 var db = getDatabase(firebaseApp)
 var auth = getAuth(firebaseApp)
 var storage = getStorage(firebaseApp)
-// var appCheck = firebase.appCheck();
+var appCheck = initializeAppCheck(firebaseApp,{
+    provider: new ReCaptchaV3Provider('6LdVyO0hAAAAABa0PDdZ20UCcGvB20K2X_djclnA'),
+    isTokenAutoRefreshEnabled: true
+});
 window.onload = function() {
     class GLOBAL_CHAT{
         home(){
