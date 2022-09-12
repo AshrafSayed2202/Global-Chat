@@ -1,8 +1,8 @@
-// import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-app.js'
-// import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-storage.js'
-// import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-auth.js'
-// import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-app-check.js'
-// import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-database.js'
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-app.js'
+import { getStorage, ref as ref2, uploadBytes, getDownloadURL, listAll, deleteObject} from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-storage.js'
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-auth.js'
+import { } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-app-check.js'
+import { getDatabase ,ref ,set ,onValue, onChildRemoved, update, remove} from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-database.js'
 const firebaseConfig = {
     apiKey: "AIzaSyCjxJ4TxSjngUdYHuZqEjvlomQVN2OOLqU",
     authDomain: "global-chat-cb729.firebaseapp.com",
@@ -11,11 +11,11 @@ const firebaseConfig = {
     messagingSenderId: "7814295286",
     appId: "1:7814295286:web:da5d1756080bb7d86c46d7"
 };
-firebase.initializeApp(firebaseConfig);
-var db = firebase.database()
-var auth = firebase.auth()
-var storage = firebase.storage()
-var appCheck = firebase.appCheck();
+const firebaseApp = initializeApp(firebaseConfig)
+var db = getDatabase(firebaseApp)
+var auth = getAuth(firebaseApp)
+var storage = getStorage(firebaseApp)
+// var appCheck = firebase.appCheck();
 window.onload = function() {
     class GLOBAL_CHAT{
         home(){
@@ -105,7 +105,7 @@ window.onload = function() {
             reset_password_container.append(reset_password)
             document.body.append(reset_password_container)
             function sendTheReset(){
-                auth.sendPasswordResetEmail(reset_password_input.value)
+                sendPasswordResetEmail(auth,reset_password_input.value)
                 .then(()=>{
                     closeForgetPassword()
                     window.alert('✅Reset mail sent')
@@ -129,7 +129,7 @@ window.onload = function() {
             e.preventDefault()
             if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_in_user_input.value)){
                 if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_in_password_input.value)){
-                    auth.signInWithEmailAndPassword(sign_in_user_input.value, sign_in_password_input.value)
+                    signInWithEmailAndPassword(auth,sign_in_user_input.value, sign_in_password_input.value)
                     .then((userCredential) => {
                         var user = userCredential.user;
                         if(!user.emailVerified){
@@ -228,12 +228,12 @@ window.onload = function() {
                 if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(sign_up_email_input.value)){
                     if( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(sign_up_password_input.value)){
                         if(sign_up_confirm_password_input.value == sign_up_password_input.value){
-                            auth.createUserWithEmailAndPassword(sign_up_email_input.value,sign_up_password_input.value).then((cred)=>{
-                                var storageRef = storage.ref()
-                                var userImageRef = storageRef.child(`users/${cred.user.uid}/profileImage.jpg`)
-                                userImageRef.put(sign_up_image_input.files[0]).then((e)=>{
-                                    storageRef.child(`users/${cred.user.uid}/profileImage.jpg`).getDownloadURL().then((url)=>{
-                                        db.ref(`users/${cred.user.uid}`).set({
+                            createUserWithEmailAndPassword(auth,sign_up_email_input.value,sign_up_password_input.value).then((cred)=>{
+                                var storageRef = ref2(storage)
+                                var userImageRef = ref2(storage,`users/${cred.user.uid}/profileImage.jpg`)
+                                uploadBytes(userImageRef,sign_up_image_input.files[0]).then((e)=>{
+                                    getDownloadURL(ref2(storage,`users/${cred.user.uid}/profileImage.jpg`)).then((url)=>{
+                                        set(ref(db,`users/${cred.user.uid}`),{
                                             image:url,
                                             name:sign_up_user_input.value,
                                             email:sign_up_email_input.value,
@@ -242,7 +242,7 @@ window.onload = function() {
                                             rooms:["Global"]
                                         })
                                     }).then(()=>{
-                                        auth.currentUser.sendEmailVerification().then(()=>{
+                                        sendEmailVerification(auth.currentUser).then(()=>{
                                             auth.signOut().then(()=>{}).catch((error)=>{console.log(error.message);})
                                         })
                                     })
@@ -341,13 +341,13 @@ window.onload = function() {
         container.append(loader_container)
         }
         create_chat(chatName){
-            db.ref(`users/${auth.currentUser.uid}/rooms`).once('value',(e)=>{
+            onValue(ref(db,`users/${auth.currentUser.uid}/rooms`),(e)=>{
                 if(!e.val().includes(chatName)){
                     localStorage.setItem('room','Global')
                     document.getElementById('chat_container').remove()
                     parent.create_chat('Global')
                 }
-            })
+            },{onlyOnce:true})
             var parent = this;
             var chat_container = document.createElement('div')
             chat_container.setAttribute('id', 'chat_container')
@@ -390,10 +390,9 @@ window.onload = function() {
             chat_image_upload.style.display = 'none'
             chat_image_upload.accept = 'image/*'
             chat_image_upload.onchange = (e)=>{
-                var storageRef = storage.ref()
-                var messageRef = storageRef.child(`Rooms/${chatName}/${e.target.files[0].size}${e.target.files[0].name}`)
-                messageRef.put(e.target.files[0]).then((cred)=>{
-                    storageRef.child(`Rooms/${chatName}/${e.target.files[0].size}${e.target.files[0].name}`).getDownloadURL().then((url)=>{
+                var messageRef = ref2(storage,`Rooms/${chatName}/${e.target.files[0].size}${e.target.files[0].name}`)
+                uploadBytes(messageRef,e.target.files[0]).then((cred)=>{
+                    getDownloadURL(ref2(storage,`Rooms/${chatName}/${e.target.files[0].size}${e.target.files[0].name}`)).then((url)=>{
                         var messageImageHTML = `<img style="width: 100%;border-radius: 15px;border: 2px dashed #ff9800;" src="${url}">`
                         parent.create_load('chat_content_container')
                         parent.send_message(messageImageHTML,chatName)
@@ -462,7 +461,7 @@ window.onload = function() {
                 var members_list = document.createElement('div')
                 members_list.setAttribute('class','members_list')
                 members_list.id = 'members_list'
-                db.ref(`Rooms/${chatName}`).once('value',(room)=>{
+                onValue(ref(db,`Rooms/${chatName}`),(room)=>{
                     var admin =  room.val().admin
                     if(auth.currentUser.uid == admin){
                         var change_room_password = document.createElement('span')
@@ -508,7 +507,7 @@ window.onload = function() {
                             confirm_change_password.onclick = ()=>{
                                 if(change_password_input.value.length >= 6){
                                     if(change_password_confirm_input.value == change_password_input.value){
-                                        db.ref(`Rooms/${chatName}`).update({
+                                        update(ref(db,`Rooms/${chatName}`),{
                                             password:change_password_input.value
                                         })
                                         closeChangePassword()
@@ -544,7 +543,7 @@ window.onload = function() {
                         })
                         chat_name_container.append(change_room_password)
                     }
-                    db.ref(`users/${admin}`).once('value',(admin_user)=>{
+                    onValue(ref(db,`users/${admin}`),(admin_user)=>{
                         var admin_container = document.createElement('div')
                         admin_container.setAttribute('class','user_container')
                         if(auth.currentUser.uid != admin){
@@ -575,12 +574,12 @@ window.onload = function() {
                         admin_name.setAttribute('class','member_name')
                         admin_container.append(member_image_holder,admin_name)
                         admins_list.append(admin_container)
-                    })
-                    db.ref(`Rooms/${chatName}/Members`).on('value',(members)=>{
+                    },{onlyOnce:true})
+                    onValue(ref(db,`Rooms/${chatName}/Members`),(members)=>{
                         members_list.innerHTML = ''
                         members = members.val()
                         for(let i=1;i<members.length;i++){
-                            db.ref(`users/${members[i]}`).once('value',(member)=>{
+                            onValue(ref(db,`users/${members[i]}`),(member)=>{
                                 member = member.val()
                                 var member_container = document.createElement('div')
                                 member_container.setAttribute('class','user_container')
@@ -618,10 +617,10 @@ window.onload = function() {
                                             button_kick.setAttribute('class','popup_button_confirm')
                                             button_kick.innerText = 'Kick'
                                             button_kick.onclick = function(){
-                                                db.ref(`Rooms/${chatName}/Members`).once('value',(membersObj)=>{
+                                                onValue(ref(db,`Rooms/${chatName}/Members`),(membersObj)=>{
                                                     membersObj = membersObj.val()
-                                                    db.ref(`Rooms/${chatName}/Members/${membersObj.indexOf(members[i])}`).remove()
-                                                })
+                                                    remove(ref(db,`Rooms/${chatName}/Members/${membersObj.indexOf(members[i])}`))
+                                                },{onlyOnce:true})
                                                 closeKick()
                                             }
                                             var button_keep = document.createElement('button')
@@ -659,10 +658,10 @@ window.onload = function() {
                                 member_name.setAttribute('class','member_name')
                                 member_container.append(member_image_holder,member_name)
                                 members_list.append(member_container)
-                            })
+                            },{onlyOnce:true})
                         }
                     })
-                })
+                },{onlyOnce:true})
                 var other_profile = document.createElement('div')
                 other_profile.setAttribute('class', 'members_container')
                 var close_other_profile = document.createElement('span')
@@ -686,14 +685,14 @@ window.onload = function() {
                     other_profile.classList.remove('active')
                 }
                 function showOthersProfile(uid){
-                    db.ref(`users/${uid}`).once('value',(user)=>{
+                    onValue(ref(db,`users/${uid}`),(user)=>{
                         user = user.val()
                         other_profile_image.src = user.image
                         other_profile_image_holder.style.borderColor = user.color
                         other_profile_image.onerror = (e)=>{e.target.src = 'media/user.webp';other_profile_image.onerror = null}
                         other_profile_name.textContent = user.name
                         other_profile_bio.textContent = user.bio
-                    }).then(()=>{
+                    },{onlyOnce:true}).then(()=>{
                         other_profile.classList.add('active')
                     })
                 }
@@ -754,15 +753,15 @@ window.onload = function() {
             update_image_color_submit.addEventListener('click',confirmUpdateImage)
             function confirmUpdateImage(){
                     if(upload_new_image_input.files.length == 0){
-                        db.ref(`users/${auth.currentUser.uid}`).update({
+                        update(ref(db,`users/${auth.currentUser.uid}`),{
                             color:new_color_input.value
                         })
                     }else{
-                        var storageRef = storage.ref()
-                                var userImageRef = storageRef.child(`users/${auth.currentUser.uid}/profileImage.jpg`)
-                                userImageRef.put(upload_new_image_input.files[0]).then((e)=>{
-                                    storageRef.child(`users/${auth.currentUser.uid}/profileImage.jpg`).getDownloadURL().then((url)=>{
-                                        db.ref(`users/${auth.currentUser.uid}`).update({
+                        var storageRef = ref2(storage)
+                                var userImageRef = ref2(storage,`users/${auth.currentUser.uid}/profileImage.jpg`)
+                                uploadBytes(userImageRef,upload_new_image_input.files[0]).then((e)=>{
+                                    getDownloadURL(ref2(storageRef,`users/${auth.currentUser.uid}/profileImage.jpg`)).then((url)=>{
+                                        update(ref(db,`users/${auth.currentUser.uid}`),{
                                             image:url,
                                             color:new_color_input.value
                                         })
@@ -812,7 +811,7 @@ window.onload = function() {
                     profile_bio_text.style.padding = '0px'
                     profile_bio_edit_btn.style.display = 'block'
                     profile_bio_edit_confirm.style.display = 'none'
-                    db.ref(`users/${auth.currentUser.uid}`).update({
+                    update(ref(db,`users/${auth.currentUser.uid}`),{
                         bio:profile_bio_text.textContent
                     })
                 }
@@ -861,7 +860,7 @@ window.onload = function() {
                     confirm_room_name.setAttribute('class','join_btn')
                     confirm_room_name.addEventListener('click',confrimRoomName)
                     function confrimRoomName(){
-                        db.ref(`Rooms/`).once('value',(rooms_object)=>{
+                        onValue(ref(db,`Rooms/`),(rooms_object)=>{
                             if(join_room_name.value.length >= 5 && rooms_object.val()[`${join_room_name.value}`] != undefined){
                                 var room_password_field = document.createElement('div')
                                 room_password_field.setAttribute('class','input-field')
@@ -885,18 +884,18 @@ window.onload = function() {
                                 confirm_room_create.setAttribute('class','join_btn')
                                 confirm_room_create.addEventListener('click',confirmRoomPassword)
                                 function confirmRoomPassword(){
-                                    db.ref(`Rooms/${join_room_name.value}`).once('value',(room)=>{
+                                    onValue(ref(db,`Rooms/${join_room_name.value}`),(room)=>{
                                         if(room_password.value.length >= 5 && room_password.value == room.val().password){
-                                            db.ref(`users/${auth.currentUser.uid}`).once('value',(user)=>{
+                                            onValue(ref(db,`users/${auth.currentUser.uid}`),(user)=>{
                                                 if(user.val().rooms.includes(join_room_name.value)){
                                                     return
                                                 }
                                                 var addedRoom = [join_room_name.value]
                                                 var newRooms = user.val().rooms.concat(addedRoom)
-                                                db.ref(`users/${auth.currentUser.uid}`).update({
+                                                update(ref(db,`users/${auth.currentUser.uid}`),{
                                                     rooms: newRooms
                                                 })
-                                            })
+                                            },{onlyOnce:true})
                                             localStorage.setItem('room',join_room_name.value)
                                             document.getElementById('chat_container').remove()
                                             parent.create_chat(join_room_name.value)
@@ -907,16 +906,16 @@ window.onload = function() {
                                             }else{
                                                 var addedMember = [auth.currentUser.uid]
                                             var newMembers = room.val().Members.concat(addedMember)
-                                            db.ref(`Rooms/${join_room_name.value}`).update({
+                                            update(ref(db,`Rooms/${join_room_name.value}`),{
                                                 Members: newMembers
                                             })
                                             }
                                         }
-                                    })
+                                    },{onlyOnce:true})
                                 }
                                 join_buttons.append(room_password_field,confirm_room_create)
                             }
-                        })
+                        },{onlyOnce:true})
                     }
                     join_room_name_field.append(join_room_name)
                     join_buttons.append(join_room_name_field,confirm_room_name)
@@ -944,7 +943,7 @@ window.onload = function() {
                     confirm_room_name.setAttribute('class','join_btn')
                     confirm_room_name.addEventListener('click',confrimRoomName)
                     function confrimRoomName(){
-                        db.ref(`Rooms/`).once('value',(rooms_object)=>{
+                        onValue(ref(db,`Rooms/`),(rooms_object)=>{
                             if(creat_room_name.value.length >= 5 && rooms_object.val()[`${creat_room_name.value}`] == undefined){
                                 var room_password_field = document.createElement('div')
                                 room_password_field.setAttribute('class','input-field')
@@ -968,32 +967,32 @@ window.onload = function() {
                                 confirm_room_create.setAttribute('class','join_btn')
                                 confirm_room_create.addEventListener('click',confirmRoomPassword)
                                 function confirmRoomPassword(){
-                                    db.ref(`Rooms/`).once('value',(rooms_object)=>{
+                                    onValue(ref(db,`Rooms/`),(rooms_object)=>{
                                         if(room_password.value.length >= 5 && rooms_object.val()[`${creat_room_name.value}`] == undefined){
-                                            db.ref(`Rooms/${creat_room_name.value}`).set({
+                                            set(ref(db,`Rooms/${creat_room_name.value}`),{
                                                 password:room_password.value,
                                                 admin: auth.currentUser.uid
                                             })
-                                            db.ref(`users/${auth.currentUser.uid}`).once('value',(user)=>{
-                                                    var addedRoom = [creat_room_name.value]
-                                                    var newRooms = user.val().rooms.concat(addedRoom)
-                                                    db.ref(`users/${auth.currentUser.uid}`).update({
-                                                        rooms: newRooms
-                                                    })
-                                                user = user.val()
-                                                db.ref(`Rooms/${creat_room_name.value}/Members`).set([auth.currentUser.uid])
-                                            })
+                                            onValue(ref(db,`users/${auth.currentUser.uid}`),(user)=>{
+                                                var addedRoom = [creat_room_name.value]
+                                                var newRooms = user.val().rooms.concat(addedRoom)
+                                                update(ref(db,`users/${auth.currentUser.uid}`),{
+                                                    rooms: newRooms
+                                                })
+                                            user = user.val()
+                                            set(ref(db,`Rooms/${creat_room_name.value}/Members`),[auth.currentUser.uid])
+                                        },{onlyOnce:true})
                                             localStorage.setItem('room',creat_room_name.value)
                                             document.getElementById('chat_container').remove()
                                             parent.create_chat(creat_room_name.value)
                                             closeJoinRoom()
                                             closeProfile()
                                         }
-                                    })
+                                    },{onlyOnce:true})
                                 }
                                 join_buttons.append(room_password_field,confirm_room_create)
                             }
-                        })
+                        },{onlyOnce:true})
                     }
                     creat_room_name_field.append(creat_room_name)
                     join_buttons.append(creat_room_name_field,confirm_room_name)
@@ -1104,12 +1103,12 @@ window.onload = function() {
             function closeRooms(){
                 rooms_container.classList.remove('aside-active')
             }
-            db.ref(`users/${auth.currentUser.uid}/rooms`).on('value',(e)=>{
+            onValue(ref(db,`users/${auth.currentUser.uid}/rooms`),(e)=>{
                 my_rooms.innerHTML = ''
                 joined_rooms.innerHTML = ''
                 var rooms = Object.values(e.val());
                 for(let i=1;i<rooms.length;i++){
-                    db.ref(`Rooms/${rooms[i]}/Members`).on('child_removed',(removedMember)=>{
+                    onChildRemoved(ref(db,`Rooms/${rooms[i]}/Members`),(removedMember)=>{
                         removedMember = removedMember.val()
                         if(removedMember == auth.currentUser.uid){
                             if(localStorage.room == rooms[i]){
@@ -1117,142 +1116,142 @@ window.onload = function() {
                                 document.getElementById('chat_container').remove()
                                 parent.create_chat('Global')
                             }
-                            db.ref(`users/${auth.currentUser.uid}/rooms`).once('value',(roomsObj)=>{
+                            onValue(ref(db,`users/${auth.currentUser.uid}/rooms`),(roomsObj)=>{
                                 roomsObj = roomsObj.val()
                                 for(var k in rooms){
                                     if(rooms[i]==rooms[k]){
-                                        db.ref(`users/${auth.currentUser.uid}/rooms/${k}`).remove()
+                                        remove(ref(db,`users/${auth.currentUser.uid}/rooms/${k}`))
                                     }
                                 }
-                            })
+                            },{onlyOnce:true})
                         }
                     })
-                    db.ref(`Rooms/${rooms[i]}`).once('value',(room)=>{
-                    var room_container = document.createElement('div')
-                    room_container.textContent = rooms[i]
-                    room_container.setAttribute('class','room_container')
-                    room_container.onclick = ()=>{room_container.classList.toggle('active')}
-                    window.addEventListener('click',(event)=>{if(room_container.contains(event.target)){false}else{room_container.classList.remove('active')}})
-                    var delete_room = document.createElement('span')
-                    delete_room.innerHTML = `<i class="fa-solid fa-trash-can"></i>`
-                    delete_room.setAttribute('class','room_red_btn')
-                    delete_room.addEventListener('click',()=>{
-                        window.onkeyup = (e)=>{if(e.key == 'Escape'){closeDeleteRoom()}}
-                        var delete_room_container = document.createElement('div')
-                        delete_room_container.setAttribute('class','popup_container')
-                        var delete_room_window = document.createElement('div')
-                        delete_room_window.setAttribute('class','popup_window')
-                        var delete_room_text = document.createElement('p')
-                        delete_room_text.setAttribute('class','popup_text')
-                        delete_room_text.innerHTML = `Are you sure you want to Delete <b style="color:#ffeb3b">${rooms[i]}</b> room?`
-                        var delete_room_buttons = document.createElement('div')
-                        delete_room_buttons.setAttribute('class','popup_buttons')
-                        var confirm_delete_room = document.createElement('button')
-                        confirm_delete_room.setAttribute('class','popup_button_confirm')
-                        confirm_delete_room.textContent = 'Delete'
-                        confirm_delete_room.onclick = ()=>{
-                            var storageRef = firebase.storage().ref();
-                            var desertRef = storageRef.child(`Rooms/${rooms[i]}`);
-                            desertRef.listAll()
-                            .then((res)=>{
-                                res.items.forEach((itemRef)=>{
-                                    var deleteRef = storageRef.child(`Rooms/${rooms[i]}/${itemRef.name}`)
-                                    deleteRef.delete().then(()=>{
-                                    }).catch((error)=>{
-                                        console.log(error.message);
+                    onValue(ref(db,`Rooms/${rooms[i]}`),(room)=>{
+                        var room_container = document.createElement('div')
+                        room_container.textContent = rooms[i]
+                        room_container.setAttribute('class','room_container')
+                        room_container.onclick = ()=>{room_container.classList.toggle('active')}
+                        window.addEventListener('click',(event)=>{if(room_container.contains(event.target)){false}else{room_container.classList.remove('active')}})
+                        var delete_room = document.createElement('span')
+                        delete_room.innerHTML = `<i class="fa-solid fa-trash-can"></i>`
+                        delete_room.setAttribute('class','room_red_btn')
+                        delete_room.addEventListener('click',()=>{
+                            window.onkeyup = (e)=>{if(e.key == 'Escape'){closeDeleteRoom()}}
+                            var delete_room_container = document.createElement('div')
+                            delete_room_container.setAttribute('class','popup_container')
+                            var delete_room_window = document.createElement('div')
+                            delete_room_window.setAttribute('class','popup_window')
+                            var delete_room_text = document.createElement('p')
+                            delete_room_text.setAttribute('class','popup_text')
+                            delete_room_text.innerHTML = `Are you sure you want to Delete <b style="color:#ffeb3b">${rooms[i]}</b> room?`
+                            var delete_room_buttons = document.createElement('div')
+                            delete_room_buttons.setAttribute('class','popup_buttons')
+                            var confirm_delete_room = document.createElement('button')
+                            confirm_delete_room.setAttribute('class','popup_button_confirm')
+                            confirm_delete_room.textContent = 'Delete'
+                            confirm_delete_room.onclick = ()=>{
+                                var storageRef = ref2(storage);
+                                var imagesRef = ref2(storage,`Rooms/${rooms[i]}`);
+                                listAll(imagesRef)
+                                .then((res)=>{
+                                    res.items.forEach((itemRef)=>{
+                                        var deleteRef = ref2(storage,`Rooms/${rooms[i]}/${itemRef.name}`)
+                                        deleteObject(deleteRef).then(()=>{
+                                        }).catch((error)=>{
+                                            console.log(error.message);
+                                        })
                                     })
-                                })
-                            }).catch((error) => {
-                                console.log(error.message);
-                            });
-                            db.ref(`Rooms/${rooms[i]}`).remove()
-                            closeDeleteRoom()
-                            closeRooms()
-                        }
-                        var cancel_delete_room = document.createElement('button')
-                        cancel_delete_room.setAttribute('class','popup_button_cancel')
-                        cancel_delete_room.textContent = 'Cancel'
-                        cancel_delete_room.onclick = closeDeleteRoom
-                        delete_room_buttons.append(confirm_delete_room,cancel_delete_room)
-                        delete_room_window.append(delete_room_text,delete_room_buttons)
-                        delete_room_container.append(delete_room_window)
-                        document.body.append(delete_room_container)
-                        setTimeout(() => {
-                            delete_room_container.style.opacity = '1'
-                        }, 0);
-                        function closeDeleteRoom(){
-                            delete_room_container.style.opacity = '0'
-                            setTimeout(()=>{delete_room_container.remove()},300)
-                        }
-                    })
-                    var enter_room = document.createElement('span')
-                    enter_room.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i>`
-                    enter_room.setAttribute('class','enter_room_btn')
-                    enter_room.addEventListener('click',()=>{
-                        localStorage.setItem('room',rooms[i])
-                        document.getElementById('chat_container').remove()
-                        parent.create_chat(rooms[i])
-                        closeRooms()
-                    })
-                    var leave_room = document.createElement('span')
-                    leave_room.innerHTML = `<i class="fa-solid fa-door-closed"></i>`
-                    leave_room.setAttribute('class','room_red_btn')
-                    leave_room.onmouseenter = ()=>{leave_room.innerHTML = `<i class="fa-solid fa-door-open"></i>`}
-                    leave_room.onmouseleave  = ()=>{leave_room.innerHTML = `<i class="fa-solid fa-door-closed"></i>`}
-                    leave_room.addEventListener('click',()=>{
-                        window.onkeyup = (e)=>{if(e.key == 'Escape'){closeLeaveRoom()}}
-                        var leave_room_container = document.createElement('div')
-                        leave_room_container.setAttribute('class','popup_container')
-                        var leave_room_window = document.createElement('div')
-                        leave_room_window.setAttribute('class','popup_window')
-                        var leave_room_text = document.createElement('p')
-                        leave_room_text.setAttribute('class','popup_text')
-                        leave_room_text.innerHTML = `Are you sure you want to Leave <b style="color:#ffeb3b">${rooms[i]}</b> room?`
-                        var leave_room_buttons = document.createElement('div')
-                        leave_room_buttons.setAttribute('class','popup_buttons')
-                        var confirm_leave_room = document.createElement('button')
-                        confirm_leave_room.setAttribute('class','popup_button_confirm')
-                        confirm_leave_room.textContent = 'Leave'
-                        confirm_leave_room.onclick = ()=>{
-                            db.ref(`Rooms/${rooms[i]}/Members`).once('value',(members)=>{
-                                members = members.val()
-                                db.ref(`Rooms/${rooms[i]}/Members/${members.indexOf(auth.currentUser.uid)}`).remove()
-                            })
+                                }).catch((error) => {
+                                    console.log(error.message);
+                                });
+                                remove(ref(db,`Rooms/${rooms[i]}`))
+                                closeDeleteRoom()
+                                closeRooms()
+                            }
+                            var cancel_delete_room = document.createElement('button')
+                            cancel_delete_room.setAttribute('class','popup_button_cancel')
+                            cancel_delete_room.textContent = 'Cancel'
+                            cancel_delete_room.onclick = closeDeleteRoom
+                            delete_room_buttons.append(confirm_delete_room,cancel_delete_room)
+                            delete_room_window.append(delete_room_text,delete_room_buttons)
+                            delete_room_container.append(delete_room_window)
+                            document.body.append(delete_room_container)
+                            setTimeout(() => {
+                                delete_room_container.style.opacity = '1'
+                            }, 0);
+                            function closeDeleteRoom(){
+                                delete_room_container.style.opacity = '0'
+                                setTimeout(()=>{delete_room_container.remove()},300)
+                            }
+                        })
+                        var enter_room = document.createElement('span')
+                        enter_room.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i>`
+                        enter_room.setAttribute('class','enter_room_btn')
+                        enter_room.addEventListener('click',()=>{
+                            localStorage.setItem('room',rooms[i])
                             document.getElementById('chat_container').remove()
-                            parent.create_chat('Global')
-                            closeLeaveRoom()
+                            parent.create_chat(rooms[i])
                             closeRooms()
-                        }
-                        var cancel_leave_room = document.createElement('button')
-                        cancel_leave_room.setAttribute('class','popup_button_cancel')
-                        cancel_leave_room.textContent = 'Cancel'
-                        cancel_leave_room.onclick = closeLeaveRoom
-                        leave_room_buttons.append(confirm_leave_room,cancel_leave_room)
-                        leave_room_window.append(leave_room_text,leave_room_buttons)
-                        leave_room_container.append(leave_room_window)
-                        document.body.append(leave_room_container)
-                        setTimeout(() => {
-                            leave_room_container.style.opacity = '1'
-                        }, 0);
-                        function closeLeaveRoom(){
-                            leave_room_container.style.opacity = '0'
-                            setTimeout(()=>{leave_room_container.remove()},300)
-                        }
-                    })
-                    room_container.append(enter_room)
-                        if(room.val().admin == auth.currentUser.uid){
-                            room_container.classList.add('my_room_container')
-                            room_container.append(delete_room)
-                            my_rooms.append(room_container)
-                        }else{
-                            room_container.classList.add('joined_room_container')
-                            room_container.append(leave_room)
-                            joined_rooms.append(room_container)
-                        }
-                    })
+                        })
+                        var leave_room = document.createElement('span')
+                        leave_room.innerHTML = `<i class="fa-solid fa-door-closed"></i>`
+                        leave_room.setAttribute('class','room_red_btn')
+                        leave_room.onmouseenter = ()=>{leave_room.innerHTML = `<i class="fa-solid fa-door-open"></i>`}
+                        leave_room.onmouseleave  = ()=>{leave_room.innerHTML = `<i class="fa-solid fa-door-closed"></i>`}
+                        leave_room.addEventListener('click',()=>{
+                            window.onkeyup = (e)=>{if(e.key == 'Escape'){closeLeaveRoom()}}
+                            var leave_room_container = document.createElement('div')
+                            leave_room_container.setAttribute('class','popup_container')
+                            var leave_room_window = document.createElement('div')
+                            leave_room_window.setAttribute('class','popup_window')
+                            var leave_room_text = document.createElement('p')
+                            leave_room_text.setAttribute('class','popup_text')
+                            leave_room_text.innerHTML = `Are you sure you want to Leave <b style="color:#ffeb3b">${rooms[i]}</b> room?`
+                            var leave_room_buttons = document.createElement('div')
+                            leave_room_buttons.setAttribute('class','popup_buttons')
+                            var confirm_leave_room = document.createElement('button')
+                            confirm_leave_room.setAttribute('class','popup_button_confirm')
+                            confirm_leave_room.textContent = 'Leave'
+                            confirm_leave_room.onclick = ()=>{
+                                onValue(ref(db,`Rooms/${rooms[i]}/Members`),(members)=>{
+                                    members = members.val()
+                                    remove(ref(db,`Rooms/${rooms[i]}/Members/${members.indexOf(auth.currentUser.uid)}`))
+                                },{onlyOnce:true})
+                                document.getElementById('chat_container').remove()
+                                parent.create_chat('Global')
+                                closeLeaveRoom()
+                                closeRooms()
+                            }
+                            var cancel_leave_room = document.createElement('button')
+                            cancel_leave_room.setAttribute('class','popup_button_cancel')
+                            cancel_leave_room.textContent = 'Cancel'
+                            cancel_leave_room.onclick = closeLeaveRoom
+                            leave_room_buttons.append(confirm_leave_room,cancel_leave_room)
+                            leave_room_window.append(leave_room_text,leave_room_buttons)
+                            leave_room_container.append(leave_room_window)
+                            document.body.append(leave_room_container)
+                            setTimeout(() => {
+                                leave_room_container.style.opacity = '1'
+                            }, 0);
+                            function closeLeaveRoom(){
+                                leave_room_container.style.opacity = '0'
+                                setTimeout(()=>{leave_room_container.remove()},300)
+                            }
+                        })
+                        room_container.append(enter_room)
+                            if(room.val().admin == auth.currentUser.uid){
+                                room_container.classList.add('my_room_container')
+                                room_container.append(delete_room)
+                                my_rooms.append(room_container)
+                            }else{
+                                room_container.classList.add('joined_room_container')
+                                room_container.append(leave_room)
+                                joined_rooms.append(room_container)
+                            }
+                        },{onlyOnce:true})
                 }
             })
-            db.ref(`users/${auth.currentUser.uid}`).on('value',(user)=>{
+            onValue(ref(db,`users/${auth.currentUser.uid}`),(user)=>{
                 user = user.val()
                 profile_btn.src = user.image
                 profile_btn.onerror = (e)=>{e.target.src = 'media/user.webp';profile_btn.onerror = null}
@@ -1278,13 +1277,17 @@ window.onload = function() {
                     index:chat_input_container.childNodes[0].dataset.index
                 }
             }
-            db.ref(`users/${auth.currentUser.uid}`).once('value',(user)=>{
+            onValue(ref(db,`users/${auth.currentUser.uid}`),(user)=>{
                 user = user.val()
-                db.ref(`Rooms/${chatName}/messages`).once('value', function(message_object) {
-                    var index = parseFloat(message_object.numChildren()) + 1
+                onValue(ref(db,`Rooms/${chatName}/messages`),function(message_object) {
+                    if(message_object.val() == null){
+                        var index = 1
+                    }else{
+                        var index = Object.values(message_object.val()).length + 1
+                    }
                     let d = new Date();
                     let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-                    db.ref(`Rooms/${chatName}/messages/message_${index}`).set({
+                    set(ref(db,`Rooms/${chatName}/messages/message_${index}`),{
                         user: {
                             uid: auth.currentUser.uid,
                             name: user.name,
@@ -1307,8 +1310,8 @@ window.onload = function() {
                     .then(function(){
                         parent.refresh_chat(chatName)
                     })
-                })
-            })
+                },{onlyOnce:true})
+            },{onlyOnce:true})
             chat_content_container.scrollTo({
                 top:chat_content_container.scrollHeight,
                 behavior:'smooth'
@@ -1316,11 +1319,11 @@ window.onload = function() {
         }
         refresh_chat(chatName){
             var chat_content_container = document.getElementById('chat_content_container')
-            db.ref(`Rooms/${chatName}/messages`).on('value', function(messages_object) {
+            onValue(ref(db,`Rooms/${chatName}/messages`),function(messages_object) {
                 if(document.querySelector('.loader_container') != null){
                     document.querySelector('.loader_container').remove()
                 }
-                if(messages_object.numChildren() == 0){
+                if(messages_object.val() == null){
                     return
                 }
                 var messages = []
@@ -1355,7 +1358,7 @@ window.onload = function() {
             })
         }
         load_more(chatName){
-            db.ref(`Rooms/${chatName}/messages`).once('value',(messages_object)=>{
+            onValue(ref(db,`Rooms/${chatName}/messages`),(messages_object)=>{
                 var messages = []
                 messages = Object.values(messages_object.val());
                 var guide = []
@@ -1389,7 +1392,7 @@ window.onload = function() {
                 if(end != 1){
                     document.querySelector(`.message_container[data-index="${end}"]`).scrollIntoView()
                 }
-            })
+            },{onlyOnce:true})
         }
     }
     function createMessage(data,scroll,chatName){
@@ -1667,8 +1670,8 @@ window.onload = function() {
             button_delete.innerText = 'Delete'
             button_delete.onclick = function(){
                 if(data.user.uid == auth.currentUser.uid){
-                    db.ref(`Rooms/${chatName}/messages/message_${data.index}`).update({
-                        deleted: true   
+                    update(ref(db,`Rooms/${chatName}/messages/message_${data.index}`),{
+                        deleted: true
                     })
                     closeDeleteMessage()
                 }else{
@@ -1718,7 +1721,7 @@ window.onload = function() {
         }
     }
 var app = new GLOBAL_CHAT()
-auth.onAuthStateChanged((user)=>{
+onAuthStateChanged(auth,(user)=>{
     if(user == null || !user.emailVerified){
         app.home()
     }else if(user.emailVerified){
