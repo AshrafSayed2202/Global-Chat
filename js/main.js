@@ -1452,12 +1452,12 @@ window.onload = function() {
         var message_content_container = document.createElement('div')
         var user_image = document.createElement('img')
         user_image.setAttribute('class','user_image')
-        user_image.style.display = 'block'
         image == ""?user_image.src = 'media/user.webp': user_image.src = image;
         user_image.onerror = (e)=>{e.target.src = 'media/user.webp';user_image.onerror = null}
         user_image.style.borderColor = `${color}`
         var user_image_holder = document.createElement('div')
         user_image_holder.setAttribute('class','user_image_holder')
+        user_image_holder.style.display = 'block'
         user_image_holder.append(user_image)
         var message_user_container = document.createElement('div')
         message_user_container.style.display = 'block'
