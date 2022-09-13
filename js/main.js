@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-app.js'
 import { getStorage, ref as ref2, uploadBytes, getDownloadURL, listAll, deleteObject} from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-storage.js'
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-auth.js'
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-auth.js'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-app-check.js'
 import { getDatabase ,ref ,set ,onValue, onChildRemoved, update, remove} from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-database.js'
 const firebaseConfig = {
@@ -136,8 +136,11 @@ window.onload = function() {
                     .then((userCredential) => {
                         var user = userCredential.user;
                         if(!user.emailVerified){
-                            window.alert('Verify your Account ✅ (Don\'t forget to check your spam folder)')
-                            firebase.auth().signOut()
+                            signOut(auth)
+                            parent.home()
+                            setTimeout(() => {
+                                createMainAlert(`<i class="fa-solid fa-envelope icon"></i>`,'Verify your Account first',`Don\'t forget to check your spam folder`,`#9c36b5`)
+                            }, 500);
                         }
                     })
                     .catch((error) => {
@@ -246,11 +249,14 @@ window.onload = function() {
                                         })
                                     }).then(()=>{
                                         sendEmailVerification(auth.currentUser).then(()=>{
-                                            auth.signOut().then(()=>{}).catch((error)=>{console.log(error.message);})
+                                            signOut(auth)
+                                            parent.home()
+                                            setTimeout(() => {
+                                                createMainAlert(`<i class="fa-solid fa-envelope icon"></i>`,'Verify your Account ',`We have sent you a verification link,<br>Don\'t forget to check your spam folder`,`#8bc34a`)
+                                            }, 500);
                                         })
                                     })
                                 })
-                                window.alert('Verify your Account ✅ (Don\'t forget to check your spam folder)')
                             }).catch(function(error){
                                 createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`${error.message}`,`red`)
                             })
@@ -1812,7 +1818,7 @@ window.onload = function() {
     }
 var app = new GLOBAL_CHAT()
 onAuthStateChanged(auth,(user)=>{
-    if(user == null || !user.emailVerified){
+    if(user == null){
         app.home()
     }else if(user.emailVerified){
         if(localStorage.room == undefined){
