@@ -1320,7 +1320,13 @@ ul li:hover{
     font-weight: 400;;
     color: #666666;
 }
+@media (max-width:500px) {
+    .message-toast .text{
+        font-size: 12px;
+    }
+}
 .message-toast .text.text-1{
+    font-size: 20px;
     font-weight: 600;
     color: #333;
 }
