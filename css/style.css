@@ -141,7 +141,7 @@ form.sign-up-form {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 10;
     transition: 0.5s;
     opacity: 0;
 }
@@ -923,18 +923,18 @@ form.sign-up-form {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 10;
     transition: 0.5s;
     opacity: 0;
 }
 .join_room{
     width: 400px;
     max-width: 100%;
-    height: 600px;
-    background-color: #d64045;
+    height: 438px;
+    background-color: #d640459e;
     border-radius: 50px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 100%;
+    border-bottom-left-radius: 100%;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -1275,5 +1275,87 @@ ul li:hover{
     }
     100%{
         transform: translateX(5px);
+    }
+}
+/* Toast Notification */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+.toast{
+    position: absolute;
+    top: 75px;
+    left: 30px;
+    border-radius: 12px;
+    background: #fff;
+    padding: 15px 25px 15px 20px;
+    box-shadow: 0 5px 10px rgb(0 0 0 / 10%);
+    border-right: 6px solid;
+    overflow: hidden;
+    transform: translateX(calc(-100% - 30px));
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+    z-index:11;
+}
+.toast.active{
+    transform: translateX(0%);
+}
+.toast .toast-content{
+    display: flex;
+    align-items: center;
+}
+.toast-content .icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 35px;
+    width: 35px;
+    color: #fff;
+    font-size: 20px;
+    border-radius: 50%;
+}
+.toast-content .message-toast{
+    display: flex;
+    flex-direction: column;
+    margin: 0 20px;
+}
+.message-toast .text{
+    font-size: 20px;
+    font-weight: 400;;
+    color: #666666;
+}
+.message-toast .text.text-1{
+    font-weight: 600;
+    color: #333;
+}
+.toast .close{
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    padding: 5px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+.toast .close:hover{
+    opacity: 1;
+}
+.toast .progress{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+}
+.toast .progress:before{
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: #ddd;
+}
+.progress.active:before{
+    animation: progress 5s linear forwards;
+}
+@keyframes progress {
+    100%{
+        left: 100%;
     }
 }

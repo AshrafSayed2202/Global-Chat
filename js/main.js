@@ -111,10 +111,10 @@ window.onload = function() {
                 sendPasswordResetEmail(auth,reset_password_input.value)
                 .then(()=>{
                     closeForgetPassword()
-                    window.alert('✅Reset mail sent')
+                    createMainAlert(`<i class="fa-solid fa-check icon"></i>`,'Success',`Reset password mail sent to <span style="font-weight:bold">${reset_password_input.value}</span><br>(don't forget to check your spam)`,`green`)
                 })
                 .catch((error)=>{
-                    window.alert(error.message)
+                    createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`${error.message}`,`red`)
                 })
             }
             function closeForgetPassword(){
@@ -141,7 +141,7 @@ window.onload = function() {
                         }
                     })
                     .catch((error) => {
-                        window.alert(error.message)
+                        createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`${error.message}`,`red`)
                     });
                 }else{
                     sign_in_password_input_field.style.border = '3px solid red'
@@ -251,8 +251,8 @@ window.onload = function() {
                                     })
                                 })
                                 window.alert('Verify your Account ✅ (Don\'t forget to check your spam folder)')
-                            }).catch(async function(error){
-                                window.alert(error)
+                            }).catch(function(error){
+                                createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`${error.message}`,`red`)
                             })
                         }else{
                             sign_up_confirm_password_input_field.style.border = '3px solid red'
@@ -695,9 +695,8 @@ window.onload = function() {
                         other_profile_image.onerror = (e)=>{e.target.src = 'media/user.webp';other_profile_image.onerror = null}
                         other_profile_name.textContent = user.name
                         other_profile_bio.textContent = user.bio
-                    },{onlyOnce:true}).then(()=>{
                         other_profile.classList.add('active')
-                    })
+                    },{onlyOnce:true})
                 }
                 members_container.append(close_members_btn,admins_list,members_list)
                 chat_name_container.append(members_container_btn)
@@ -853,6 +852,7 @@ window.onload = function() {
                     var join_room_name = document.createElement('input')
                     join_room_name.placeholder = 'Room Name'
                     join_room_name.setAttribute('class','creat_room_input')
+                    join_room_name.oninput = ()=>{join_room_name_field.style.border = '2px solid #d64045'}
                     join_room_name.onkeyup = (e)=>{
                         if(e.key == "Enter"){
                             confrimRoomName()
@@ -864,8 +864,9 @@ window.onload = function() {
                     confirm_room_name.addEventListener('click',confrimRoomName)
                     function confrimRoomName(){
                         onValue(ref(db,`Rooms/`),(rooms_object)=>{
-                            if(join_room_name.value.length >= 5 && rooms_object.val()[`${join_room_name.value}`] != undefined){
-                                var room_password_field = document.createElement('div')
+                            if(join_room_name.value.length >= 5){
+                                if(rooms_object.val()[`${join_room_name.value}`] != undefined){
+                                    var room_password_field = document.createElement('div')
                                 room_password_field.setAttribute('class','input-field')
                                 room_password_field.style.width = '80%'
                                 room_password_field.style.margin = '25px auto'
@@ -873,6 +874,7 @@ window.onload = function() {
                                 room_password.type = 'password'
                                 room_password.placeholder = 'Room Password'
                                 room_password.setAttribute('class','creat_room_input')
+                                room_password.oninput = ()=>{room_password_field.style.border = '2px solid #d64045'}
                                 room_password.onkeyup = (e)=>{
                                     if(e.key == "Enter"){
                                         confirmRoomPassword()
@@ -888,35 +890,54 @@ window.onload = function() {
                                 confirm_room_create.addEventListener('click',confirmRoomPassword)
                                 function confirmRoomPassword(){
                                     onValue(ref(db,`Rooms/${join_room_name.value}`),(room)=>{
-                                        if(room_password.value.length >= 5 && room_password.value == room.val().password){
-                                            onValue(ref(db,`users/${auth.currentUser.uid}`),(user)=>{
-                                                if(user.val().rooms.includes(join_room_name.value)){
+                                        if(room_password.value.length >= 5){
+                                            if(room_password.value == room.val().password){
+                                                onValue(ref(db,`users/${auth.currentUser.uid}`),(user)=>{
+                                                    if(user.val().rooms.includes(join_room_name.value)){
+                                                        return
+                                                    }
+                                                    var addedRoom = [join_room_name.value]
+                                                    var newRooms = user.val().rooms.concat(addedRoom)
+                                                    update(ref(db,`users/${auth.currentUser.uid}`),{
+                                                        rooms: newRooms
+                                                    })
+                                                },{onlyOnce:true})
+                                                localStorage.setItem('room',join_room_name.value)
+                                                document.getElementById('chat_container').remove()
+                                                parent.create_chat(join_room_name.value)
+                                                closeJoinRoom()
+                                                closeProfile()
+                                                if(room.val().Members.includes(auth.currentUser.uid)){
                                                     return
-                                                }
-                                                var addedRoom = [join_room_name.value]
-                                                var newRooms = user.val().rooms.concat(addedRoom)
-                                                update(ref(db,`users/${auth.currentUser.uid}`),{
-                                                    rooms: newRooms
+                                                }else{
+                                                    var addedMember = [auth.currentUser.uid]
+                                                var newMembers = room.val().Members.concat(addedMember)
+                                                update(ref(db,`Rooms/${join_room_name.value}`),{
+                                                    Members: newMembers
                                                 })
-                                            },{onlyOnce:true})
-                                            localStorage.setItem('room',join_room_name.value)
-                                            document.getElementById('chat_container').remove()
-                                            parent.create_chat(join_room_name.value)
-                                            closeJoinRoom()
-                                            closeProfile()
-                                            if(room.val().Members.includes(auth.currentUser.uid)){
-                                                return
+                                                }
                                             }else{
-                                                var addedMember = [auth.currentUser.uid]
-                                            var newMembers = room.val().Members.concat(addedMember)
-                                            update(ref(db,`Rooms/${join_room_name.value}`),{
-                                                Members: newMembers
-                                            })
+                                                createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`Wrong password, try again`,`red`)
+                                                room_password.focus()
+                                                room_password_field.style.border = '3px solid red'
                                             }
+                                        }else{
+                                            createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`This password is too damn short bro`,`red`)
+                                            room_password.focus()
+                                            room_password_field.style.border = '3px solid red'
                                         }
                                     },{onlyOnce:true})
                                 }
                                 join_buttons.append(room_password_field,confirm_room_create)
+                                }else{
+                                    createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`This Room Dosn't exist`,`red`)
+                                    join_room_name.focus()
+                                    join_room_name_field.style.border = '3px solid red'
+                                }
+                            }else{
+                                createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`There is no room with this short name`,`red`)
+                                join_room_name.focus()
+                                join_room_name_field.style.border = '3px solid red'
                             }
                         },{onlyOnce:true})
                     }
@@ -936,6 +957,7 @@ window.onload = function() {
                     var creat_room_name = document.createElement('input')
                     creat_room_name.placeholder = 'Room Name'
                     creat_room_name.setAttribute('class','creat_room_input')
+                    creat_room_name.oninput = ()=>{creat_room_name_field.style.border = '2px solid #d64045'}
                     creat_room_name.onkeyup = (e)=>{
                         if(e.key == "Enter"){
                             confrimRoomName()
@@ -947,8 +969,9 @@ window.onload = function() {
                     confirm_room_name.addEventListener('click',confrimRoomName)
                     function confrimRoomName(){
                         onValue(ref(db,`Rooms/`),(rooms_object)=>{
-                            if(creat_room_name.value.length >= 5 && rooms_object.val()[`${creat_room_name.value}`] == undefined){
-                                var room_password_field = document.createElement('div')
+                            if(creat_room_name.value.length >= 5){
+                                if(rooms_object.val()[`${creat_room_name.value}`] == undefined){
+                                    var room_password_field = document.createElement('div')
                                 room_password_field.setAttribute('class','input-field')
                                 room_password_field.style.width = '80%'
                                 room_password_field.style.margin = '25px auto'
@@ -971,29 +994,46 @@ window.onload = function() {
                                 confirm_room_create.addEventListener('click',confirmRoomPassword)
                                 function confirmRoomPassword(){
                                     onValue(ref(db,`Rooms/`),(rooms_object)=>{
-                                        if(room_password.value.length >= 5 && rooms_object.val()[`${creat_room_name.value}`] == undefined){
-                                            set(ref(db,`Rooms/${creat_room_name.value}`),{
-                                                password:room_password.value,
-                                                admin: auth.currentUser.uid
-                                            })
-                                            onValue(ref(db,`users/${auth.currentUser.uid}`),(user)=>{
-                                                var addedRoom = [creat_room_name.value]
-                                                var newRooms = user.val().rooms.concat(addedRoom)
-                                                update(ref(db,`users/${auth.currentUser.uid}`),{
-                                                    rooms: newRooms
+                                        if(room_password.value.length >= 5){
+                                            if(rooms_object.val()[`${creat_room_name.value}`] == undefined){
+                                                set(ref(db,`Rooms/${creat_room_name.value}`),{
+                                                    password:room_password.value,
+                                                    admin: auth.currentUser.uid
                                                 })
-                                            user = user.val()
-                                            set(ref(db,`Rooms/${creat_room_name.value}/Members`),[auth.currentUser.uid])
-                                        },{onlyOnce:true})
-                                            localStorage.setItem('room',creat_room_name.value)
-                                            document.getElementById('chat_container').remove()
-                                            parent.create_chat(creat_room_name.value)
-                                            closeJoinRoom()
-                                            closeProfile()
+                                                onValue(ref(db,`users/${auth.currentUser.uid}`),(user)=>{
+                                                    var addedRoom = [creat_room_name.value]
+                                                    var newRooms = user.val().rooms.concat(addedRoom)
+                                                    update(ref(db,`users/${auth.currentUser.uid}`),{
+                                                        rooms: newRooms
+                                                    })
+                                                user = user.val()
+                                                set(ref(db,`Rooms/${creat_room_name.value}/Members`),[auth.currentUser.uid])
+                                            },{onlyOnce:true})
+                                                localStorage.setItem('room',creat_room_name.value)
+                                                document.getElementById('chat_container').remove()
+                                                parent.create_chat(creat_room_name.value)
+                                                closeJoinRoom()
+                                                closeProfile()
+                                            }else{
+                                                createMainAlert(`<i class="fa-regular fa-face-frown icon"></i>`,'Error',`The room name got used while you setting your password <br> please change it`,`red`)
+                                            }
+                                        }else{
+                                        createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`This password it too short`,`red`)
+                                        room_password.focus()
+                                        room_password_field.style.border = '3px solid red'
                                         }
                                     },{onlyOnce:true})
                                 }
                                 join_buttons.append(room_password_field,confirm_room_create)
+                                }else{
+                                    createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`Room name is already used`,`red`)
+                                    creat_room_name.focus()
+                                    creat_room_name_field.style.border = '3px solid red'
+                                }
+                            }else{
+                                createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`Room name is too short`,`red`)
+                                creat_room_name.focus()
+                                creat_room_name_field.style.border = '3px solid red'
                             }
                         },{onlyOnce:true})
                     }
@@ -1513,7 +1553,7 @@ window.onload = function() {
             repliedTo.addEventListener('click',()=>{
                 let realMessage = document.querySelector(`.message_container[data-index="${data.reply.index}"]`)
                 if(realMessage == undefined){
-                    window.alert('This Message was Deleted')
+                    createMainAlert(`<i class="fa-solid fa-exclamation icon"></i>`,'Error',`This message has ben deleted`,`red`)
                 }else{
                     realMessage.scrollIntoView({behavior: 'smooth'})
                     realMessage.ariaPressed
@@ -1678,7 +1718,7 @@ window.onload = function() {
                     })
                     closeDeleteMessage()
                 }else{
-                    window.alert('You can\'t delete this')
+                    createMainAlert(`<i class="fa-solid fa-ban icon"></i>`,'Access Denied',`You can\'t delete this`,'red')
                 }
             }
             var button_keep = document.createElement('button')
@@ -1716,6 +1756,53 @@ window.onload = function() {
             cloned_message.append(close_cloned_message)
             chat_input_container.insertBefore(cloned_message,chat_input_container.firstChild)
         })
+    }
+    function createMainAlert(icon,title,message,color){
+        if(document.querySelector('.toast') != null){
+            document.querySelector('.toast').classList.remove('active')
+            setTimeout(() => {
+                document.querySelector('.toast').remove()
+                createAlert()
+            }, 500);
+        }else{
+            createAlert()
+        }
+        function createAlert(){
+            var alert = document.createElement('div')
+            alert.setAttribute('class','toast')
+            alert.innerHTML = `
+                <div class="toast-content">
+                ${icon}
+                    <div class="message-toast">
+                        <span class="text text-1">${title}</span>
+                        <span class="text text-2">${message}</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-xmark close"></i>
+                <div class="progress"></div>
+            `
+            setTimeout(() => {
+                document.querySelector('.toast-content .icon').style.backgroundColor = `${color}`
+                document.querySelector('.close').onclick = ()=>{
+                    alert.classList.remove('active')
+                    setTimeout(() => {
+                        alert.remove()
+                    }, 500);
+                    clearTimeout(timer)
+                }
+                alert.classList.add('active')
+                alert.style.borderColor = `${color}`
+                document.querySelector('.progress').classList.add('active')
+                document.querySelector('.progress').style.backgroundColor = `${color}`
+                var timer = setTimeout(() => {
+                    alert.classList.remove('active')
+                    setTimeout(() => {
+                        alert.remove()
+                    }, 500);
+                }, 5000);
+            }, 1);
+            document.body.append(alert)
+        }
     }
     function deleteReplyMessage(){
         if(chat_input_container.childNodes[0].className == 'cloned_message'){
