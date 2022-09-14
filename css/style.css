@@ -1013,7 +1013,7 @@ form.sign-up-form {
     width: 40px;
 }
 .user_image_holder{
-    width: 57px;
+    min-width: 40px;
     height: 40px;
     align-self: flex-start;
     overflow: hidden;
