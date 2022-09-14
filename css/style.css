@@ -373,6 +373,7 @@ form.sign-up-form {
 }
 #chat_inner_container{
     width: 40%;
+    height: 100vh;
     background-color: #f5d9dcde;
     border-bottom-right-radius: 20px;
     border-bottom-left-radius: 20px;
@@ -380,7 +381,6 @@ form.sign-up-form {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    position: relative;
 }
 @media (max-width:767px) {
     #chat_inner_container{
@@ -463,15 +463,15 @@ form.sign-up-form {
 #chat_input_container{
     width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    min-height: 50px;
+    float: left;
     background-color: Transparent;
-    padding: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
     font-family: Varela Round;
     margin-top: 10px;
     background-color: #eee;
-    position: absolute;
-    bottom: 0;
+    position: relative;
 }
 #chat_input{
     width: 88%;
