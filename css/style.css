@@ -473,6 +473,13 @@ form.sign-up-form {
     background-color: #eee;
     position: relative;
 }
+@media (max-width:769px) {
+    #chat_input_container{
+        margin-bottom: 50px;
+        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: 20px;
+    }
+}
 #chat_input{
     width: 88%;
     height: 100%;
