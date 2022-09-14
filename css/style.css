@@ -473,9 +473,9 @@ form.sign-up-form {
     background-color: #eee;
     position: relative;
 }
-@media (max-width:769px) {
+@media (max-width:600px) {
     #chat_input_container{
-        margin-bottom: 50px;
+        margin-bottom: 5px;
         border-bottom-right-radius: 20px;
         border-bottom-left-radius: 20px;
     }
