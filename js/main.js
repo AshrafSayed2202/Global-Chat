@@ -1526,7 +1526,7 @@ window.onload = function() {
         message_container.append(user_image_holder)
         message_content_container.setAttribute('class', 'message_content_container')
         message_content.setAttribute('class', 'message_content')
-        if(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(message) && message.startsWith('<img') == false){
+        if(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(message) && (message.startsWith('<img') == false || message.startsWith('<iframe') == false)){
             if(message.startsWith('http')){
                 message_content.innerHTML = `<a style="color: #45f6ff;" target="_blank" href="${message}">${message}</a>`
             }else{
